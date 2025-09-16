@@ -1,35 +1,21 @@
 import React, { useState, useEffect } from "react";
-import YearViewCalendar from "./components/YearViewCalendar";
 import EventForm from "./components/EventForm";
+import YearViewCalendar from "./components/YearViewCalendar";
 import { loadEvents, saveEvents } from "./utils/storage";
 
 export default function App() {
   const [events, setEvents] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     setEvents(loadEvents());
   }, []);
 
-  const addEvent = (payload) => {
-    const newItem = { id: String(Date.now()), ...payload };
-    updateEvents([...events, newItem]);
-  };
-
-  const deleteEvents = (id) => {
-    updateEvents(events.filter((b) => b.id !== id));
-  };
-
-  // Call this when you add/delete events
-  const updateEvents = (newList) => {
-    setEvents(newList);
-    saveEvents(newList);
-  };
-
-  const handleEdit = (id, changes) => {
-    const updated = events.map(b =>
-      b.id === id ? { ...b, ...changes } : b
-    );
-    updateEvents(updated);
+  const handleEventSubmit = (eventData) => {
+    const newEvents = [...events, { ...eventData, id: Date.now() }];
+    setEvents(newEvents);
+    saveEvents(newEvents);
+    setShowModal(false); // Close modal after save
   };
 
   return (
@@ -37,22 +23,29 @@ export default function App() {
       <header className="app-header">
         <h1>Event Calendar</h1>
       </header>
-
-      <main>
-        <div className="controls">
-          <EventForm onSubmit={addEvent} />
+      
+      <button onClick={() => setShowModal(true)}>Create Event</button>
+      {showModal && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <EventForm onSubmit={handleEventSubmit} />
+            <button onClick={() => setShowModal(false)}>Cancel</button>
+          </div>
         </div>
-
-        <YearViewCalendar
-          events={events}
-          onDelete={id => updateEvents(events.filter(b => b.id !== id))}
-          onEdit={handleEdit}
-        />
-      </main>
-
-      <footer className="app-footer">
-        
-      </footer>
+      )}
+      <YearViewCalendar
+        events={events}
+        onDelete={id => {
+          const filtered = events.filter(e => e.id !== id);
+          setEvents(filtered);
+          saveEvents(filtered);
+        }}
+        onEdit={(id, changes) => {
+          const updated = events.map(e => e.id === id ? { ...e, ...changes } : e);
+          setEvents(updated);
+          saveEvents(updated);
+        }}
+      />
     </div>
   );
 }
