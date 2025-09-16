@@ -10,13 +10,17 @@ export default function YearViewCalendar({ events = [], onDelete, onEdit }) {
   const map = {};
   for (let m = 1; m <= 12; m++) map[m] = {};
 
-  events.forEach((b) => {
-    const dim = daysInMonth(b.month, year);
-    const day = Math.min(b.day, dim); // handles Feb 29 on non-leap years
-    if (!map[b.month]) map[b.month] = {};
-    const arr = map[b.month][day] || [];
-    arr.push(b);
-    map[b.month][day] = arr;
+  events.forEach((e) => {
+    const dim = daysInMonth(e.month, year);
+    const day = Math.min(e.day, dim);
+
+    // Only show non-recurring events on their specific year
+    if (!e.isRecurring && e.year !== year) return;
+
+    if (!map[e.month]) map[e.month] = {};
+    const arr = map[e.month][day] || [];
+    arr.push(e);
+    map[e.month][day] = arr;
   });
 
   return (

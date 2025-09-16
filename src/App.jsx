@@ -40,7 +40,7 @@ export default function App() {
 
       <main>
         <div className="controls">
-          <EventForm onAdd={addEvent} />
+          <EventForm onSubmit={addEvent} />
         </div>
 
         <YearViewCalendar

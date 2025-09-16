@@ -1,67 +1,117 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { daysInMonth } from "../utils";
 
-/*
-  Uses <input type="date"> for convenience. We extract month/day and pass up.
-*/
-export default function BirthdayForm({ onAdd }) {
-  const [name, setName] = useState("");
-  const [dateStr, setDateStr] = useState("");
-  const [note, setNote] = useState("");
-  const [isRecurring, setIsRecurring] = useState(true);
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    if (!name.trim() || !dateStr) {
-      return alert("Please provide a name and a date.");
-    }
-    // parse date input (yyyy-mm-dd) as local date
-    const d = new Date(dateStr + "T00:00:00");
-    const month = d.getMonth() + 1;
-    const day = d.getDate();
+export default function EventForm({ onSubmit, initial }) {
+  const defaultState = {
+    name: "",
+    note: "",
+    month: 1,
+    day: 1,
+    isRecurring: true,
+    year: "unknown"
+  };
 
-    onAdd({ name: name.trim(), month, day, note: note.trim(), isRecurring });
-    setName("");
-    setDateStr("");
-    setNote("");
-    setIsRecurring(false);
+  const [name, setName] = useState(initial?.name || defaultState.name);
+  const [note, setNote] = useState(initial?.note || defaultState.note);
+  const [month, setMonth] = useState(initial?.month || defaultState.month);
+  const [isRecurring, setIsRecurring] = useState(initial?.isRecurring ?? defaultState.isRecurring);
+  const [year, setYear] = useState(initial?.year !== undefined ? initial.year : defaultState.year);
+  const [day, setDay] = useState(initial?.day || defaultState.day);
+
+  // Years for select
+  const currentYear = new Date().getFullYear();
+  const years = ["unknown", ...Array.from({ length: 151 }, (_, i) => currentYear - 100 + i)];
+
+  // Calculate days count
+  let daysCount;
+  if (year === "unknown" && month === 2) {
+    daysCount = 29;
+  } else if (year === "unknown") {
+    daysCount = daysInMonth(month, 2024); // Use leap year for max days
+  } else {
+    daysCount = daysInMonth(month, Number(year));
   }
 
+  useEffect(() => {
+    if (day > daysCount) setDay(daysCount);
+  }, [month, year, daysCount]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit({
+      name,
+      note,
+      month: Number(month),
+      day: Number(day),
+      isRecurring,
+      year: year === "unknown" ? undefined : Number(year),
+    });
+    // Reset form fields
+    setName(defaultState.name);
+    setNote(defaultState.note);
+    setMonth(defaultState.month);
+    setDay(defaultState.day);
+    setIsRecurring(defaultState.isRecurring);
+    setYear(defaultState.year);
+  };
+
   return (
-    <form className="birthday-form" onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <input
+        type="text"
         value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Name"
-        aria-label="Name"
-        name="name"
+        onChange={e => setName(e.target.value)}
+        placeholder="Event Name"
+        required
       />
-      
       <input
-        type="date"
-        value={dateStr}
-        onChange={(e) => setDateStr(e.target.value)}
-        aria-label="Birth date"
-      />
-
-      <input
+        type="text"
         value={note}
-        onChange={(e) => setNote(e.target.value)}
-        placeholder="Note (optional)"
-        aria-label="Note"
-        name="note"
+        onChange={e => setNote(e.target.value)}
+        placeholder="Note"
       />
+      <label>
+        Month:
+        <select value={month} onChange={e => setMonth(Number(e.target.value))}>
+          {MONTH_NAMES.map((m, i) => (
+            <option key={i + 1} value={i + 1}>{m}</option>
+          ))}
+        </select>
+      </label>
+      <label>
+        Day:
+        <select value={day} onChange={e => setDay(Number(e.target.value))}>
+          {[...Array(daysCount)].map((_, i) => (
+            <option key={i + 1} value={i + 1}>{i + 1}</option>
+          ))}
+        </select>
+      </label>
 
+      <label>
+        Year:
+        <select value={year} onChange={e => setYear(e.target.value)}>
+          {years.map(y =>
+            <option key={y} value={y}>{y === "unknown" ? "Unknown" : y}</option>
+          )}
+        </select>
+      </label>
+      
       <label>
         <input
           type="checkbox"
           checked={isRecurring}
-          onChange={(e) => setIsRecurring(e.target.checked)}
-          name="isRecurring"
+          onChange={e => setIsRecurring(e.target.checked)}
         />
         Repeat every year
       </label>
 
-      <button type="submit">Add Event</button>
+
+      <button type="submit">Save</button>
     </form>
   );
 }
