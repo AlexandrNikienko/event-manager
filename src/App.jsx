@@ -40,16 +40,18 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <h1>Event Calendar</h1>
+
+        <button
+          className="create-event-btn"
+          onClick={() => {
+            setShowModal(true);
+            setEditingEvent(null);
+          }}
+        >
+          Create Event
+        </button>
       </header>
 
-      <button
-        onClick={() => {
-          setShowModal(true);
-          setEditingEvent(null);
-        }}
-      >
-        Create Event
-      </button>
       {showModal && (
         <div className="modal-backdrop">
           <div className="modal">

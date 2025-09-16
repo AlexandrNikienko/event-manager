@@ -25,7 +25,7 @@ export default function YearViewCalendar({ events = [], onDelete, onEdit }) {
 
   return (
     <div>
-      <div className="controls" style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+      <div className="controls">
         <button onClick={() => setYear(year - 1)}>&lt; Prev</button>
         <span style={{ fontWeight: 600, fontSize: "1.2rem" }}>{year}</span>
         <button onClick={() => setYear(year + 1)}>Next &gt;</button>
