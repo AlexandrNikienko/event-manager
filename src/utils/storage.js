@@ -1,6 +1,6 @@
-const STORAGE_KEY = "birthdays";
+const STORAGE_KEY = "events";
 
-export function loadBirthdays() {
+export function loadEvents() {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (raw) {
     try {
@@ -17,6 +17,6 @@ export function loadBirthdays() {
   ];
 }
 
-export function saveBirthdays(birthdays) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(birthdays));
+export function saveEvents(events) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
 }

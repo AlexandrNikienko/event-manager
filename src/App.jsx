@@ -1,58 +1,57 @@
 import React, { useState, useEffect } from "react";
 import YearViewCalendar from "./components/YearViewCalendar";
-import BirthdayForm from "./components/BirthdayForm";
-import { loadBirthdays, saveBirthdays } from "./utils/storage";
+import EventForm from "./components/EventForm";
+import { loadEvents, saveEvents } from "./utils/storage";
 
 export default function App() {
-  const [birthdays, setBirthdays] = useState([]);
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    setBirthdays(loadBirthdays());
+    setEvents(loadEvents());
   }, []);
 
-  const addBirthday = (payload) => {
+  const addEvent = (payload) => {
     const newItem = { id: String(Date.now()), ...payload };
-    updateBirthdays([...birthdays, newItem]);
+    updateEvents([...events, newItem]);
   };
 
-  const deleteBirthday = (id) => {
-    updateBirthdays(birthdays.filter((b) => b.id !== id));
+  const deleteEvents = (id) => {
+    updateEvents(events.filter((b) => b.id !== id));
   };
 
-  // Call this when you add/delete birthdays
-  const updateBirthdays = (newList) => {
-    setBirthdays(newList);
-    saveBirthdays(newList);
+  // Call this when you add/delete events
+  const updateEvents = (newList) => {
+    setEvents(newList);
+    saveEvents(newList);
   };
 
   const handleEdit = (id, changes) => {
-    const updated = birthdays.map(b =>
+    const updated = events.map(b =>
       b.id === id ? { ...b, ...changes } : b
     );
-    updateBirthdays(updated);
+    updateEvents(updated);
   };
 
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Yearly Birthdays</h1>
-        <p className="sub">Enter birthdays and view them in a 12-month year view.</p>
+        <h1>Event Calendar</h1>
       </header>
 
       <main>
         <div className="controls">
-          <BirthdayForm onAdd={addBirthday} />
+          <EventForm onAdd={addEvent} />
         </div>
 
         <YearViewCalendar
-          birthdays={birthdays}
-          onDelete={id => updateBirthdays(birthdays.filter(b => b.id !== id))}
+          events={events}
+          onDelete={id => updateEvents(events.filter(b => b.id !== id))}
           onEdit={handleEdit}
         />
       </main>
 
       <footer className="app-footer">
-        <small>Built with React — data is mock JSON and kept in memory.</small>
+        
       </footer>
     </div>
   );

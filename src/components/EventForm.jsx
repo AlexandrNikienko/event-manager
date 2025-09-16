@@ -7,6 +7,7 @@ export default function BirthdayForm({ onAdd }) {
   const [name, setName] = useState("");
   const [dateStr, setDateStr] = useState("");
   const [note, setNote] = useState("");
+  const [isRecurring, setIsRecurring] = useState(true);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -18,10 +19,11 @@ export default function BirthdayForm({ onAdd }) {
     const month = d.getMonth() + 1;
     const day = d.getDate();
 
-    onAdd({ name: name.trim(), month, day, note: note.trim() });
+    onAdd({ name: name.trim(), month, day, note: note.trim(), isRecurring });
     setName("");
     setDateStr("");
     setNote("");
+    setIsRecurring(false);
   }
 
   return (
@@ -31,20 +33,35 @@ export default function BirthdayForm({ onAdd }) {
         onChange={(e) => setName(e.target.value)}
         placeholder="Name"
         aria-label="Name"
+        name="name"
       />
+      
       <input
         type="date"
         value={dateStr}
         onChange={(e) => setDateStr(e.target.value)}
         aria-label="Birth date"
       />
+
       <input
         value={note}
         onChange={(e) => setNote(e.target.value)}
         placeholder="Note (optional)"
         aria-label="Note"
+        name="note"
       />
-      <button type="submit">Add birthday</button>
+
+      <label>
+        <input
+          type="checkbox"
+          checked={isRecurring}
+          onChange={(e) => setIsRecurring(e.target.checked)}
+          name="isRecurring"
+        />
+        Repeat every year
+      </label>
+
+      <button type="submit">Add Event</button>
     </form>
   );
 }

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import MonthGrid from "./MonthGrid";
 import { daysInMonth } from "../utils";
 
-export default function YearViewCalendar({ birthdays = [], onDelete, onEdit }) {
+export default function YearViewCalendar({ events = [], onDelete, onEdit }) {
   const currentYear = new Date().getFullYear();
   const [year, setYear] = useState(currentYear);
 
@@ -10,7 +10,7 @@ export default function YearViewCalendar({ birthdays = [], onDelete, onEdit }) {
   const map = {};
   for (let m = 1; m <= 12; m++) map[m] = {};
 
-  birthdays.forEach((b) => {
+  events.forEach((b) => {
     const dim = daysInMonth(b.month, year);
     const day = Math.min(b.day, dim); // handles Feb 29 on non-leap years
     if (!map[b.month]) map[b.month] = {};
