@@ -57,7 +57,7 @@ export default function DayTooltip({ events = [], onDelete, onEdit }) {
               <div key={event.id} className="event-row">
                 <span>{event.name}</span>
                 <span>{event.note}</span>
-                <button onClick={() => startEdit(event)}>Edit</button>
+                <button onClick={() => onEdit(event.id)}>Edit</button>
                 <button
                   className="delete-btn"
                   onClick={() => onDelete && onDelete(event.id)}
