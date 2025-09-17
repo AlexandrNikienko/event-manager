@@ -8,16 +8,14 @@ export default function App() {
   const [showModal, setShowModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
   const [newEvent, setNewEvent] = useState(null);
+  const [year, setYear] = useState(new Date().getFullYear());
 
   useEffect(() => {
     setEvents(loadEvents());
   }, []);
 
   const handleEventSubmit = (eventData) => {
-    console.log("Event submitted:", eventData);
     if (editingEvent) {
-      console.log("Editing event:", editingEvent);
-      // Edit existing event
       const updated = events.map((e) =>
         e.id === editingEvent.id ? { ...e, ...eventData } : e
       );
@@ -25,24 +23,20 @@ export default function App() {
       saveEvents(updated);
       setEditingEvent(null);
     } else {
-      // Create new event
       const newEvents = [...events, { ...eventData, id: Date.now() }];
-      console.log("New events list:", newEvents);
       setEvents(newEvents);
       saveEvents(newEvents);
     }
-    setShowModal(false); // Close modal after save
+    setShowModal(false);
   };
 
   const handleEdit = (id) => {
-    console.log("Edit clicked:", id);
     const event = events.find((e) => e.id === id);
     setEditingEvent(event);
     setShowModal(true);
   };
 
   const handleDayClick = (date) => {
-    console.log("Day clicked:", date);
     setNewEvent({
       name: "",
       note: "",
@@ -55,58 +49,88 @@ export default function App() {
   };
 
   const handleDelete = (id) => {
-    console.log("handleDelete:", id);
     const filtered = events.filter((e) => e.id !== id);
     setEvents(filtered);
     saveEvents(filtered);
   }
 
   const handleCreateEvent = () => {
-    setNewEvent({
-      name: "",
-      note: "",
-      month: "",
-      day: "",
-      year: "",
-      isRecurring: true
-    });
+    setNewEvent(null);
     setShowModal(true);
     setEditingEvent(null);
   };
 
+  // Sidebar logic
+  const eventsOfYear = events.filter(e => e.isRecurring || e.year === year);
+
+  eventsOfYear.sort((a, b) => {
+    if (a.month !== b.month) return a.month - b.month;
+    return a.day - b.day;
+  });
+
+  // Handler to update year from YearViewCalendar
+  const handleYearChange = (newYear) => {
+    setYear(newYear);
+  };
+
   return (
     <div className="app">
-      <header className="app-header">
-        <h1>Event Calendar</h1>
+        <header className="app-header">
+          <h1>Event Calendar</h1>
+          <button
+            className="create-event-btn"
+            onClick={handleCreateEvent}
+          >
+            Create Event
+          </button>
+        </header>
 
-        <button
-          className="create-event-btn"
-          onClick={handleCreateEvent}
-        >
-          Create Event
-        </button>
-      </header>
-
-      {showModal && (
-        <div className="modal-backdrop">
-          <div className="modal">
-            <EventForm
-              onSubmit={handleEventSubmit}
-              initial={editingEvent || newEvent}
-              onCancel={() => {
-                setShowModal(false);
-                setEditingEvent(null);
-              }}
-            />
+        {showModal && (
+          <div className="modal-backdrop">
+            <div className="modal">
+              <header>
+                {editingEvent ? "Edit Event" : "Create Event"}
+              </header>
+              <EventForm
+                onSubmit={handleEventSubmit}
+                initial={editingEvent || newEvent}
+                onCancel={() => {
+                  setShowModal(false);
+                  setEditingEvent(null);
+                }}
+              />
+            </div>
           </div>
+        )}
+
+        <div style={{ display: "flex" }}>
+          <aside className="sidebar">
+            <h2>Events in {year}</h2>
+
+            <ul className="sidebar-list">
+              {eventsOfYear.length === 0 && <li className="muted">No events</li>}
+
+              {eventsOfYear.map(event => (
+                <li key={event.id} className="sidebar-event">
+                  <span className="sidebar-date">{event.month}/{event.day}</span>
+                  <span className="sidebar-name">{event.name}</span>
+                  {event.note && <span className="sidebar-note">({event.note})</span>}
+                  <button className="sidebar-edit" onClick={() => handleEdit(event.id)}>Edit</button>
+                  <button className="sidebar-delete" onClick={() => handleDelete(event.id)}>Delete</button>
+                </li>
+              ))}
+            </ul>
+          </aside>
+
+          <YearViewCalendar
+            events={events}
+            onDelete={handleDelete}
+            onEdit={handleEdit}
+            onDayClick={handleDayClick}
+            year={year}
+            onYearChange={handleYearChange}
+          />
         </div>
-      )}
-      <YearViewCalendar
-        events={events}
-        onDelete={handleDelete}
-        onEdit={handleEdit}
-        onDayClick={handleDayClick}
-      />
     </div>
   );
 }

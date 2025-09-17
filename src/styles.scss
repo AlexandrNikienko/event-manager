@@ -16,21 +16,87 @@ body {
   color: #111;
 }
 
+
 .app {
   max-width: 1600px;
   margin: auto;
   padding: 1rem;
 }
 
+.sidebar {
+  width: 320px;
+  background: var(--card);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  margin-right: 24px;
+  padding: 1rem 0.5rem;
+  height: fit-content;
+}
+.sidebar h2 {
+  font-size: 1.1rem;
+  margin: 0 0 1rem 0;
+  color: var(--accent);
+}
+.sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.sidebar-event {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.98rem;
+}
+.sidebar-date {
+  font-weight: 600;
+  color: var(--muted);
+  min-width: 48px;
+}
+.sidebar-name {
+  flex: 1;
+  color: #222;
+}
+.sidebar-note {
+  color: var(--muted);
+  font-size: 0.9em;
+}
+.sidebar-edit, .sidebar-delete {
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 0.9em;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.sidebar-delete {
+  color: #b02626;
+}
+.sidebar-edit:hover {
+  background: #f0f4ff;
+}
+.sidebar-delete:hover {
+  background: #fff0f0;
+}
+.sidebar .muted {
+  color: var(--muted);
+  font-size: 0.95em;
+  padding: 8px 0;
+}
+
 .app-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
+  margin-bottom: 1rem;
 
-.app-header h1 {
-  margin-top: 0;
-  font-size: 1.6rem;
+  h1 {
+    margin: 0;
+    font-size: 1.6rem;
+  }
 }
 
 .controls {
@@ -38,24 +104,22 @@ body {
   gap: 8px;
   flex-wrap: wrap;
   align-items: center;
-  margin-bottom: 1rem;
-}
+  justify-content: center;
+  margin-top: 1rem;
 
-.modal input[type="text"],
-.modal select {
-  padding: 8px 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  margin-right: 1rem;
-}
+  button {
+    padding: 8px 12px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
 
-.controls button {
-  padding: 8px 12px;
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+  span {
+    font-weight: 600;
+    font-size: 1.2rem;
+  }
 }
 
 .year-view {
@@ -92,7 +156,8 @@ body {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-   &:hover {
+
+   &:not(.empty):hover {
     cursor: pointer;
     background: #f0f4ff;
    }
@@ -212,10 +277,24 @@ body {
 }
 .modal {
   background: #fff;
-  padding: 2rem;
-  border-radius: 8px;
+  padding: 1rem;
+  border-radius: .5rem;
   min-width: 320px;
   box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+
+  header {
+    margin-bottom: 1rem;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+
+  input[type="text"],
+  select {
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-right: 1rem;
+  }
 }
 
 .create-event-btn {

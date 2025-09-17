@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import MonthGrid from "./MonthGrid";
 import { daysInMonth } from "../utils";
 
-export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayClick }) {
+export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayClick, onYearChange, year }) {
   const currentYear = new Date().getFullYear();
-  const [year, setYear] = useState(currentYear);
 
   // build map month -> day -> [events] (recalculate on every render)
   const map = {};
@@ -24,12 +23,7 @@ export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayC
   });
 
   return (
-    <div>
-      <div className="controls">
-        <button onClick={() => setYear(year - 1)}>&lt; Prev</button>
-        <span style={{ fontWeight: 600, fontSize: "1.2rem" }}>{year}</span>
-        <button onClick={() => setYear(year + 1)}>Next &gt;</button>
-      </div>
+    <main>
       <div className="year-view">
         {Array.from({ length: 12 }).map((_, i) => {
           const monthIndex = i + 1;
@@ -46,6 +40,14 @@ export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayC
           );
         })}
       </div>
-    </div>
+
+      <div className="controls">
+        <button onClick={() => onYearChange(year - 1)}>&lt; Prev</button>
+
+        <span>{year}</span>
+
+        <button onClick={() => onYearChange(year + 1)}>Next &gt;</button>
+      </div>
+    </main>
   );
 }
