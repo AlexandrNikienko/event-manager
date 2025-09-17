@@ -6,7 +6,7 @@ const MONTH_NAMES = [
   "July", "August", "September", "October", "November", "December"
 ];
 
-export default function EventForm({ onSubmit, initial }) {
+export default function EventForm({ onSubmit, initial, onCancel }) {
   const defaultState = {
     name: "",
     note: "",
@@ -61,57 +61,72 @@ export default function EventForm({ onSubmit, initial }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        value={name}
-        onChange={e => setName(e.target.value)}
-        placeholder="Event Name"
-        required
-      />
-      <input
-        type="text"
-        value={note}
-        onChange={e => setNote(e.target.value)}
-        placeholder="Note"
-      />
-      <label>
-        Month:
-        <select value={month} onChange={e => setMonth(Number(e.target.value))}>
-          {MONTH_NAMES.map((m, i) => (
-            <option key={i + 1} value={i + 1}>{m}</option>
-          ))}
-        </select>
-      </label>
-      <label>
-        Day:
-        <select value={day} onChange={e => setDay(Number(e.target.value))}>
-          {[...Array(daysCount)].map((_, i) => (
-            <option key={i + 1} value={i + 1}>{i + 1}</option>
-          ))}
-        </select>
-      </label>
-
-      <label>
-        Year:
-        <select value={year} onChange={e => setYear(e.target.value)}>
-          {years.map(y =>
-            <option key={y} value={y}>{y === "unknown" ? "Unknown" : y}</option>
-          )}
-        </select>
-      </label>
-      
-      <label>
+    <form className="event-form" onSubmit={handleSubmit}>
+      <div>
         <input
-          type="checkbox"
-          checked={isRecurring}
-          onChange={e => setIsRecurring(e.target.checked)}
+          type="text"
+          value={name}
+          onChange={e => setName(e.target.value)}
+          placeholder="Event Name"
+          required
         />
-        Repeat every year
-      </label>
+      </div>
+
+      <div>
+        <input
+          type="text"
+          value={note}
+          onChange={e => setNote(e.target.value)}
+          placeholder="Note"
+        />
+      </div>
+
+      <div>
+        <label>
+          Month:
+          <select value={month} onChange={e => setMonth(Number(e.target.value))}>
+            {MONTH_NAMES.map((m, i) => (
+              <option key={i + 1} value={i + 1}>{m}</option>
+            ))}
+          </select>
+        </label>
+
+        <label>
+          Day:
+          <select value={day} onChange={e => setDay(Number(e.target.value))}>
+            {[...Array(daysCount)].map((_, i) => (
+              <option key={i + 1} value={i + 1}>{i + 1}</option>
+            ))}
+          </select>
+        </label>
+
+        <label>
+          Year:
+          <select value={year} onChange={e => setYear(e.target.value)}>
+            {years.map(y =>
+              <option key={y} value={y}>{y === "unknown" ? "Unknown" : y}</option>
+            )}
+          </select>
+        </label>
+      </div>
+
+      <div>
+        <label>
+          <input
+            type="checkbox"
+            checked={isRecurring}
+            onChange={e => setIsRecurring(e.target.checked)}
+          />
+          Repeat every year
+        </label>
+      </div>
 
 
-      <button type="submit">Save</button>
+      <footer>
+        <button onClick={onCancel} type="button">Cancel</button>
+
+        <button type="submit">Save</button>
+      </footer>
     </form>
   );
 }

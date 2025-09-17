@@ -55,15 +55,11 @@ export default function App() {
       {showModal && (
         <div className="modal-backdrop">
           <div className="modal">
-            <EventForm onSubmit={handleEventSubmit} initial={editingEvent} />
-            <button
-              onClick={() => {
+            <EventForm onSubmit={handleEventSubmit} initial={editingEvent} 
+              onCancel={() => {
                 setShowModal(false);
                 setEditingEvent(null);
-              }}
-            >
-              Cancel
-            </button>
+              }}/>
           </div>
         </div>
       )}
