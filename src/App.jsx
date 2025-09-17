@@ -7,13 +7,16 @@ export default function App() {
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
+  const [newEvent, setNewEvent] = useState(null);
 
   useEffect(() => {
     setEvents(loadEvents());
   }, []);
 
   const handleEventSubmit = (eventData) => {
+    console.log("Event submitted:", eventData);
     if (editingEvent) {
+      console.log("Editing event:", editingEvent);
       // Edit existing event
       const updated = events.map((e) =>
         e.id === editingEvent.id ? { ...e, ...eventData } : e
@@ -24,6 +27,7 @@ export default function App() {
     } else {
       // Create new event
       const newEvents = [...events, { ...eventData, id: Date.now() }];
+      console.log("New events list:", newEvents);
       setEvents(newEvents);
       saveEvents(newEvents);
     }
@@ -31,13 +35,15 @@ export default function App() {
   };
 
   const handleEdit = (id) => {
+    console.log("Edit clicked:", id);
     const event = events.find((e) => e.id === id);
     setEditingEvent(event);
     setShowModal(true);
   };
 
   const handleDayClick = (date) => {
-    setEditingEvent({
+    console.log("Day clicked:", date);
+    setNewEvent({
       name: "",
       note: "",
       month: date.month,
@@ -48,6 +54,26 @@ export default function App() {
     setShowModal(true);
   };
 
+  const handleDelete = (id) => {
+    console.log("handleDelete:", id);
+    const filtered = events.filter((e) => e.id !== id);
+    setEvents(filtered);
+    saveEvents(filtered);
+  }
+
+  const handleCreateEvent = () => {
+    setNewEvent({
+      name: "",
+      note: "",
+      month: "",
+      day: "",
+      year: "",
+      isRecurring: true
+    });
+    setShowModal(true);
+    setEditingEvent(null);
+  };
+
   return (
     <div className="app">
       <header className="app-header">
@@ -55,10 +81,7 @@ export default function App() {
 
         <button
           className="create-event-btn"
-          onClick={() => {
-            setShowModal(true);
-            setEditingEvent(null);
-          }}
+          onClick={handleCreateEvent}
         >
           Create Event
         </button>
@@ -69,7 +92,7 @@ export default function App() {
           <div className="modal">
             <EventForm
               onSubmit={handleEventSubmit}
-              initial={editingEvent}
+              initial={editingEvent || newEvent}
               onCancel={() => {
                 setShowModal(false);
                 setEditingEvent(null);
@@ -80,11 +103,7 @@ export default function App() {
       )}
       <YearViewCalendar
         events={events}
-        onDelete={(id) => {
-          const filtered = events.filter((e) => e.id !== id);
-          setEvents(filtered);
-          saveEvents(filtered);
-        }}
+        onDelete={handleDelete}
         onEdit={handleEdit}
         onDayClick={handleDayClick}
       />

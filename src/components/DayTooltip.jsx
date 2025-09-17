@@ -23,11 +23,21 @@ export default function DayTooltip({ events = [], onDelete, onEdit }) {
 
                 <span>{event.note}</span>
 
-                <button onClick={() => onEdit(event.id)}>Edit</button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit && onEdit(event.id)
+                  }}
+                >
+                  Edit
+                </button>
 
                 <button
                   className="delete-btn"
-                  onClick={() => onDelete && onDelete(event.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete && onDelete(event.id)
+                  }}
                   aria-label={`Delete ${event.name}`}
                 >
                   Delete

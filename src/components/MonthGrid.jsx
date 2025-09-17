@@ -17,9 +17,11 @@ export default function MonthGrid({ month, year, eventsMap = {}, onDelete, onEdi
   const offset = (firstDay === 0 ? 6 : firstDay - 1);
 
   const dayCells = [];
+  
   for (let i = 0; i < offset; i++) {
     dayCells.push(<div key={`empty-${i}`} className="day-cell empty"></div>);
   }
+
   for (let d = 1; d <= days; d++) {
     const events = eventsMap[d] || [];
     const isToday = isCurrentMonth && d === todayDay;
@@ -30,11 +32,13 @@ export default function MonthGrid({ month, year, eventsMap = {}, onDelete, onEdi
         onClick={() => onDayClick && onDayClick({ month, day: d, year })}
       >
         <div className="day-number">{d}</div>
+
         {events.length ? (
           <div className="dot" title={events.map((e) => e.name).join(", ")}>
             {events.length > 1 ? <span className="count">{events.length}</span> : null}
           </div>
         ) : null}
+
         <DayTooltip events={events} onDelete={onDelete} onEdit={onEdit} />
       </div>
     );

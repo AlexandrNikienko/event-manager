@@ -18,5 +18,6 @@ export function loadEvents() {
 }
 
 export function saveEvents(events) {
+  //console.log("Saving events:", events);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
 }
