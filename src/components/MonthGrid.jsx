@@ -4,7 +4,7 @@ import DayTooltip from "./DayTooltip";
 
 const WEEKDAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
-export default function MonthGrid({ month, year, eventsMap = {}, onDelete, onEdit }) {
+export default function MonthGrid({ month, year, eventsMap = {}, onDelete, onEdit, onDayClick }) {
   const days = daysInMonth(month, year);
 
   // Get today's date
@@ -27,6 +27,7 @@ export default function MonthGrid({ month, year, eventsMap = {}, onDelete, onEdi
       <div
         key={d}
         className={`day-cell${events.length ? " has-event" : ""}${isToday ? " today" : ""}`}
+        onClick={() => onDayClick && onDayClick({ month, day: d, year })}
       >
         <div className="day-number">{d}</div>
         {events.length ? (

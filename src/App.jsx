@@ -36,6 +36,18 @@ export default function App() {
     setShowModal(true);
   };
 
+  const handleDayClick = (date) => {
+    setEditingEvent({
+      name: "",
+      note: "",
+      month: date.month,
+      day: date.day,
+      year: date.year,
+      isRecurring: true
+    });
+    setShowModal(true);
+  };
+
   return (
     <div className="app">
       <header className="app-header">
@@ -55,11 +67,14 @@ export default function App() {
       {showModal && (
         <div className="modal-backdrop">
           <div className="modal">
-            <EventForm onSubmit={handleEventSubmit} initial={editingEvent} 
+            <EventForm
+              onSubmit={handleEventSubmit}
+              initial={editingEvent}
               onCancel={() => {
                 setShowModal(false);
                 setEditingEvent(null);
-              }}/>
+              }}
+            />
           </div>
         </div>
       )}
@@ -71,6 +86,7 @@ export default function App() {
           saveEvents(filtered);
         }}
         onEdit={handleEdit}
+        onDayClick={handleDayClick}
       />
     </div>
   );

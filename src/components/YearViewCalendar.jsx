@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import MonthGrid from "./MonthGrid";
 import { daysInMonth } from "../utils";
 
-export default function YearViewCalendar({ events = [], onDelete, onEdit }) {
+export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayClick }) {
   const currentYear = new Date().getFullYear();
   const [year, setYear] = useState(currentYear);
 
@@ -41,6 +41,7 @@ export default function YearViewCalendar({ events = [], onDelete, onEdit }) {
               eventsMap={map[monthIndex]}
               onDelete={onDelete}
               onEdit={onEdit}
+              onDayClick={onDayClick}
             />
           );
         })}
