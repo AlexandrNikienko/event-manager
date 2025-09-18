@@ -1,6 +1,6 @@
 // src/firebase.js
 import { initializeApp } from "firebase/app";
-import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentSingleTabManager } from "firebase/firestore";
 
 // your firebaseConfig from Firebase Console
 const firebaseConfig = {
@@ -13,11 +13,12 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 
-// Enable offline persistence
-enableIndexedDbPersistence(db).catch((err) => {
-  console.error('Firebase persistence error:', err);
+// Initialize Firestore with persistence
+const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({
+    tabManager: persistentSingleTabManager()
+  })
 });
 
 export { db };
