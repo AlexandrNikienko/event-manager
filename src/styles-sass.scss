@@ -1,0 +1,236 @@
+:root {
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --background-color: #f8f9fa;
+  --border-color: #dee2e6;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  line-height: 1.4;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 20px;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.sidebar {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+  }
+
+  &-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &-event {
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    display: grid;
+    gap: 8px;
+
+    &:hover {
+      background: var(--background-color);
+    }
+  }
+
+  &-date {
+    font-weight: 600;
+    color: var(--primary-color);
+  }
+
+  &-name {
+    font-size: 1.1em;
+  }
+
+  &-note {
+    color: var(--secondary-color);
+    font-size: 0.9em;
+  }
+
+  &-edit, &-delete {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  &-edit {
+    background: var(--primary-color);
+    color: white;
+
+    &:hover {
+      background: darken(var(--primary-color), 10%);
+    }
+  }
+
+  &-delete {
+    background: var(--danger-color);
+    color: white;
+
+    &:hover {
+      background: darken(var(--danger-color), 10%);
+    }
+  }
+
+  .muted {
+    color: var(--secondary-color);
+    font-style: italic;
+  }
+}
+
+.year-view {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.month-card {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .month-title {
+    font-size: 1.2em;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--primary-color);
+  }
+
+  .days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+
+  .day-cell {
+    aspect-ratio: 1;
+    padding: 4px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--background-color);
+    }
+
+    &.has-event {
+      background: lighten(var(--primary-color), 35%);
+    }
+
+    .day-number {
+      font-size: 0.9em;
+    }
+
+    .dot {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      width: 8px;
+      height: 8px;
+      background: var(--primary-color);
+      border-radius: 50%;
+
+      .count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        font-size: 0.8em;
+        background: var(--primary-color);
+        color: white;
+        padding: 2px 4px;
+        border-radius: 4px;
+      }
+    }
+  }
+}
+
+.weekdays-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 8px;
+  background: var(--background-color);
+  border-radius: 4px;
+  padding: 8px 0;
+}
+
+.weekday-cell {
+  text-align: center;
+  font-weight: 500;
+  color: var(--secondary-color);
+  font-size: 0.9em;
+}
+
+.tooltip {
+  position: absolute;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  min-width: 200px;
+
+  &-wrapper {
+    position: relative;
+  }
+
+  &-item {
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border-color);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .note {
+      font-size: 0.9em;
+      color: var(--secondary-color);
+    }
+  }
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+
+  button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background: darken(var(--primary-color), 10%);
+    }
+  }
+}

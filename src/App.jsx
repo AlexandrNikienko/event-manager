@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import EventForm from "./components/EventForm";
 import YearViewCalendar from "./components/YearViewCalendar";
-import { loadEvents, saveEvents } from "./utils/storage";
+import { eventService } from './services/eventService';
+import { migrateEventsToFirebase } from './utils/migrateToFirebase';
 
 export default function App() {
   const [events, setEvents] = useState([]);
@@ -9,25 +10,55 @@ export default function App() {
   const [editingEvent, setEditingEvent] = useState(null);
   const [newEvent, setNewEvent] = useState(null);
   const [year, setYear] = useState(new Date().getFullYear());
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setEvents(loadEvents());
-  }, []);
+    loadEvents();
+  }, [year]);
 
-  const handleEventSubmit = (eventData) => {
-    if (editingEvent) {
-      const updated = events.map((e) =>
-        e.id === editingEvent.id ? { ...e, ...eventData } : e
-      );
-      setEvents(updated);
-      saveEvents(updated);
-      setEditingEvent(null);
-    } else {
-      const newEvents = [...events, { ...eventData, id: Date.now() }];
-      setEvents(newEvents);
-      saveEvents(newEvents);
+  // useEffect(() => {
+  //   // Run migration once
+  //   const migrate = async () => {
+  //     await migrateEventsToFirebase();
+  //     // After migration, load events from Firebase
+  //     loadEvents();
+  //   };
+    
+  //   //migrate();
+  //   // Remove this useEffect after migration
+  // }, []);
+
+  const loadEvents = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const loadedEvents = await eventService.getEventsByYear(year);
+      setEvents(loadedEvents);
+    } catch (error) {
+      console.error('Error loading events:', error);
+      setError('Failed to load events. Please try again later.');
+    } finally {
+      setLoading(false);
     }
-    setShowModal(false);
+  };
+
+  const handleEventSubmit = async (eventData) => {
+    try {
+      if (editingEvent) {
+        // Update existing event
+        const updated = await eventService.updateEvent(editingEvent.id, eventData);
+        setEvents(events.map(e => e.id === editingEvent.id ? updated : e));
+      } else {
+        // Add new event
+        const newEvent = await eventService.addEvent(eventData);
+        setEvents([...events, newEvent]);
+      }
+      setShowModal(false);
+      setEditingEvent(null);
+    } catch (error) {
+      console.error('Error saving event:', error);
+    }
   };
 
   const handleEdit = (id) => {
@@ -48,11 +79,14 @@ export default function App() {
     setShowModal(true);
   };
 
-  const handleDelete = (id) => {
-    const filtered = events.filter((e) => e.id !== id);
-    setEvents(filtered);
-    saveEvents(filtered);
-  }
+  const handleDelete = async (id) => {
+    try {
+      await eventService.deleteEvent(id);
+      setEvents(events.filter(e => e.id !== id));
+    } catch (error) {
+      console.error('Error deleting event:', error);
+    }
+  };
 
   const handleCreateEvent = () => {
     setNewEvent(null);
@@ -72,6 +106,14 @@ export default function App() {
   const handleYearChange = (newYear) => {
     setYear(newYear);
   };
+
+  if (loading) {
+    return <div>Loading events...</div>;
+  }
+
+  if (error) {
+    return <div className="error">{error}</div>;
+  }
 
   return (
     <div className="app">
