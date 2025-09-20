@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { daysInMonth } from "../utils";
+import { EVENT_TYPES } from "../utils/eventIcons";
 
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
@@ -13,7 +14,8 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
     month: 1,
     day: 1,
     isRecurring: true,
-    year: "unknown"
+    year: "unknown",
+    type: "birthday",
   };
 
   const [name, setName] = useState(initial?.name || defaultState.name);
@@ -22,6 +24,7 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
   const [isRecurring, setIsRecurring] = useState(initial?.isRecurring ?? defaultState.isRecurring);
   const [year, setYear] = useState(initial?.year !== undefined ? initial.year : defaultState.year);
   const [day, setDay] = useState(initial?.day || defaultState.day);
+  const [type, setType] = useState(initial?.type || defaultState.type);
 
   // Years for select
   const currentYear = new Date().getFullYear();
@@ -41,15 +44,16 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
     if (day > daysCount) setDay(daysCount);
   }, [month, year, daysCount]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit({
+    await onSubmit({
       name,
       note,
       month: Number(month),
       day: Number(day),
       isRecurring,
-      year: year === "unknown" ? undefined : Number(year),
+      year: year === "unknown" ? "unknown" : Number(year),
+      type
     });
     // Reset form fields
     setName(defaultState.name);
@@ -58,6 +62,7 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
     setDay(defaultState.day);
     setIsRecurring(defaultState.isRecurring);
     setYear(defaultState.year);
+    setType(defaultState.type);
   };
 
   return (
@@ -79,6 +84,19 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
           onChange={e => setNote(e.target.value)}
           placeholder="Note"
         />
+      </div>
+
+      <div>
+        <label>
+          Type:
+          <select value={type} onChange={e => setType(e.target.value)}>
+            {EVENT_TYPES.map(t => (
+              <option key={t.value} value={t.value}>
+                {t.icon + ' ' + t.label}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
 
       <div>

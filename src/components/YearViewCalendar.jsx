@@ -24,6 +24,14 @@ export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayC
 
   return (
     <main>
+      <div className="controls">
+        <button onClick={() => onYearChange(year - 1)}>&lt; Prev</button>
+
+        <span>{year}</span>
+
+        <button onClick={() => onYearChange(year + 1)}>Next &gt;</button>
+      </div>
+      
       <div className="year-view">
         {Array.from({ length: 12 }).map((_, i) => {
           const monthIndex = i + 1;
@@ -39,14 +47,6 @@ export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayC
             />
           );
         })}
-      </div>
-
-      <div className="controls">
-        <button onClick={() => onYearChange(year - 1)}>&lt; Prev</button>
-
-        <span>{year}</span>
-
-        <button onClick={() => onYearChange(year + 1)}>Next &gt;</button>
       </div>
     </main>
   );

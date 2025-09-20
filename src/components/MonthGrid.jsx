@@ -17,7 +17,7 @@ export default function MonthGrid({ month, year, eventsMap = {}, onDelete, onEdi
   const offset = (firstDay === 0 ? 6 : firstDay - 1);
 
   const dayCells = [];
-  
+
   for (let i = 0; i < offset; i++) {
     dayCells.push(<div key={`empty-${i}`} className="day-cell empty"></div>);
   }
@@ -47,11 +47,13 @@ export default function MonthGrid({ month, year, eventsMap = {}, onDelete, onEdi
   return (
     <div className="month-card">
       <div className="month-title">{MONTH_NAMES[month - 1]} {year}</div>
+
       <div className="weekdays-row">
         {WEEKDAYS.map((wd) => (
           <div key={wd} className="weekday-cell">{wd}</div>
         ))}
       </div>
+      
       <div className="days-grid">{dayCells}</div>
     </div>
   );

@@ -3,6 +3,14 @@
   --card: #fff;
   --accent: #2b6ef6;
   --muted: #6b7280;
+
+
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --background-color: #f8f9fa;
+  --border-color: #dee2e6;
 }
 
 * {
@@ -24,74 +32,155 @@ body {
 }
 
 .sidebar {
-  width: 320px;
+  width: 20px;
   background: var(--card);
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   margin-right: 24px;
   padding: 1rem 0.5rem;
   height: fit-content;
+  position: relative;
+  transition: .3s;
+  will-change: width;
+  white-space: nowrap;
+
+  svg {
+    aspect-ratio: 1;
+  }
+
+  &.is-open {
+    width: 320px;
+
+    .sidebar-extender svg {
+      transform: rotate(0deg);
+    }
+
+    .sidebar-list,
+    .sidebar-title {
+      opacity: 1
+    }
+  }
 }
-.sidebar h2 {
+
+.sidebar-extender {
+  position: absolute;
+  z-index: 1;
+  top: 10px;
+  right: -15px;
+  background: var(--card);
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &:hover {
+    background: #f0f4ff;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: var(--muted);
+    transform: rotate(180deg);
+    transition: transform .3s;
+  }
+}
+
+.edit-btn, 
+.delete-btn {
+  background: transparent;
+  border: 1px solid #eee;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  &:hover {
+    background: #fff0f0;
+  }
+}
+
+.edit-btn:hover {
+  background: #f0f4ff;
+}
+
+.edit-btn svg {
+  fill: var(--primary-color);
+  width: 15px;
+}
+
+.delete-btn svg {
+  fill: var(--danger-color);
+  width: 16px;
+}
+
+.delete-btn:hover {
+  background: #fff0f0;
+}
+
+.sidebar-list,
+.sidebar-title {
+  opacity: 0;
+  transition: opacity .3s;
+}
+
+.sidebar-title {
   font-size: 1.1rem;
   margin: 0 0 1rem 0;
   color: var(--accent);
 }
+
 .sidebar-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
+
 .sidebar-event {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 0;
+  padding: 4px 0;
   border-bottom: 1px solid #f0f0f0;
-  font-size: 0.98rem;
+
+  &:hover {
+      background: var(--background-color);
+    }
 }
+
+.past-event {
+  opacity: 0.5;
+}
+
 .sidebar-date {
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--muted);
-  min-width: 48px;
+  min-width: 36px;
 }
+
 .sidebar-name {
   flex: 1;
   color: #222;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .sidebar-note {
   color: var(--muted);
   font-size: 0.9em;
 }
-.sidebar-edit, .sidebar-delete {
-  background: transparent;
-  border: none;
-  color: var(--accent);
-  cursor: pointer;
-  font-size: 0.9em;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-.sidebar-delete {
-  color: #b02626;
-}
-.sidebar-edit:hover {
-  background: #f0f4ff;
-}
-.sidebar-delete:hover {
-  background: #fff0f0;
-}
-.sidebar .muted {
-  color: var(--muted);
-  font-size: 0.95em;
-  padding: 8px 0;
-}
 
 .app-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  gap: 1rem;
 
   h1 {
     margin: 0;
@@ -99,13 +188,17 @@ body {
   }
 }
 
+main {
+  transform: translateY(-47px);
+}
+
 .controls {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  margin-top: 1rem;
+  margin-bottom: 1rem;
+      justify-content: end;
 
   button {
     padding: 8px 12px;
@@ -114,6 +207,10 @@ body {
     border: none;
     border-radius: 6px;
     cursor: pointer;
+
+     &:hover {
+      background: #4681f9;
+    }
   }
 
   span {
@@ -132,21 +229,17 @@ body {
   background: var(--card);
   padding: 10px;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .month-title {
-  font-weight: 600;
-  color: var(--muted);
   margin-bottom: 8px;
-  text-transform: uppercase;
-  font-size: 0.8rem;
 }
 
 .days-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
+  gap: 2px;
 }
 
 .day-cell {
@@ -184,7 +277,7 @@ body {
   color: white;
 }
 
-.dot .count {
+.count {
   font-size: 0.7rem;
   line-height: 1;
 }
@@ -207,30 +300,18 @@ body {
   border-radius: 6px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
   min-width: 180px;
+
+  .edit-btn {
+    margin-left: auto;
+  }
 }
 
 .tooltip-item {
-  margin-bottom: 8px;
-}
-
-.tooltip-item .note {
-  color: var(--muted);
-  font-size: 0.85rem;
-  margin-top: 4px;
-}
-
-.delete-btn {
-  background: transparent;
-  border: 1px solid #eee;
-  padding: 4px 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  color: #b02626;
-}
-
-.delete-btn:hover {
-  background: #fff0f0;
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  white-space: nowrap;
+  gap: 8px;
 }
 
 .weekdays-row {
@@ -244,19 +325,11 @@ body {
 
 /* Style for each weekday cell */
 .weekday-cell {
+  letter-spacing: 0.5px;
   text-align: center;
   font-weight: 500;
-  color: #555;
-  font-size: 0.95em;
-  letter-spacing: 0.5px;
-  padding: 2px 0;
-}
-
-/* Make sure the days grid matches the weekdays row */
-.days-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
+  color: var(--secondary-color);
+  font-size: 0.9em;
 }
 
 .day-cell.today {
@@ -304,6 +377,8 @@ body {
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  position: relative;
+  z-index: 1;
 }
 
 .event-form {

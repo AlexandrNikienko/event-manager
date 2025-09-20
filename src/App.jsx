@@ -3,6 +3,8 @@ import EventForm from "./components/EventForm";
 import YearViewCalendar from "./components/YearViewCalendar";
 import { eventService } from './services/eventService';
 import { migrateEventsToFirebase } from './utils/migrateToFirebase';
+import { getEventType } from "./utils/eventIcons";
+import { DoubleArrows, Edit, Delete } from "./utils/icons";
 
 export default function App() {
   const [events, setEvents] = useState([]);
@@ -12,6 +14,7 @@ export default function App() {
   const [year, setYear] = useState(new Date().getFullYear());
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     loadEvents();
@@ -24,7 +27,7 @@ export default function App() {
   //     // After migration, load events from Firebase
   //     loadEvents();
   //   };
-    
+
   //   //migrate();
   //   // Remove this useEffect after migration
   // }, []);
@@ -107,6 +110,14 @@ export default function App() {
     setYear(newYear);
   };
 
+  const isEventInPast = (event, year) => {
+    const today = new Date();
+    const eventYear = event.isRecurring ? year : event.year;
+    const eventDate = new Date(eventYear, event.month - 1, event.day);
+
+    return eventDate < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  };
+
   if (loading) {
     return <div>Loading events...</div>;
   }
@@ -117,62 +128,85 @@ export default function App() {
 
   return (
     <div className="app">
-        <header className="app-header">
-          <h1>Event Calendar</h1>
-          <button
-            className="create-event-btn"
-            onClick={handleCreateEvent}
-          >
-            Create Event
-          </button>
-        </header>
+      <header className="app-header">
+        <h1>Event Calendar</h1>
 
-        {showModal && (
-          <div className="modal-backdrop">
-            <div className="modal">
-              <header>
-                {editingEvent ? "Edit Event" : "Create Event"}
-              </header>
-              <EventForm
-                onSubmit={handleEventSubmit}
-                initial={editingEvent || newEvent}
-                onCancel={() => {
-                  setShowModal(false);
-                  setEditingEvent(null);
-                }}
-              />
-            </div>
+        <button
+          className="create-event-btn"
+          onClick={handleCreateEvent}
+        >
+          + Add Event
+        </button>
+      </header>
+
+      {showModal && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <header>
+              {editingEvent ? "Edit Event" : "Create Event"}
+            </header>
+
+            <EventForm
+              onSubmit={handleEventSubmit}
+              initial={editingEvent || newEvent}
+              onCancel={() => {
+                setShowModal(false);
+                setEditingEvent(null);
+              }}
+            />
           </div>
-        )}
-
-        <div style={{ display: "flex" }}>
-          <aside className="sidebar">
-            <h2>Events in {year}</h2>
-
-            <ul className="sidebar-list">
-              {eventsOfYear.length === 0 && <li className="muted">No events</li>}
-
-              {eventsOfYear.map(event => (
-                <li key={event.id} className="sidebar-event">
-                  <span className="sidebar-date">{event.month}/{event.day}</span>
-                  <span className="sidebar-name">{event.name}</span>
-                  {event.note && <span className="sidebar-note">({event.note})</span>}
-                  <button className="sidebar-edit" onClick={() => handleEdit(event.id)}>Edit</button>
-                  <button className="sidebar-delete" onClick={() => handleDelete(event.id)}>Delete</button>
-                </li>
-              ))}
-            </ul>
-          </aside>
-
-          <YearViewCalendar
-            events={events}
-            onDelete={handleDelete}
-            onEdit={handleEdit}
-            onDayClick={handleDayClick}
-            year={year}
-            onYearChange={handleYearChange}
-          />
         </div>
+      )}
+
+      <div style={{ display: "flex" }}>
+        <aside className={`sidebar ${isSidebarOpen ? 'is-open' : ''}`}>
+          <div className="sidebar-extender" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+            <DoubleArrows></DoubleArrows>
+          </div>
+          
+          <h2 className="sidebar-title">Events in {year}</h2>
+
+          <ul className="sidebar-list">
+            {eventsOfYear.length === 0 && <li className="muted">No events</li>}
+
+            {eventsOfYear.map(event => {
+              return (
+                <li
+                  key={event.id}
+                  className={`sidebar-event ${isEventInPast(event, year) ? "past-event" : ""}`}
+                >
+                  <span className="sidebar-date">{event.month}/{event.day}</span>
+
+                  <span className="sidebar-icon">
+                    {getEventType(event.type).icon}
+                  </span>
+
+                  <span className="sidebar-name">{event.name}</span>
+
+                  {/* {event.note && <span className="sidebar-note">({event.note})</span>} */}
+
+                  <button className="edit-btn" onClick={() => handleEdit(event.id)} title="Edit Event">
+                    <Edit></Edit>
+                  </button>
+
+                  <button className="delete-btn" onClick={() => handleDelete(event.id)} title="Delete Event">
+                    <Delete></Delete>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </aside>
+
+        <YearViewCalendar
+          events={events}
+          onDelete={handleDelete}
+          onEdit={handleEdit}
+          onDayClick={handleDayClick}
+          year={year}
+          onYearChange={handleYearChange}
+        />
+      </div>
     </div>
   );
 }

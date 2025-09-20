@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { getEventType } from "../utils/eventIcons";
+import { Delete, Edit } from "../utils/icons";
 
 /*
   Simple hover tooltip. Contains a Delete button (calls onDelete(id)).
@@ -16,34 +18,40 @@ export default function DayTooltip({ events = [], onDelete, onEdit }) {
       onMouseLeave={() => setShow(false)}
     >
       {show && (
-        <div className="tooltip">
+        <div className="tooltip"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}>
           {events.map((event) =>
-              <div key={event.id} className="event-row">
-                <span>{event.name}</span>
+            <div key={event.id} className="tooltip-item">
+              <span className="sidebar-icon">
+                {getEventType(event.type).icon}
+              </span>
 
-                <span>{event.note}</span>
+              <span>{event.name}</span>
 
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit && onEdit(event.id)
-                  }}
-                >
-                  Edit
-                </button>
+              <button
+                className="edit-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit && onEdit(event.id)
+                }}
+              >
+                <Edit></Edit>
+              </button>
 
-                <button
-                  className="delete-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete && onDelete(event.id)
-                  }}
-                  aria-label={`Delete ${event.name}`}
-                >
-                  Delete
-                </button>
-              </div>
-            )
+              <button
+                className="delete-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete && onDelete(event.id)
+                }}
+                aria-label={`Delete ${event.name}`}
+              >
+                <Delete></Delete>
+              </button>
+            </div>
+          )
           }
         </div>
       )}
