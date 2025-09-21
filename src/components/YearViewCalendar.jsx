@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import MonthGrid from "./MonthGrid";
 import { daysInMonth } from "../utils";
 
-export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayClick, onYearChange, year }) {
+export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayClick, onYearChange, year, loading }) {
   const currentYear = new Date().getFullYear();
+
+  console.log('loading:', loading);
 
   // build map month -> day -> [events] (recalculate on every render)
   const map = {};
@@ -31,23 +33,25 @@ export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayC
 
         <button onClick={() => onYearChange(year + 1)}>Next &gt;</button>
       </div>
-      
-      <div className="year-view">
-        {Array.from({ length: 12 }).map((_, i) => {
-          const monthIndex = i + 1;
-          return (
-            <MonthGrid
-              key={monthIndex}
-              month={monthIndex}
-              year={year}
-              eventsMap={map[monthIndex]}
-              onDelete={onDelete}
-              onEdit={onEdit}
-              onDayClick={onDayClick}
-            />
-          );
-        })}
-      </div>
+
+      {true && (
+        <div className="year-view">
+          {Array.from({ length: 12 }).map((_, i) => {
+            const monthIndex = i + 1;
+            return (
+              <MonthGrid
+                key={monthIndex}
+                month={monthIndex}
+                year={year}
+                eventsMap={map[monthIndex]}
+                onDelete={onDelete}
+                onEdit={onEdit}
+                onDayClick={onDayClick}
+              />
+            );
+          })}
+        </div>
+      )}
     </main>
   );
 }

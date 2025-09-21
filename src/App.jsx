@@ -15,6 +15,7 @@ export default function App() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     loadEvents();
@@ -118,9 +119,17 @@ export default function App() {
     return eventDate < new Date(today.getFullYear(), today.getMonth(), today.getDate());
   };
 
-  if (loading) {
-    return <div>Loading events...</div>;
-  }
+  const filteredEvents = eventsOfYear.filter(event => {
+    const term = searchTerm.toLowerCase();
+    return (
+      event.name.toLowerCase().includes(term) ||
+      (event.note && event.note.toLowerCase().includes(term))
+    );
+  });
+
+  // if (loading) {
+  //   return <div>Loading events...</div>;
+  // }
 
   if (error) {
     return <div className="error">{error}</div>;
@@ -166,10 +175,19 @@ export default function App() {
           
           <h2 className="sidebar-title">Events in {year}</h2>
 
-          <ul className="sidebar-list">
-            {eventsOfYear.length === 0 && <li className="muted">No events</li>}
+          <div className="sidebar-search">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search events..."
+            />
+          </div>
 
-            {eventsOfYear.map(event => {
+          <ul className="sidebar-list">
+            {filteredEvents.length === 0 && <li className="muted">No events</li>}
+
+            {filteredEvents.map(event => {
               return (
                 <li
                   key={event.id}
@@ -199,12 +217,13 @@ export default function App() {
         </aside>
 
         <YearViewCalendar
-          events={events}
+          events={events && filteredEvents}
           onDelete={handleDelete}
           onEdit={handleEdit}
           onDayClick={handleDayClick}
           year={year}
           onYearChange={handleYearChange}
+          loading={loading}
         />
       </div>
     </div>

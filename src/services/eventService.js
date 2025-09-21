@@ -43,7 +43,6 @@ export const eventService = {
 
   // Add new event
   async addEvent(eventData) {
-    console.log('Adding event:', eventData);
     const docRef = await addDoc(collection(db, COLLECTION_NAME), eventData);
     return {
       id: docRef.id,
@@ -53,7 +52,6 @@ export const eventService = {
 
   // Update event
   async updateEvent(id, eventData) {
-    console.log('Updating event:', eventData);
     const eventRef = doc(db, COLLECTION_NAME, id);
     await updateDoc(eventRef, eventData);
     return {

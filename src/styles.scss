@@ -139,6 +139,8 @@ body {
   list-style: none;
   padding: 0;
   margin: 0;
+  max-height: calc(100vh - 150px);
+  overflow: auto;
 }
 
 .sidebar-event {
@@ -170,7 +172,13 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  .past-event & {
+    text-decoration: line-through;
+    color: #222
+  }
 }
+
 .sidebar-note {
   color: var(--muted);
   font-size: 0.9em;
@@ -190,6 +198,7 @@ body {
 
 main {
   transform: translateY(-47px);
+  flex: 1;
 }
 
 .controls {
@@ -249,6 +258,7 @@ main {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  position: relative;
 
    &:not(.empty):hover {
     cursor: pointer;
