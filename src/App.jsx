@@ -5,6 +5,8 @@ import { eventService } from './services/eventService';
 import { migrateEventsToFirebase } from './utils/migrateToFirebase';
 import { getEventType } from "./utils/eventIcons";
 import { DoubleArrows, Edit, Delete, Calendar } from "./utils/icons";
+import { LoginButton } from "./components/LoginButton";
+import { useAuth } from "./AuthProvider.jsx";
 
 export default function App() {
   const [events, setEvents] = useState([]);
@@ -16,6 +18,8 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const { user, loading: loadingUser, logout } = useAuth();
 
   useEffect(() => {
     loadEvents();
@@ -135,10 +139,21 @@ export default function App() {
     return <div className="error">{error}</div>;
   }
 
+  if (loadingUser) return <div>Loading...</div>;
+
+  if (!user) {
+    return (
+      <div>
+        <h2>Please sign in</h2>
+        <LoginButton />
+      </div>
+    );
+  }
+
   return (
     <div className="app">
       <header className="app-header">
-        <h1><Calendar></Calendar> Event Calendar</h1>
+        <h1><Calendar/> Event Calendar</h1>
 
         <button
           className="create-event-btn"
@@ -146,6 +161,8 @@ export default function App() {
         >
           + Add Event
         </button>
+
+        <button className="logout-button" onClick={logout}>Logout</button>
       </header>
 
       {showModal && (
@@ -170,7 +187,7 @@ export default function App() {
       <div style={{ display: "flex" }}>
         <aside className={`sidebar ${isSidebarOpen ? 'is-open' : ''}`}>
           <div className="sidebar-extender" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-            <DoubleArrows></DoubleArrows>
+            <DoubleArrows/>
           </div>
           
           <h2 className="sidebar-title">Events in {year}</h2>

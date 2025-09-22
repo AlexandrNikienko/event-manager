@@ -22,6 +22,11 @@ body {
   margin: 0;
   background: var(--bg);
   color: #111;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 
@@ -395,6 +400,10 @@ select {
   border: none;
   border-radius: 6px;
   cursor: pointer;
+}
+
+.create-event-btn,
+.logout-button {
   position: relative;
   z-index: 1;
 }

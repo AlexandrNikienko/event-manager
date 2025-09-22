@@ -1,6 +1,7 @@
 // src/firebase.js
 import { initializeApp } from "firebase/app";
 import { getFirestore, initializeFirestore, persistentLocalCache, persistentSingleTabManager } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 // your firebaseConfig from Firebase Console
 const firebaseConfig = {
@@ -12,7 +13,9 @@ const firebaseConfig = {
   appId: "1:994383053852:web:e139b2a98cce257c8bcbd9"
 };
 
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
+
+export const auth = getAuth(app);
 
 // Initialize Firestore with persistence
 const db = initializeFirestore(app, {
