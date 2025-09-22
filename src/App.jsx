@@ -4,7 +4,7 @@ import YearViewCalendar from "./components/YearViewCalendar";
 import { eventService } from './services/eventService';
 import { migrateEventsToFirebase } from './utils/migrateToFirebase';
 import { getEventType } from "./utils/eventIcons";
-import { DoubleArrows, Edit, Delete } from "./utils/icons";
+import { DoubleArrows, Edit, Delete, Calendar } from "./utils/icons";
 
 export default function App() {
   const [events, setEvents] = useState([]);
@@ -138,7 +138,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Event Calendar</h1>
+        <h1><Calendar></Calendar> Event Calendar</h1>
 
         <button
           className="create-event-btn"
@@ -176,7 +176,7 @@ export default function App() {
           <h2 className="sidebar-title">Events in {year}</h2>
 
           <div className="sidebar-search">
-            <input
+            <input className="search-input"
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
