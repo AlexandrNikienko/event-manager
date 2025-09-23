@@ -38,6 +38,7 @@ body {
 
 .sidebar {
   width: 20px;
+  flex: 0 0 20px;;
   background: var(--card);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -55,7 +56,7 @@ body {
 
   &.is-open {
     width: 320px;
-    flex: 0 0 320px;
+    flex-basis: 320px;
 
     .sidebar-extender svg {
       transform: rotate(0deg);

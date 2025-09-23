@@ -260,16 +260,16 @@ export default function App() {
                     {getEventType(event.type).icon}
                   </span>
 
-                  <span className="sidebar-name">{event.name}</span>
+                  <span className="sidebar-name" title={event.name}>{event.name}</span>
 
                   {/* {event.note && <span className="sidebar-note">({event.note})</span>} */}
 
                   <button className="edit-btn" onClick={() => handleEdit(event.id)} title="Edit Event">
-                    <Edit></Edit>
+                    <Edit/>
                   </button>
 
                   <button className="delete-btn" onClick={() => handleDelete(event.id)} title="Delete Event">
-                    <Delete></Delete>
+                    <Delete/>
                   </button>
                 </li>
               );
