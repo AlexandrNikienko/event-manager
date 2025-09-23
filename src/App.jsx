@@ -8,6 +8,10 @@ import { DoubleArrows, Edit, Delete, Calendar } from "./utils/icons";
 import { LoginButton } from "./components/LoginButton";
 import { useAuth } from "./AuthProvider.jsx";
 
+// import { getFirestore, collection, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
+// const db = getFirestore();
+
+
 export default function App() {
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -22,8 +26,10 @@ export default function App() {
   const { user, loading: loadingUser, logout } = useAuth();
 
   useEffect(() => {
+    if (loadingUser) return; // still checking auth
+    if (!user) return;       // no logged-in user → don’t load
     loadEvents();
-  }, [year]);
+  }, [user, loadingUser, year]);
 
   // useEffect(() => {
   //   // Run migration once
@@ -37,7 +43,45 @@ export default function App() {
   //   // Remove this useEffect after migration
   // }, []);
 
+  //useEffect(() => {
+    //patchEventsUserId
+    //patchEventsUserIdAndDeleteEmptyYear();
+  //}, []);
+
+  // async function patchEventsUserId() {
+  //   const snapshot = await getDocs(collection(db, "events"));
+  //   for (const doc of snapshot.docs) {
+  //     const data = doc.data();
+  //     if (!data.userId) {
+  //       await updateDoc(doc.ref, {
+  //         userId: "kLkSNogK6JMNbN15GmdgGkr4Qvw1",
+  //       });
+  //       console.log(`Updated ${doc.id}`);
+  //     }
+  //   }
+  // }
+
+  // async function patchEventsUserIdAndDeleteEmptyYear() {
+  //   const snapshot = await getDocs(collection(db, "events"));
+
+  //   for (const d of snapshot.docs) {
+  //     const data = d.data();
+
+  //     if (!data.year || data.year === "") {
+  //       await deleteDoc(d.ref);
+  //       console.log(`Deleted ${d.id}`);
+  //     } else if (!data.userId) {
+  //       await updateDoc(d.ref, {
+  //         userId: "kLkSNogK6JMNbN15GmdgGkr4Qvw1",
+  //       });
+  //       console.log(`Updated ${d.id}`);
+  //     }
+  //   }
+  // }
+
   const loadEvents = async () => {
+    if (!user) return; // extra safety
+
     try {
       setLoading(true);
       setError(null);
@@ -202,12 +246,12 @@ export default function App() {
           </div>
 
           <ul className="sidebar-list">
-            {filteredEvents.length === 0 && <li className="muted">No events</li>}
+            {filteredEvents.length === 0 && <li key="no-events" className="muted">No events</li>}
 
             {filteredEvents.map(event => {
               return (
                 <li
-                  key={event.id}
+                  key={event.id || `${event.name}-${event.month}-${event.day}`}
                   className={`sidebar-event ${isEventInPast(event, year) ? "past-event" : ""}`}
                 >
                   <span className="sidebar-date">{event.month}/{event.day}</span>

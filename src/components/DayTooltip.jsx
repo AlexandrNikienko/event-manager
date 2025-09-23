@@ -23,7 +23,7 @@ export default function DayTooltip({ events = [], onDelete, onEdit }) {
             e.stopPropagation();
           }}>
           {events.map((event) =>
-            <div key={event.id} className="tooltip-item">
+            <div key={event.id || `${event.name}-${event.month}-${event.day}`} className="tooltip-item">
               <span className="sidebar-icon">
                 {getEventType(event.type).icon}
               </span>

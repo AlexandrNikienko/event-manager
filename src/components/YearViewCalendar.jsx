@@ -5,7 +5,7 @@ import { daysInMonth } from "../utils";
 export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayClick, onYearChange, year, loading }) {
   const currentYear = new Date().getFullYear();
 
-  console.log('loading:', loading);
+  // console.log('loading:', loading);
 
   // build map month -> day -> [events] (recalculate on every render)
   const map = {};
