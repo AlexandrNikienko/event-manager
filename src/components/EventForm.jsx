@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { daysInMonth } from "../utils";
+import { Form, Input, Select, Checkbox, Button, Flex } from "antd";
+
+import { daysInMonth, MONTH_NAMES } from "../utils";
 import { EVENT_TYPES } from "../utils/eventIcons";
 
-const MONTH_NAMES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
-];
-
 export default function EventForm({ onSubmit, initial, onCancel }) {
+  const [form] = Form.useForm();
+  const { Option } = Select;
+
+  console.log('Initial values:', initial);
+
   const defaultState = {
-    name: "",
-    note: "",
+    name: '',
+    note: '',
     month: 1,
     day: 1,
     isRecurring: true,
@@ -18,133 +20,112 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
     type: "birthday",
   };
 
-  const [name, setName] = useState(initial?.name || defaultState.name);
-  const [note, setNote] = useState(initial?.note || defaultState.note);
-  const [month, setMonth] = useState(initial?.month || defaultState.month);
-  const [isRecurring, setIsRecurring] = useState(initial?.isRecurring ?? defaultState.isRecurring);
-  const [year, setYear] = useState(initial?.year !== undefined ? initial.year : defaultState.year);
-  const [day, setDay] = useState(initial?.day || defaultState.day);
-  const [type, setType] = useState(initial?.type || defaultState.type);
+  useEffect(() => {
+    form.setFieldsValue(initial || defaultState);
+  }, [initial, form]);
 
-  // Years for select
+  // // Years for select
   const currentYear = new Date().getFullYear();
   const years = ["unknown", ...Array.from({ length: 151 }, (_, i) => currentYear - 100 + i)];
 
-  // Calculate days count
+  // Watch form values
+  const month = Form.useWatch("month", form) || 1;
+  const year = Form.useWatch("year", form) || "unknown";
+  const day = Form.useWatch("day", form) || 1;
+
+  // Calculate days count based on month + year
   let daysCount;
   if (year === "unknown" && month === 2) {
     daysCount = 29;
   } else if (year === "unknown") {
-    daysCount = daysInMonth(month, 2024); // Use leap year for max days
+    daysCount = daysInMonth(month, 2024); // leap year as safe max
   } else {
     daysCount = daysInMonth(month, Number(year));
   }
 
+  // Auto-correct day if invalid
   useEffect(() => {
-    if (day > daysCount) setDay(daysCount);
-  }, [month, year, daysCount]);
+    if (day > daysCount) {
+      form.setFieldsValue({ day: daysCount });
+    }
+  }, [day, daysCount, form]);
 
   const handleSubmit = async (e) => {
+    console.log('Submitting with values:', form.getFieldsValue());
+
     e.preventDefault();
-    await onSubmit({
-      name,
-      note,
-      month: Number(month),
-      day: Number(day),
-      isRecurring,
-      year: year === "unknown" ? "unknown" : Number(year),
-      type
-    });
-    // Reset form fields
-    setName(defaultState.name);
-    setNote(defaultState.note);
-    setMonth(defaultState.month);
-    setDay(defaultState.day);
-    setIsRecurring(defaultState.isRecurring);
-    setYear(defaultState.year);
-    setType(defaultState.type);
+
+    await onSubmit(form.getFieldsValue());
+
+    form.resetFields();
+  };
+
+  const formLayout = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 18 },
+    layout: "horizontal",
   };
 
   return (
-    <form className="event-form" onSubmit={handleSubmit}>
-      <div>
-        <input
-          type="text"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          placeholder="Event Name"
-          required
-        />
-      </div>
+    <Form
+      form={form}
+      {...formLayout}
+      initialValues={initial || defaultState}
+      onFinish={handleSubmit}
+      autoComplete="off"
+    >
+      <Form.Item name="name" label="Event Name" rules={[{ required: true }]}>
+        <Input />
+      </Form.Item>
 
-      <div>
-        <input
-          type="text"
-          value={note}
-          onChange={e => setNote(e.target.value)}
-          placeholder="Note"
-        />
-      </div>
+      <Form.Item name="note" label="Note">
+        <Input />
+      </Form.Item>
 
-      <div>
-        <label>
-          Type:
-          <select value={type} onChange={e => setType(e.target.value)}>
-            {EVENT_TYPES.map(t => (
-              <option key={t.value} value={t.value}>
-                {t.icon + ' ' + t.label}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
+      <Form.Item label="Type" name="type">
+        <Select options={EVENT_TYPES.map(t => ({
+          value: t.value,
+          label: `${t.icon} ${t.label}`,
+        }))} />
+      </Form.Item>
 
-      <div>
-        <label>
-          Month:
-          <select value={month} onChange={e => setMonth(Number(e.target.value))}>
-            {MONTH_NAMES.map((m, i) => (
-              <option key={i + 1} value={i + 1}>{m}</option>
-            ))}
-          </select>
-        </label>
+      <Form.Item label="Month" name="month">
+        <Select options={MONTH_NAMES.map((m, i) => ({
+          value: i + 1,
+          label: m,
+        }))}/>
+      </Form.Item>
 
-        <label>
-          Day:
-          <select value={day} onChange={e => setDay(Number(e.target.value))}>
-            {[...Array(daysCount)].map((_, i) => (
-              <option key={i + 1} value={i + 1}>{i + 1}</option>
-            ))}
-          </select>
-        </label>
+      <Form.Item label="Day" name="day">
+        <Select options={[...Array(daysCount)].map((_, i) => ({
+          value: i + 1,
+          label: i + 1
+        }))}/>
+      </Form.Item>
 
-        <label>
-          Year:
-          <select value={year} onChange={e => setYear(e.target.value)}>
-            {years.map(y =>
-              <option key={y} value={y}>{y === "unknown" ? "Unknown" : y}</option>
-            )}
-          </select>
-        </label>
-      </div>
+      <Form.Item label="Year" name="year">
+        <Select options={years.map(y => ({
+          value: y,
+          label: y === "unknown" ? "Unknown" : y
+        }))}/>
+      </Form.Item>
 
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            checked={isRecurring}
-            onChange={e => setIsRecurring(e.target.checked)}
-          />
-          Repeat every year
-        </label>
-      </div>
+      <Form.Item name="isRecurring" valuePropName="checked">
+        <Checkbox>Repeat every year</Checkbox>
+      </Form.Item>
 
+      <Flex gap="small" justify="end" style={{ marginTop: 20 }}>
+        <Button onClick={() => {
+          onCancel && onCancel();
+          form.resetFields();
+        }}
+          variant="outlined"
+        >
+          Cancel
+        </Button>
 
-      <footer>
-        <button onClick={onCancel} type="button">Cancel</button>
-
-        <button type="submit">Save</button>
-      </footer>
-    </form>
+        <Button onClick={handleSubmit} type="primary">Save</Button>
+      </Flex>
+    </Form>
   );
 }

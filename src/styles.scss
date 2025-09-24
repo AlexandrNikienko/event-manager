@@ -42,7 +42,6 @@ body {
   background: var(--card);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  margin-right: 24px;
   padding: 1rem 0.5rem;
   height: fit-content;
   position: relative;
@@ -108,27 +107,25 @@ body {
 }
 
 .delete-btn {
+  svg {
+    fill: var(--danger-color);
+    width: 16px;
+  }
+
   &:hover {
     background: #fff0f0;
   }
 }
 
-.edit-btn:hover {
-  background: #f0f4ff;
-}
+.edit-btn {
+  svg {
+    fill: var(--primary-color);
+    width: 15px;
+  }
 
-.edit-btn svg {
-  fill: var(--primary-color);
-  width: 15px;
-}
-
-.delete-btn svg {
-  fill: var(--danger-color);
-  width: 16px;
-}
-
-.delete-btn:hover {
-  background: #fff0f0;
+  &:hover {
+    background: #f0f4ff;
+  }
 }
 
 .sidebar-list,
@@ -210,30 +207,7 @@ main {
 }
 
 .controls {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  align-items: center;
   margin-bottom: 1rem;
-      justify-content: end;
-
-  button {
-    padding: 8px 12px;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-
-     &:hover {
-      background: #4681f9;
-    }
-  }
-
-  span {
-    font-weight: 600;
-    font-size: 1.2rem;
-  }
 }
 
 .year-view {
@@ -357,66 +331,14 @@ main {
   border-radius: 6px;
 }
 
-.modal-backdrop {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-.modal {
-  background: #fff;
-  padding: 1rem;
-  border-radius: .5rem;
-  min-width: 320px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.2);
-
-  header {
-    margin-bottom: 1rem;
-    font-weight: bold;
-    font-size: 1.2rem;
-  }
-}
-
-input[type=text],
-select {
-  padding: 8px 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  margin-right: 1rem;
-}
-
 .search-input {
   margin: 0 0 0.5rem;
   width: 100%;
   opacity: 0;
 }
 
-.create-event-btn {
-  padding: 8px 12px;
-  background: green;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
 .create-event-btn,
 .logout-button {
   position: relative;
   z-index: 1;
-}
-
-.event-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-
-  footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-  }
 }

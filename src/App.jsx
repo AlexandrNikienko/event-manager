@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Button, Flex, Modal, Input } from 'antd';
 import EventForm from "./components/EventForm";
 import YearViewCalendar from "./components/YearViewCalendar";
 import { eventService } from './services/eventService';
@@ -7,6 +8,7 @@ import { getEventType } from "./utils/eventIcons";
 import { DoubleArrows, Edit, Delete, Calendar } from "./utils/icons";
 import { LoginButton } from "./components/LoginButton";
 import { useAuth } from "./AuthProvider.jsx";
+import { CalendarOutlined, LogoutOutlined, PlusOutlined } from "@ant-design/icons";
 
 // import { getFirestore, collection, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
 // const db = getFirestore();
@@ -14,7 +16,7 @@ import { useAuth } from "./AuthProvider.jsx";
 
 export default function App() {
   const [events, setEvents] = useState([]);
-  const [showModal, setShowModal] = useState(false);
+  // const [showModal, setShowModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
   const [newEvent, setNewEvent] = useState(null);
   const [year, setYear] = useState(new Date().getFullYear());
@@ -24,6 +26,17 @@ export default function App() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const { user, loading: loadingUser, logout } = useAuth();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setEditingEvent(null);
+  }
 
   useEffect(() => {
     if (loadingUser) return; // still checking auth
@@ -106,7 +119,7 @@ export default function App() {
         const newEvent = await eventService.addEvent(eventData);
         setEvents([...events, newEvent]);
       }
-      setShowModal(false);
+      setIsModalOpen(false);
       setEditingEvent(null);
     } catch (error) {
       console.error('Error saving event:', error);
@@ -116,10 +129,11 @@ export default function App() {
   const handleEdit = (id) => {
     const event = events.find((e) => e.id === id);
     setEditingEvent(event);
-    setShowModal(true);
+    setIsModalOpen(true);
   };
 
   const handleDayClick = (date) => {
+    console.log('Day clicked:', date);
     setNewEvent({
       name: "",
       note: "",
@@ -128,7 +142,7 @@ export default function App() {
       year: date.year,
       isRecurring: true
     });
-    setShowModal(true);
+    setIsModalOpen(true);
   };
 
   const handleDelete = async (id) => {
@@ -142,7 +156,7 @@ export default function App() {
 
   const handleCreateEvent = () => {
     setNewEvent(null);
-    setShowModal(true);
+    showModal(true);
     setEditingEvent(null);
   };
 
@@ -197,38 +211,28 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1><Calendar/> Event Calendar</h1>
+        <h1><CalendarOutlined /> Event Calendar</h1>
 
-        <button
-          className="create-event-btn"
-          onClick={handleCreateEvent}
-        >
-          + Add Event
-        </button>
+        <Button className="create-event-btn" onClick={handleCreateEvent} type="primary"><PlusOutlined /> Add Event</Button>
 
-        <button className="logout-button" onClick={logout}>Logout</button>
+        <Button className="logout-button" onClick={logout} color="danger" variant="outlined"><LogoutOutlined /> Logout</Button>
       </header>
 
-      {showModal && (
-        <div className="modal-backdrop">
-          <div className="modal">
-            <header>
-              {editingEvent ? "Edit Event" : "Create Event"}
-            </header>
+       <Modal
+        title={editingEvent ? "Edit Event" : "Create Event"}
+        closable={{ 'aria-label': 'Custom Close Button' }}
+        open={isModalOpen}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <EventForm
+          onSubmit={handleEventSubmit}
+          initial={editingEvent || newEvent}
+          onCancel={handleCancel}
+        />
+      </Modal>
 
-            <EventForm
-              onSubmit={handleEventSubmit}
-              initial={editingEvent || newEvent}
-              onCancel={() => {
-                setShowModal(false);
-                setEditingEvent(null);
-              }}
-            />
-          </div>
-        </div>
-      )}
-
-      <div style={{ display: "flex" }}>
+      <Flex gap="large">
         <aside className={`sidebar ${isSidebarOpen ? 'is-open' : ''}`}>
           <div className="sidebar-extender" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             <DoubleArrows/>
@@ -237,7 +241,7 @@ export default function App() {
           <h2 className="sidebar-title">Events in {year}</h2>
 
           <div className="sidebar-search">
-            <input className="search-input"
+            <Input className="search-input"
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -286,7 +290,7 @@ export default function App() {
           onYearChange={handleYearChange}
           loading={loading}
         />
-      </div>
+      </Flex>
     </div>
   );
 }

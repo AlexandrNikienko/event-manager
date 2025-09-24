@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { Button, Flex } from 'antd';
 import MonthGrid from "./MonthGrid";
 import { daysInMonth } from "../utils";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 
 export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayClick, onYearChange, year, loading }) {
   const currentYear = new Date().getFullYear();
@@ -26,13 +28,17 @@ export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayC
 
   return (
     <main>
-      <div className="controls">
-        <button onClick={() => onYearChange(year - 1)}>&lt; Prev</button>
+      <Flex gap="middle" justify="flex-end" align="center" className="controls">
+        <Button color="primary" variant="outlined" onClick={() => onYearChange(year - 1)}>
+          <LeftOutlined /> Prev
+        </Button>
 
-        <span>{year}</span>
+        <b>{year}</b>
 
-        <button onClick={() => onYearChange(year + 1)}>Next &gt;</button>
-      </div>
+        <Button color="primary" variant="outlined" onClick={() => onYearChange(year + 1)}>
+          Next <RightOutlined />
+        </Button>
+      </Flex>
 
       {true && (
         <div className="year-view">
