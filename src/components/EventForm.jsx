@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Form, Input, Select, Checkbox, Button, Flex } from "antd";
 
 import { daysInMonth, MONTH_NAMES } from "../utils";
@@ -34,14 +34,11 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
   const day = Form.useWatch("day", form) || 1;
 
   // Calculate days count based on month + year
-  let daysCount;
-  if (year === "unknown" && month === 2) {
-    daysCount = 29;
-  } else if (year === "unknown") {
-    daysCount = daysInMonth(month, 2024); // leap year as safe max
-  } else {
-    daysCount = daysInMonth(month, Number(year));
-  }
+  const daysCount = useMemo(() => {
+    if (year === "unknown" && month === 2) return 29;
+    if (year === "unknown") return daysInMonth(month, 2024);
+    return daysInMonth(month, Number(year));
+  }, [month, year]);
 
   // Auto-correct day if invalid
   useEffect(() => {
