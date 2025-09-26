@@ -33,11 +33,20 @@ export default function MonthGrid({ month, year, eventsMap = {}, onDelete, onEdi
       >
         <div className="day-number">{d}</div>
 
-        {events.length ? (
+        {/* {events.length ? (
           <div className="dot" title={events.map((e) => e.name).join(", ")}>
             {events.length > 1 ? <span className="count">{events.length}</span> : null}
           </div>
-        ) : null}
+        ) : null} */}
+
+        {events.length > 0 && (
+          <div className="dots">
+            {events.slice(0, 4).map((e, i) => (
+              <div key={i} className="dot" title={e.name}></div>
+            ))}
+            {/* {events.length > 4 && <span className="more">+</span>} */}
+          </div>
+        )}
 
         <DayTooltip events={events} onDelete={onDelete} onEdit={onEdit} />
       </div>

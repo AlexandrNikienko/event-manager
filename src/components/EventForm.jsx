@@ -3,25 +3,15 @@ import { Form, Input, Select, Checkbox, Button, Flex } from "antd";
 
 import { daysInMonth, MONTH_NAMES } from "../utils";
 import { EVENT_TYPES } from "../utils/eventIcons";
+import TextArea from "antd/es/input/TextArea";
 
 export default function EventForm({ onSubmit, initial, onCancel }) {
   const [form] = Form.useForm();
-  const { Option } = Select;
 
   console.log('Initial values:', initial);
 
-  const defaultState = {
-    name: '',
-    note: '',
-    month: 1,
-    day: 1,
-    isRecurring: true,
-    year: "unknown",
-    type: "birthday",
-  };
-
   useEffect(() => {
-    form.setFieldsValue(initial || defaultState);
+    form.setFieldsValue(initial);
   }, [initial, form]);
 
   // // Years for select
@@ -67,16 +57,15 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
     <Form
       form={form}
       {...formLayout}
-      initialValues={initial || defaultState}
+      initialValues={initial}
       onFinish={handleSubmit}
-      autoComplete="off"
     >
-      <Form.Item name="name" label="Event Name" rules={[{ required: true }]}>
+      <Form.Item name="name" label="Event Name" rules={[{ required: true }]} placeholder="Enter event name">
         <Input />
       </Form.Item>
 
-      <Form.Item name="note" label="Note">
-        <Input />
+      <Form.Item name="note" label="Note" placeholder="Enter a note">
+        <TextArea />
       </Form.Item>
 
       <Form.Item label="Type" name="type">

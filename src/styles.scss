@@ -230,7 +230,7 @@ main {
 .days-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
+  gap: 4px;
 }
 
 .day-cell {
@@ -258,8 +258,8 @@ main {
 }
 
 .dot {
-  width: 18px;
-  height: 18px;
+  width: 6px;
+  aspect-ratio: 1;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -267,6 +267,24 @@ main {
   font-size: 0.7rem;
   background: var(--accent);
   color: white;
+}
+
+.dots {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  gap: 2px;
+  justify-content: end;
+  flex-wrap: wrap;
+  max-width: 18px;
+}
+
+.more {
+  font-size: 10px;
+  line-height: 1;
+  margin-left: 2px;
+  color: #666;
 }
 
 .count {
@@ -341,4 +359,14 @@ main {
 .logout-button {
   position: relative;
   z-index: 1;
+}
+
+
+.month-card,
+.sidebar {
+  /* From https://css.glass */
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }

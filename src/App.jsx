@@ -140,7 +140,8 @@ export default function App() {
       month: date.month,
       day: date.day,
       year: date.year,
-      isRecurring: true
+      isRecurring: true,
+      type: "birthday",
     });
     setIsModalOpen(true);
   };
@@ -155,7 +156,15 @@ export default function App() {
   };
 
   const handleCreateEvent = () => {
-    setNewEvent(null);
+    setNewEvent({
+      name: '',
+      note: '',
+      month: 1,
+      day: 1,
+      isRecurring: true,
+      year: "unknown",
+      type: "birthday",
+    });
     showModal(true);
     setEditingEvent(null);
   };
@@ -219,7 +228,7 @@ export default function App() {
       </header>
 
        <Modal
-        title={editingEvent ? "Edit Event" : "Create Event"}
+        title={editingEvent ? "Edit Event" : "Add Event"}
         closable={{ 'aria-label': 'Custom Close Button' }}
         open={isModalOpen}
         onCancel={handleCancel}
