@@ -297,13 +297,11 @@ export default function App() {
 
                   {/* {event.note && <span className="sidebar-note">({event.note})</span>} */}
 
-                  <button className="edit-btn" onClick={() => handleEdit(event.id)} title="Edit Event">
-                    <Edit/>
-                  </button>
+                  <Button className="edit-btn" onClick={() => handleEdit(event.id)} title="Edit Event" icon={<Edit/>} size="small" type="text">
+                  </Button>
 
-                  <button className="delete-btn" onClick={() => handleDelete(event.id)} title="Delete Event">
-                    <Delete/>
-                  </button>
+                  <Button className="delete-btn" onClick={() => handleDelete(event.id)} title="Delete Event" icon={<Delete/>} size="small" type="text">
+                  </Button>
                 </li>
               );
             })}

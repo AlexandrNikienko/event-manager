@@ -12,7 +12,7 @@ export default function DayTooltip({ events = [], onDelete, onEdit }) {
       placement="top"
       trigger="hover"
       title={
-        <Flex className="tooltip" vertical="true" gap="small">
+        <Flex className="tooltip" vertical="true" gap="0">
           {events.map((event) => (
             <Flex className="tooltip-item" align="center" gap="small" justify="start"
               key={event.id || `${event.name}-${event.month}-${event.day}`}

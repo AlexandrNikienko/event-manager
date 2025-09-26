@@ -111,34 +111,24 @@ body {
   }
 }
 
-.edit-btn, 
-.delete-btn {
-  background: transparent;
-  border: 1px solid #eee;
-  padding: 4px 8px;
-  border-radius: 6px;
-  cursor: pointer;
+.delete-btn,
+.edit-btn {
+  //background: transparent !important;
+
+  &:hover {
+    transform: scale(1.2);
+  }
 }
 
 .delete-btn {
   svg {
     fill: var(--danger-color);
-    width: 16px;
-  }
-
-  &:hover {
-    background: #fff0f0;
   }
 }
 
 .edit-btn {
   svg {
     fill: var(--primary-color);
-    width: 15px;
-  }
-
-  &:hover {
-    background: #f0f4ff;
   }
 }
 
@@ -167,11 +157,14 @@ body {
   align-items: center;
   gap: 8px;
   padding: 4px;
-  border-bottom: 1px solid #f0f0f0;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid #f0f0f0;
+  }
 
   &:hover {
-      background: var(--background-color);
-    }
+    background: var(--background-color);
+  }
 }
 
 .past-event {
@@ -318,6 +311,15 @@ main {
 
 .tooltip-item {
   white-space: nowrap;
+  padding: 4px;
+
+  &:hover {
+    background: var(--background-color);
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid #f0f0f0;
+  }
 
   .edit-btn {
     margin-left: auto;
