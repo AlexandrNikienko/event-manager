@@ -224,8 +224,8 @@ export default function App() {
 
   if (!user) {
     return (
-      <div>
-        <h2>Please sign in</h2>
+      <div className="login-prompt">
+        <b>Please </b>
         <LoginButton />
       </div>
     );

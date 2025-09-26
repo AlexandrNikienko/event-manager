@@ -16,7 +16,7 @@ export function LoginButton() {
   };
 
   return (
-    <button onClick={loginWithGoogle}>
+    <button onClick={loginWithGoogle} style={{ padding: '4px 8px', fontSize: '1rem', cursor: 'pointer' }}>
       Sign in with Google
     </button>
   );

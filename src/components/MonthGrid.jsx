@@ -1,5 +1,5 @@
 import React from "react";
-import { MONTH_NAMES, daysInMonth, WEEKDAYS, MONTH_BACKGROUNDS } from "../utils";
+import { MONTH_NAMES, daysInMonth, WEEKDAYS } from "../utils";
 import DayTooltip from "./DayTooltip";
 
 export default function MonthGrid({ month, year, eventsMap = {}, onDelete, onEdit, onDayClick }) {
@@ -46,10 +46,7 @@ export default function MonthGrid({ month, year, eventsMap = {}, onDelete, onEdi
   }
 
   return (
-    <div className="month-card" style={{
-          //background: MONTH_BACKGROUNDS[month],
-        }}
-      >
+    <div className="month-card">
       <div className="month-inner">
         <div className="month-title">{MONTH_NAMES[month - 1]} {year}</div>
 
