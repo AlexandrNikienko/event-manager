@@ -29,13 +29,13 @@ export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayC
   return (
     <main>
       <Flex gap="middle" justify="flex-end" align="center" className="controls">
-        <Button color="primary" variant="outlined" onClick={() => onYearChange(year - 1)}>
+        <Button color="default" variant="outlined" onClick={() => onYearChange(year - 1)}>
           <LeftOutlined />
         </Button>
 
         <b>{year}</b>
 
-        <Button color="primary" variant="outlined" onClick={() => onYearChange(year + 1)}>
+        <Button color="default" variant="outlined" onClick={() => onYearChange(year + 1)}>
           <RightOutlined />
         </Button>
       </Flex>

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Button, Flex, Modal, Input } from 'antd';
+import { Button, Flex, Modal, Input, Checkbox } from 'antd';
 import EventForm from "./components/EventForm";
 import YearViewCalendar from "./components/YearViewCalendar";
 import { eventService } from './services/eventService';
 import { migrateEventsToFirebase } from './utils/migrateToFirebase';
 import { getEventType } from "./utils/eventIcons";
-import { DoubleArrows, Edit, Delete, Calendar } from "./utils/icons";
+import { DoubleArrows, Edit, Delete } from "./utils/icons";
 import { LoginButton } from "./components/LoginButton";
 import { useAuth } from "./AuthProvider.jsx";
 import { CalendarOutlined, LogoutOutlined, PlusOutlined } from "@ant-design/icons";
+import rainbow from "./assets/rainbow.svg";
 
 // import { getFirestore, collection, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
 // const db = getFirestore();
@@ -24,6 +25,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [hidePast, setHidePast] = useState(true);
 
   const { user, loading: loadingUser, logout } = useAuth();
 
@@ -251,11 +253,14 @@ export default function App() {
 
           <div className="sidebar-search">
             <Input className="search-input"
+              name="search"
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search events..."
+              placeholder="Search event"
             />
+
+            <Checkbox checked={hidePast} onChange={() => setHidePast(!hidePast)}>Hide past</Checkbox>
           </div>
 
           <ul className="sidebar-list">
@@ -264,6 +269,7 @@ export default function App() {
             {filteredEvents.map(event => {
               return (
                 <li
+                  hidden={hidePast && isEventInPast(event, year)}
                   key={event.id || `${event.name}-${event.month}-${event.day}`}
                   className={`sidebar-event ${isEventInPast(event, year) ? "past-event" : ""}`}
                 >

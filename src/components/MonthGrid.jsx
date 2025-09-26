@@ -1,8 +1,6 @@
 import React from "react";
-import { MONTH_NAMES, daysInMonth } from "../utils";
+import { MONTH_NAMES, daysInMonth, WEEKDAYS, MONTH_BACKGROUNDS } from "../utils";
 import DayTooltip from "./DayTooltip";
-
-const WEEKDAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
 export default function MonthGrid({ month, year, eventsMap = {}, onDelete, onEdit, onDayClick }) {
   const days = daysInMonth(month, year);
@@ -33,12 +31,6 @@ export default function MonthGrid({ month, year, eventsMap = {}, onDelete, onEdi
       >
         <div className="day-number">{d}</div>
 
-        {/* {events.length ? (
-          <div className="dot" title={events.map((e) => e.name).join(", ")}>
-            {events.length > 1 ? <span className="count">{events.length}</span> : null}
-          </div>
-        ) : null} */}
-
         {events.length > 0 && (
           <div className="dots">
             {events.slice(0, 4).map((e, i) => (
@@ -54,16 +46,21 @@ export default function MonthGrid({ month, year, eventsMap = {}, onDelete, onEdi
   }
 
   return (
-    <div className="month-card">
-      <div className="month-title">{MONTH_NAMES[month - 1]} {year}</div>
+    <div className="month-card" style={{
+          //background: MONTH_BACKGROUNDS[month],
+        }}
+      >
+      <div className="month-inner">
+        <div className="month-title">{MONTH_NAMES[month - 1]} {year}</div>
 
-      <div className="weekdays-row">
-        {WEEKDAYS.map((wd) => (
-          <div key={wd} className="weekday-cell">{wd}</div>
-        ))}
+        <div className="weekdays-row">
+          {WEEKDAYS.map((wd) => (
+            <div key={wd} className="weekday-cell">{wd}</div>
+          ))}
+        </div>
+        
+        <div className="days-grid">{dayCells}</div>
       </div>
-      
-      <div className="days-grid">{dayCells}</div>
     </div>
   );
 }
