@@ -9,15 +9,15 @@ import { DoubleArrows, Edit, Delete } from "./utils/icons";
 import { LoginButton } from "./components/LoginButton";
 import { useAuth } from "./AuthProvider.jsx";
 import { CalendarOutlined, LogoutOutlined, PlusOutlined } from "@ant-design/icons";
-import rainbow from "./assets/rainbow.svg";
 
 // import { getFirestore, collection, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
 // const db = getFirestore();
 
 
 export default function App() {
+  const [modal, contextHolder] = Modal.useModal();
+
   const [events, setEvents] = useState([]);
-  // const [showModal, setShowModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
   const [newEvent, setNewEvent] = useState(null);
   const [year, setYear] = useState(new Date().getFullYear());
@@ -149,12 +149,24 @@ export default function App() {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await eventService.deleteEvent(id);
-      setEvents(events.filter(e => e.id !== id));
-    } catch (error) {
-      console.error('Error deleting event:', error);
-    }
+    const event = events.find((e) => e.id === id);
+    console.log('Deleting event:', event);
+
+    modal.confirm({
+      title: "Are you sure you want to delete this event?",
+      content: event ? `${event.name} (${event.day}/${event.month})` : "This event",
+      okText: "Yes, delete",
+      okType: "danger",
+      cancelText: "Cancel",
+      onOk: async () => {
+        try {
+          await eventService.deleteEvent(id);
+          setEvents(events.filter((e) => e.id !== id));
+        } catch (error) {
+          console.error("Error deleting event:", error);
+        }
+      },
+    });
   };
 
   const handleCreateEvent = () => {
@@ -221,6 +233,8 @@ export default function App() {
 
   return (
     <div className="app">
+      {contextHolder}
+
       <header className="app-header">
         <h1><CalendarOutlined /> Event Calendar</h1>
 
@@ -273,7 +287,7 @@ export default function App() {
                   key={event.id || `${event.name}-${event.month}-${event.day}`}
                   className={`sidebar-event ${isEventInPast(event, year) ? "past-event" : ""}`}
                 >
-                  <span className="sidebar-date">{event.month}/{event.day}</span>
+                  <span className="sidebar-date">{event.day}/{event.month}</span>
 
                   <span className="sidebar-icon">
                     {getEventType(event.type).icon}

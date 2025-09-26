@@ -37,7 +37,6 @@ body {
   backdrop-filter: saturate(30%) blur(30px);
 }
 
-
 .app {
   max-width: 1600px;
   margin: auto;
@@ -367,11 +366,14 @@ main {
 }
 
 .create-event-btn,
-.logout-button {
+.logout-button,
+.ant-btn {
   position: relative;
   z-index: 1;
-}
 
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
 
 .month-card,
 .sidebar {
