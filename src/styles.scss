@@ -225,6 +225,8 @@ main {
 
 .month-title {
   margin-bottom: 8px;
+  text-align: center;
+  font-weight: 500;
 }
 
 .days-grid {
@@ -301,27 +303,23 @@ main {
 }
 
 .tooltip {
-  position: absolute;
-  z-index: 20;
-  left: 6px;
-  top: 28px;
-  background: #fff;
-  padding: 8px;
-  border-radius: 6px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
   min-width: 180px;
+}
+
+.tooltip-item {
+  white-space: nowrap;
 
   .edit-btn {
     margin-left: auto;
   }
 }
 
-.tooltip-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 6px;
+.tooltip-event-name {
+  flex: 1;
+  color: #222;
   white-space: nowrap;
-  gap: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .weekdays-row {

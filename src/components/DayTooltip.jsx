@@ -1,60 +1,54 @@
-import React, { useState } from "react";
+import React from "react";
+import { Tooltip, Button, Flex } from "antd";
 import { getEventType } from "../utils/eventIcons";
 import { Delete, Edit } from "../utils/icons";
 
-/*
-  Simple hover tooltip. Contains a Delete button (calls onDelete(id)).
-  You can replace with a popover library later for better mobile support.
-*/
 export default function DayTooltip({ events = [], onDelete, onEdit }) {
-  const [show, setShow] = useState(false);
-
   if (!events || events.length === 0) return null;
 
   return (
-    <div
-      className="tooltip-wrapper"
-      onMouseEnter={() => setShow(true)}
-      onMouseLeave={() => setShow(false)}
-    >
-      {show && (
-        <div className="tooltip"
-          onClick={(e) => {
-            e.stopPropagation();
-          }}>
-          {events.map((event) =>
-            <div key={event.id || `${event.name}-${event.month}-${event.day}`} className="tooltip-item">
-              <span className="sidebar-icon">
-                {getEventType(event.type).icon}
-              </span>
+    <Tooltip
+      color="#fff"
+      placement="top"
+      trigger="hover"
+      title={
+        <Flex className="tooltip" vertical="true" gap="small">
+          {events.map((event) => (
+            <Flex className="tooltip-item" align="center" gap="small" justify="start"
+              key={event.id || `${event.name}-${event.month}-${event.day}`}
+            >
+              <span>{getEventType(event.type).icon}</span>
 
-              <span>{event.name}</span>
+              <span className="tooltip-event-name">{event.name}</span>
 
-              <button
+              <Button
                 className="edit-btn"
+                size="small"
+                type="text"
+                icon={<Edit />}
                 onClick={(e) => {
                   e.stopPropagation();
-                  onEdit && onEdit(event.id)
+                  onEdit?.(event.id);
                 }}
-              >
-                <Edit></Edit>
-              </button>
+              />
 
-              <button
+              <Button
                 className="delete-btn"
+                size="small"
+                type="text"
+                danger
+                icon={<Delete />}
                 onClick={(e) => {
                   e.stopPropagation();
-                  onDelete && onDelete(event.id)
+                  onDelete?.(event.id);
                 }}
-                aria-label={`Delete ${event.name}`}
-              >
-                <Delete></Delete>
-              </button>
-            </div>
-          )
-          }
-        </div>
-      )}
-    </div>
+              />
+            </Flex>
+          ))}
+        </Flex>
+      }
+    >
+      <div className="tooltip-wrapper" />
+    </Tooltip>
   );
 }
