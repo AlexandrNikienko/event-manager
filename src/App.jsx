@@ -9,6 +9,7 @@ import { DoubleArrows, Edit, Delete } from "./utils/icons";
 import { LoginButton } from "./components/LoginButton";
 import { useAuth } from "./AuthProvider.jsx";
 import { CalendarOutlined, LogoutOutlined, PlusOutlined } from "@ant-design/icons";
+import { MONTH_NAMES } from "./utils.js";
 
 // import { getFirestore, collection, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
 // const db = getFirestore();
@@ -212,6 +213,17 @@ export default function App() {
     );
   });
 
+  const getAge = (event, currentYear) => {
+    if ((event.type !== "birthday" && event.type !== "anniversary") || !event.year || event.year === "unknown") {
+      return null;
+    }
+
+    const birthYear = Number(event.year);
+    const age = currentYear - birthYear;
+
+    return age;
+  };
+
   // if (loading) {
   //   return <div>Loading events...</div>;
   // }
@@ -243,20 +255,6 @@ export default function App() {
         <Button className="logout-button" onClick={logout} color="danger" variant="outlined"><LogoutOutlined /> Logout</Button>
       </header>
 
-       <Modal
-        title={editingEvent ? "Edit Event" : "Add Event"}
-        closable={{ 'aria-label': 'Custom Close Button' }}
-        open={isModalOpen}
-        onCancel={handleCancel}
-        footer={null}
-      >
-        <EventForm
-          onSubmit={handleEventSubmit}
-          initial={editingEvent || newEvent}
-          onCancel={handleCancel}
-        />
-      </Modal>
-
       <Flex gap="large">
         <aside className={`sidebar ${isSidebarOpen ? 'is-open' : ''}`}>
           <div className="sidebar-extender" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
@@ -281,16 +279,21 @@ export default function App() {
             {filteredEvents.length === 0 && <li key="no-events" className="muted">No events</li>}
 
             {filteredEvents.map(event => {
+              const age = getAge(event, year);
               return (
                 <li
                   hidden={hidePast && isEventInPast(event, year)}
                   key={event.id || `${event.name}-${event.month}-${event.day}`}
                   className={`sidebar-event ${isEventInPast(event, year) ? "past-event" : ""}`}
                 >
-                  <span className="sidebar-date">{event.day}/{event.month}</span>
+                  <span className="sidebar-date">{MONTH_NAMES[event.month - 1].slice(0,3)} {event.day}</span>
 
                   <span className="sidebar-icon">
                     {getEventType(event.type).icon}
+
+                    {age && (
+                      <sup className="sidebar-age">{age}</sup>
+                    )}
                   </span>
 
                   <span className="sidebar-name" title={event.name}>{event.name}</span>
@@ -318,6 +321,20 @@ export default function App() {
           loading={loading}
         />
       </Flex>
+
+      <Modal
+        title={editingEvent ? "Edit Event" : "Add Event"}
+        closable={{ 'aria-label': 'Custom Close Button' }}
+        open={isModalOpen}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <EventForm
+          onSubmit={handleEventSubmit}
+          initial={editingEvent || newEvent}
+          onCancel={handleCancel}
+        />
+      </Modal>
     </div>
   );
 }

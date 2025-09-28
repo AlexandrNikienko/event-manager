@@ -17,20 +17,22 @@ export default function DayTooltip({ events = [], onDelete, onEdit }) {
             <Flex className="tooltip-item" align="center" gap="small" justify="start"
               key={event.id || `${event.name}-${event.month}-${event.day}`}
             >
-              <span>{getEventType(event.type).icon}</span>
+              <Flex className="ellipsis pointer" onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit?.(event.id);
+                  }} align="center" gap="small" justify="start" flex={1}
+              >
+                <span>{getEventType(event.type).icon}</span>
 
-              <span className="tooltip-event-name">{event.name}</span>
+                <span className="tooltip-event-name">{event.name}</span>
 
-              <Button
-                className="edit-btn"
-                size="small"
-                type="text"
-                icon={<Edit />}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEdit?.(event.id);
-                }}
-              />
+                <Button
+                  className="edit-btn"
+                  size="small"
+                  type="text"
+                  icon={<Edit />}
+                />
+              </Flex>
 
               <Button
                 className="delete-btn"

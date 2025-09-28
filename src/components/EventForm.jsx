@@ -40,8 +40,6 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
   const handleSubmit = async (e) => {
     console.log('Submitting with values:', form.getFieldsValue());
 
-    e.preventDefault();
-
     await onSubmit(form.getFieldsValue());
 
     form.resetFields();
@@ -110,7 +108,7 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
           Cancel
         </Button>
 
-        <Button onClick={handleSubmit} type="primary">Save</Button>
+        <Button htmlType="submit" type="primary">Save</Button>
       </Flex>
     </Form>
   );
