@@ -3,17 +3,15 @@ import { Button, Flex, Modal, Input, Checkbox } from 'antd';
 import EventForm from "./components/EventForm";
 import YearViewCalendar from "./components/YearViewCalendar";
 import { eventService } from './services/eventService';
-import { migrateEventsToFirebase } from './utils/migrateToFirebase';
-import { getEventType } from "./utils/eventIcons";
-import { DoubleArrows, Edit, Delete } from "./utils/icons";
+import { DoubleArrowsIcon } from "./utils/icons";
 import { LoginButton } from "./components/LoginButton";
 import { useAuth } from "./AuthProvider.jsx";
-import { CalendarOutlined, LogoutOutlined, PlusOutlined } from "@ant-design/icons";
-import { MONTH_NAMES } from "./utils.js";
+import { LogoutOutlined, PlusOutlined } from "@ant-design/icons";
+import { MONTH_NAMES } from "./utils/utils.js";
+import EventList from "./components/EventList.jsx";
 
 // import { getFirestore, collection, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
 // const db = getFirestore();
-
 
 export default function App() {
   const [modal, contextHolder] = Modal.useModal();
@@ -46,18 +44,6 @@ export default function App() {
     if (!user) return;       // no logged-in user → don’t load
     loadEvents();
   }, [user, loadingUser, year]);
-
-  // useEffect(() => {
-  //   // Run migration once
-  //   const migrate = async () => {
-  //     await migrateEventsToFirebase();
-  //     // After migration, load events from Firebase
-  //     loadEvents();
-  //   };
-
-  //   //migrate();
-  //   // Remove this useEffect after migration
-  // }, []);
 
   //useEffect(() => {
     //patchEventsUserId
@@ -155,7 +141,7 @@ export default function App() {
 
     modal.confirm({
       title: "Are you sure you want to delete this event?",
-      content: event ? `${event.name} (${event.day}/${event.month})` : "This event",
+      content: event ? `${event.name} (${MONTH_NAMES[event.month - 1].slice(0, 3)} ${event.day})` : "This event",
       okText: "Yes, delete",
       okType: "danger",
       cancelText: "Cancel",
@@ -197,14 +183,6 @@ export default function App() {
     setYear(newYear);
   };
 
-  const isEventInPast = (event, year) => {
-    const today = new Date();
-    const eventYear = event.isRecurring ? year : event.year;
-    const eventDate = new Date(eventYear, event.month - 1, event.day);
-
-    return eventDate < new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  };
-
   const filteredEvents = eventsOfYear.filter(event => {
     const term = searchTerm.toLowerCase();
     return (
@@ -212,17 +190,6 @@ export default function App() {
       (event.note && event.note.toLowerCase().includes(term))
     );
   });
-
-  const getAge = (event, currentYear) => {
-    if ((event.type !== "birthday" && event.type !== "anniversary") || !event.year || event.year === "unknown") {
-      return null;
-    }
-
-    const birthYear = Number(event.year);
-    const age = currentYear - birthYear;
-
-    return age;
-  };
 
   // if (loading) {
   //   return <div>Loading events...</div>;
@@ -248,7 +215,7 @@ export default function App() {
       {contextHolder}
 
       <header className="app-header">
-        <h1><CalendarOutlined /> Event Calendar</h1>
+        <h1><img className="logo" src="./src/assets/rainbow.svg" alt="Logo"/>Life Palette</h1>
 
         <Button className="create-event-btn" onClick={handleCreateEvent} type="primary"><PlusOutlined /> Add Event</Button>
 
@@ -258,57 +225,26 @@ export default function App() {
       <Flex gap="large">
         <aside className={`sidebar ${isSidebarOpen ? 'is-open' : ''}`}>
           <div className="sidebar-extender" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-            <DoubleArrows/>
-          </div>
-          
-          <h2 className="sidebar-title">Events in {year}</h2>
-
-          <div className="sidebar-search">
-            <Input className="search-input"
-              name="search"
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search event"
-            />
-
-            <Checkbox checked={hidePast} onChange={() => setHidePast(!hidePast)}>Hide past</Checkbox>
+            <DoubleArrowsIcon/>
           </div>
 
-          <ul className="sidebar-list">
-            {filteredEvents.length === 0 && <li key="no-events" className="muted">No events</li>}
+          <div className="sidebar-inner">
+            <h2 className="sidebar-title">Events in {year}</h2>
 
-            {filteredEvents.map(event => {
-              const age = getAge(event, year);
-              return (
-                <li
-                  hidden={hidePast && isEventInPast(event, year)}
-                  key={event.id || `${event.name}-${event.month}-${event.day}`}
-                  className={`sidebar-event ${isEventInPast(event, year) ? "past-event" : ""}`}
-                >
-                  <span className="sidebar-date">{MONTH_NAMES[event.month - 1].slice(0,3)} {event.day}</span>
+            <div className="sidebar-search">
+              <Input className="search-input"
+                name="search"
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search event"
+              />
 
-                  <span className="sidebar-icon">
-                    {getEventType(event.type).icon}
+              <Checkbox checked={hidePast} onChange={() => setHidePast(!hidePast)}>Hide past</Checkbox>
+            </div>
 
-                    {age && (
-                      <sup className="sidebar-age">{age}</sup>
-                    )}
-                  </span>
-
-                  <span className="sidebar-name" title={event.name}>{event.name}</span>
-
-                  {/* {event.note && <span className="sidebar-note">({event.note})</span>} */}
-
-                  <Button className="edit-btn" onClick={() => handleEdit(event.id)} title="Edit Event" icon={<Edit/>} size="small" type="text">
-                  </Button>
-
-                  <Button className="delete-btn" onClick={() => handleDelete(event.id)} title="Delete Event" icon={<Delete/>} size="small" type="text">
-                  </Button>
-                </li>
-              );
-            })}
-          </ul>
+            <EventList events={events && filteredEvents} year={year} hidePast={hidePast} onEdit={handleEdit} onDelete={handleDelete}/>
+          </div>
         </aside>
 
         <YearViewCalendar

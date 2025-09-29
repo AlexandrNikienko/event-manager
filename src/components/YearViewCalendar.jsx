@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button, Flex } from 'antd';
-import MonthGrid from "./MonthGrid";
-import { daysInMonth } from "../utils";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { daysInMonth } from "../utils/utils";
+import MonthGrid from "./MonthGrid";
 
 export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayClick, onYearChange, year, loading }) {
   const currentYear = new Date().getFullYear();

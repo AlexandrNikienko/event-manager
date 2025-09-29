@@ -50,12 +50,20 @@ body {
   padding: 1rem;
 }
 
+.logo {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
 .sidebar {
   width: 20px;
-  flex: 0 0 20px;;
+  flex: 0 0 20px;
+  ;
   background: var(--card);
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: 1rem 0.5rem;
   height: fit-content;
   position: relative;
@@ -75,12 +83,15 @@ body {
       transform: rotate(0deg);
     }
 
-    .sidebar-list,
-    .sidebar-title,
-    .sidebar-search {
+    .sidebar-inner {
       opacity: 1
     }
   }
+}
+
+.sidebar-inner {
+  opacity: 0;
+  transition: opacity .3s;
 }
 
 .sidebar-extender {
@@ -130,12 +141,6 @@ body {
   svg {
     fill: var(--primary-color);
   }
-}
-
-.sidebar-list,
-.sidebar-title {
-  opacity: 0;
-  transition: opacity .3s;
 }
 
 .sidebar-title {
@@ -201,6 +206,22 @@ body {
   h1 {
     margin: 0;
     font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(90deg,
+        red,
+        orange,
+        yellow,
+        green,
+        blue,
+        indigo,
+        violet);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    /* for Firefox */
+    text-fill-color: transparent;
+    text-shadow: 0px 0px 0px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -247,10 +268,10 @@ main {
   justify-content: space-between;
   position: relative;
 
-   &:not(.empty):hover {
+  &:not(.empty):hover {
     cursor: pointer;
     background: #f0f4ff;
-   }
+  }
 }
 
 .day-number {
@@ -364,8 +385,6 @@ main {
   display: flex;
   align-items: center;
   gap: .5rem;
-  opacity: 0;
-  transition: .3s;
 }
 
 .search-input {

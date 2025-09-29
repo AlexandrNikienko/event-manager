@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Form, Input, Select, Checkbox, Button, Flex } from "antd";
-
-import { daysInMonth, MONTH_NAMES } from "../utils";
-import { EVENT_TYPES } from "../utils/eventIcons";
+import { daysInMonth, MONTH_NAMES, EVENT_TYPES } from "../utils/utils";
 import TextArea from "antd/es/input/TextArea";
 
 export default function EventForm({ onSubmit, initial, onCancel }) {
@@ -77,21 +75,21 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
         <Select options={MONTH_NAMES.map((m, i) => ({
           value: i + 1,
           label: m,
-        }))}/>
+        }))} />
       </Form.Item>
 
       <Form.Item label="Day" name="day">
         <Select options={[...Array(daysCount)].map((_, i) => ({
           value: i + 1,
           label: i + 1
-        }))}/>
+        }))} />
       </Form.Item>
 
       <Form.Item label="Year" name="year">
         <Select options={years.map(y => ({
           value: y,
           label: y === "unknown" ? "Unknown" : y
-        }))}/>
+        }))} />
       </Form.Item>
 
       <Form.Item name="isRecurring" valuePropName="checked">

@@ -1,5 +1,5 @@
 import React from "react";
-import { MONTH_NAMES, daysInMonth, WEEKDAYS } from "../utils";
+import { MONTH_NAMES, daysInMonth, WEEKDAYS } from "../utils/utils";
 import DayTooltip from "./DayTooltip";
 
 export default function MonthGrid({ month, year, eventsMap = {}, onDelete, onEdit, onDayClick }) {
@@ -40,7 +40,7 @@ export default function MonthGrid({ month, year, eventsMap = {}, onDelete, onEdi
           </div>
         )}
 
-        <DayTooltip events={events} onDelete={onDelete} onEdit={onEdit} />
+        <DayTooltip events={events} onDelete={onDelete} onEdit={onEdit} year={year}/>
       </div>
     );
   }
