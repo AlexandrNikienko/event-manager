@@ -1,0 +1,59 @@
+.event-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: calc(100vh - 190px);
+  overflow: auto;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    &:hover {
+      background: var(--background-color);
+    }
+  }
+
+  &__date {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+    flex: 0 0 40px;
+  }
+
+  &__name {
+    flex: 1;
+    color: #222;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__note {
+    color: var(--muted);
+    font-size: 0.9em;
+  }
+
+  &__icon {
+    position: relative;
+  }
+
+  &__age {
+    font-size: 0.6em;
+    color: var(--muted);
+    position: absolute;
+    top: -4px;
+    left: 12px;
+  }
+}
+
+.past-event {
+  opacity: 0.5;
+  color: #222
+}

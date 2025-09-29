@@ -2,9 +2,10 @@ import React from "react";
 import { Button, Flex } from "antd";
 import { getAge, isEventInPast, MONTH_NAMES, getEventTypeIcon } from "../utils/utils";
 import { DeleteIcon, EditIcon } from "../utils/icons";
+import"./EventList.scss";
 
-export default function EventList({ events = [], onEdit, onDelete, year, hidePast }) {
-    return <ul className="sidebar-list">
+export default function EventList({ events = [], onEdit, onDelete, year, hidePast, hideDate = false }) {
+    return <ul className="event-list">
         {events.length === 0 && <li key="no-events" className="muted">No events</li>}
 
         {events.map(event => {
@@ -14,7 +15,7 @@ export default function EventList({ events = [], onEdit, onDelete, year, hidePas
                 <li
                     hidden={hidePast && isEventInPast(event, year)}
                     key={event.id || `${event.name}-${event.month}-${event.day}`}
-                    className={`sidebar-event ${isEventInPast(event, year) ? "past-event" : ""}`}
+                    className={`event-list__item ${isEventInPast(event, year) ? "past-event" : ""}`}
                 >
                     <Flex className="ellipsis pointer"
                         align="center" gap="small" justify="start" flex={1}
@@ -23,17 +24,17 @@ export default function EventList({ events = [], onEdit, onDelete, year, hidePas
                             onEdit?.(event.id);
                         }}
                     >
-                        <span className="sidebar-date">{MONTH_NAMES[event.month - 1].slice(0, 3)} {event.day}</span>
+                        <span className="event-list__date" hidden={hideDate}>{MONTH_NAMES[event.month - 1].slice(0, 3)} {event.day}</span>
 
-                        <span className="sidebar-icon">
+                        <span className="event-list__icon">
                             {getEventTypeIcon(event.type)}
 
                             {age && (
-                                <sup className="sidebar-age">{age}</sup>
+                                <sup className="event-list__age">{age}</sup>
                             )}
                         </span>
 
-                        <span className="sidebar-name" title={event.name}>{event.name}</span>
+                        <span className="event-list__name" title={event.name}>{event.name}</span>
 
                         <Button className="edit-btn" title="Edit Event" icon={<EditIcon />} size="small" type="text" />
                     </Flex>

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Button, Flex, Modal, Input, Checkbox } from 'antd';
+import { LogoutOutlined, PlusOutlined } from "@ant-design/icons";
+import { useAuth } from "./AuthProvider.jsx";
+import { eventService } from './services/eventService';
+import { MONTH_NAMES } from "./utils/utils.js";
+import { DoubleArrowsIcon } from "./utils/icons";
 import EventForm from "./components/EventForm";
 import YearViewCalendar from "./components/YearViewCalendar";
-import { eventService } from './services/eventService';
-import { DoubleArrowsIcon } from "./utils/icons";
 import { LoginButton } from "./components/LoginButton";
-import { useAuth } from "./AuthProvider.jsx";
-import { LogoutOutlined, PlusOutlined } from "@ant-design/icons";
-import { MONTH_NAMES } from "./utils/utils.js";
 import EventList from "./components/EventList.jsx";
 
 // import { getFirestore, collection, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
