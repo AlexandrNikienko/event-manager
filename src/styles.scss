@@ -313,3 +313,7 @@ main {
   display: inline;
   @extend %rainbow-text;
 }
+
+.ant-modal .ant-modal-header {
+  margin-bottom: 1rem;
+}

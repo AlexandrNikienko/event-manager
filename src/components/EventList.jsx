@@ -29,7 +29,7 @@ export default function EventList({ events = [], onEdit, onDelete, year, hidePas
                         <span className="event-list__icon">
                             {getEventTypeIcon(event.type)}
 
-                            {age && (
+                            {age > 0 && (
                                 <sup className="event-list__age">{age}</sup>
                             )}
                         </span>

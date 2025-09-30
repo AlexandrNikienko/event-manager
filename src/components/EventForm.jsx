@@ -1,20 +1,27 @@
-import React, { useEffect, useMemo } from "react";
-import { Form, Input, Select, Checkbox, Button, Flex } from "antd";
+import React, { useEffect, useMemo, useState } from "react";
+import { Form, Input, Select, Checkbox, Button, Flex, Radio, InputNumber } from "antd";
 import { daysInMonth, MONTH_NAMES, EVENT_TYPES } from "../utils/utils";
 import TextArea from "antd/es/input/TextArea";
 
 export default function EventForm({ onSubmit, initial, onCancel }) {
   const [form] = Form.useForm();
 
+  const [yearOption, setYearOption] = useState(
+    initial?.year === "unknown" ? "unknown" : "year"
+  );
+
   console.log('Initial values:', initial);
 
   useEffect(() => {
     form.setFieldsValue(initial);
+    if (initial?.year === "unknown") {
+      setYearOption("unknown");
+    } else {
+      setYearOption("year");
+    }
   }, [initial, form]);
 
-  // // Years for select
   const currentYear = new Date().getFullYear();
-  const years = ["unknown", ...Array.from({ length: 151 }, (_, i) => currentYear - 100 + i)];
 
   // Watch form values
   const month = Form.useWatch("month", form) || 1;
@@ -36,10 +43,15 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
   }, [day, daysCount, form]);
 
   const handleSubmit = async (e) => {
+    let values = form.getFieldsValue();
+
+    // Normalize year based on option
+    if (yearOption === "unknown") {
+      values.year = "unknown";
+    }
+
     console.log('Submitting with values:', form.getFieldsValue());
-
     await onSubmit(form.getFieldsValue());
-
     form.resetFields();
   };
 
@@ -52,8 +64,10 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
   return (
     <Form
       form={form}
-      {...formLayout}
       initialValues={initial}
+      labelCol={{ span: 6 }}
+      wrapperCol={{ span: 18 }}
+      layout="horizontal"
       onFinish={handleSubmit}
     >
       <Form.Item name="name" label="Event Name" rules={[{ required: true }]} placeholder="Enter event name">
@@ -85,14 +99,44 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
         }))} />
       </Form.Item>
 
-      <Form.Item label="Year" name="year">
-        <Select options={years.map(y => ({
-          value: y,
-          label: y === "unknown" ? "Unknown" : y
-        }))} />
+      <Form.Item label="Year">
+        <Radio.Group
+          value={yearOption}
+          onChange={(e) => {
+            const val = e.target.value;
+            setYearOption(val);
+            if (val === "unknown") {
+              form.setFieldsValue({ year: "unknown" });
+            } else {
+              form.setFieldsValue({ year: currentYear });
+            }
+          }}
+        >
+          <Radio value="year">
+            <Form.Item
+              noStyle
+              name="year"
+              rules={[
+                {
+                  required: yearOption === "year",
+                  message: "Please enter year",
+                },
+              ]}
+            >
+              <InputNumber
+                min={1900}
+                max={currentYear + 50}
+                style={{ width: 120, marginLeft: 8 }}
+                disabled={yearOption !== "year"}
+              />
+            </Form.Item>
+          </Radio>
+
+          <Radio value="unknown">Unknown</Radio>
+        </Radio.Group>
       </Form.Item>
 
-      <Form.Item name="isRecurring" valuePropName="checked">
+      <Form.Item name="isRecurring" valuePropName="checked" style={{ marginLeft: 118 }}>
         <Checkbox>Repeat every year</Checkbox>
       </Form.Item>
 
