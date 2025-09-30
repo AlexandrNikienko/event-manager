@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Button, Flex, Modal, Input, Checkbox } from 'antd';
-import { PlusOutlined } from "@ant-design/icons";
+import { Button, Flex, Modal, Input, Checkbox, Dropdown, Avatar, Spin } from 'antd';
+import { PlusOutlined, UserOutlined, QuestionOutlined, LogoutOutlined } from "@ant-design/icons";
 import { useAuth } from "./AuthProvider.jsx";
 import { eventService } from './services/eventService';
 import { MONTH_NAMES } from "./utils/utils.js";
@@ -10,9 +10,6 @@ import YearViewCalendar from "./components/YearViewCalendar";
 import { LoginButton } from "./components/LoginButton";
 import EventList from "./components/EventList.jsx";
 import rainbow from "./assets/rainbow.svg";
-
-import { Dropdown, Avatar, Spin } from "antd";
-import { UserOutlined, QuestionOutlined, LogoutOutlined, GoogleOutlined } from "@ant-design/icons";
 
 // import { getFirestore, collection, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
 // const db = getFirestore();
@@ -199,15 +196,9 @@ export default function App() {
     );
   });
 
-  // if (loading) {
-  //   return <div>Loading events...</div>;
-  // }
-
   if (error) {
     return <div className="error">{error}</div>;
   }
-
-  if (loadingUser) return <div>Loading...</div>;
 
   return (
     <div className="app">
@@ -219,6 +210,8 @@ export default function App() {
         <Button className="create-event-btn" onClick={handleCreateEvent} type="primary" disabled={!user}>
           <PlusOutlined /> Add Event
         </Button>
+
+        {loading && <div>Loading events...</div>}
 
         <div className="user">
           {loadingUser ? (
@@ -263,6 +256,7 @@ export default function App() {
               )}
             >
               <Avatar
+                size={"large"}
                 className={`user-avatar ${!user ? "pulse" : ""}`}
                 src={user?.photoURL || (user ? null : undefined)}
                 icon={!user ? <QuestionOutlined /> : (!user?.photoURL && <UserOutlined />)}
