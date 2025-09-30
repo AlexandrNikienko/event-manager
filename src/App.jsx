@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Flex, Modal, Input, Checkbox } from 'antd';
-import { LogoutOutlined, PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import { useAuth } from "./AuthProvider.jsx";
 import { eventService } from './services/eventService';
 import { MONTH_NAMES } from "./utils/utils.js";
@@ -9,6 +9,9 @@ import EventForm from "./components/EventForm";
 import YearViewCalendar from "./components/YearViewCalendar";
 import { LoginButton } from "./components/LoginButton";
 import EventList from "./components/EventList.jsx";
+
+import { Dropdown, Avatar, Spin } from "antd";
+import { UserOutlined, QuestionOutlined, LogoutOutlined, GoogleOutlined } from "@ant-design/icons";
 
 // import { getFirestore, collection, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
 // const db = getFirestore();
@@ -29,6 +32,7 @@ export default function App() {
   const { user, loading: loadingUser, logout } = useAuth();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -41,13 +45,16 @@ export default function App() {
 
   useEffect(() => {
     if (loadingUser) return; // still checking auth
-    if (!user) return;       // no logged-in user → don’t load
+    if (!user) {
+      setEvents([]); // clear events when user logs out
+      return;
+    }    // no logged-in user → don’t load
     loadEvents();
   }, [user, loadingUser, year]);
 
   //useEffect(() => {
-    //patchEventsUserId
-    //patchEventsUserIdAndDeleteEmptyYear();
+  //patchEventsUserId
+  //patchEventsUserIdAndDeleteEmptyYear();
   //}, []);
 
   // async function patchEventsUserId() {
@@ -201,31 +208,75 @@ export default function App() {
 
   if (loadingUser) return <div>Loading...</div>;
 
-  if (!user) {
-    return (
-      <div className="login-prompt">
-        <b>Please </b>
-        <LoginButton />
-      </div>
-    );
-  }
-
   return (
     <div className="app">
       {contextHolder}
 
       <header className="app-header">
-        <h1><img className="logo" src="./src/assets/rainbow.svg" alt="Logo"/>Life Palette</h1>
+        <h1><img className="logo" src="./src/assets/rainbow.svg" alt="Logo" />Life Palette</h1>
 
-        <Button className="create-event-btn" onClick={handleCreateEvent} type="primary"><PlusOutlined /> Add Event</Button>
+        <Button className="create-event-btn" onClick={handleCreateEvent} type="primary" disabled={!user}>
+          <PlusOutlined /> Add Event
+        </Button>
 
-        <Button className="logout-button" onClick={logout} color="danger" variant="outlined"><LogoutOutlined /> Logout</Button>
+        <div className="user">
+          {loadingUser ? (
+            <Spin />
+          ) : (
+            <Dropdown
+              arrow
+              trigger={["hover"]}
+              open={open}
+              onOpenChange={setOpen}
+              placement="bottomRight"
+              popupRender={() => (
+                <div className="custom-dropdown">
+                  {user ? (
+                    <>
+                      <div style={{ marginBottom: 8 }}>
+                        <b>Welcome, {user.displayName}</b>
+                        <span>{user.email}</span>
+                      </div>
+                      
+                      <Button
+                        block
+                        danger
+                        type="primary"
+                        icon={<LogoutOutlined />}
+                        onClick={() => {
+                          logout();
+                          setOpen(false);
+                        }}
+                      >
+                        Logout
+                      </Button>
+                    </>
+                  ) : (
+                    <div>
+                      Please, <LoginButton />
+                      <br />
+                      to activate the functionality
+                    </div>
+                  )}
+                </div>
+              )}
+            >
+              <Avatar
+                className={`user-avatar ${!user ? "pulse" : ""}`}
+                src={user?.photoURL || (user ? null : undefined)}
+                icon={!user ? <QuestionOutlined /> : (!user?.photoURL && <UserOutlined />)}
+                style={{ cursor: "pointer" }}
+              />
+            </Dropdown>
+          )}
+        </div>
+
       </header>
 
       <Flex gap="large">
         <aside className={`sidebar ${isSidebarOpen ? 'is-open' : ''}`}>
           <div className="sidebar-extender" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-            <DoubleArrowsIcon/>
+            <DoubleArrowsIcon />
           </div>
 
           <div className="sidebar-inner">
@@ -243,7 +294,7 @@ export default function App() {
               <Checkbox checked={hidePast} onChange={() => setHidePast(!hidePast)}>Hide past</Checkbox>
             </div>
 
-            <EventList events={events && filteredEvents} year={year} hidePast={hidePast} onEdit={handleEdit} onDelete={handleDelete}/>
+            <EventList events={events && filteredEvents} year={year} hidePast={hidePast} onEdit={handleEdit} onDelete={handleDelete} />
           </div>
         </aside>
 

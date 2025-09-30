@@ -20,6 +20,7 @@ export const eventService = {
 
   async getEventsByYear(year) {
     const user = auth.currentUser;
+    console.log('Fetching events for user:', user);
     if (!user) throw new Error('User not authorized');
 
     const q = query(
