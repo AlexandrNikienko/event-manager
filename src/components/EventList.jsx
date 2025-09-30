@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Flex } from "antd";
 import { getAge, isEventInPast, MONTH_NAMES, getEventTypeIcon } from "../utils/utils";
 import { DeleteIcon, EditIcon } from "../utils/icons";
-import"./EventList.scss";
+import"../styles/EventList.scss";
 
 export default function EventList({ events = [], onEdit, onDelete, year, hidePast, hideDate = false }) {
     return <ul className="event-list">
