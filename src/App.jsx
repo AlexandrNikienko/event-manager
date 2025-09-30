@@ -9,6 +9,7 @@ import EventForm from "./components/EventForm";
 import YearViewCalendar from "./components/YearViewCalendar";
 import { LoginButton } from "./components/LoginButton";
 import EventList from "./components/EventList.jsx";
+import rainbow from "./assets/rainbow.svg";
 
 import { Dropdown, Avatar, Spin } from "antd";
 import { UserOutlined, QuestionOutlined, LogoutOutlined, GoogleOutlined } from "@ant-design/icons";
@@ -213,7 +214,7 @@ export default function App() {
       {contextHolder}
 
       <header className="app-header">
-        <h1><img className="logo" src="./src/assets/rainbow.svg" alt="Logo" />Life Palette</h1>
+        <h1><img className="logo" src={rainbow} alt="Logo" />Life Palette</h1>
 
         <Button className="create-event-btn" onClick={handleCreateEvent} type="primary" disabled={!user}>
           <PlusOutlined /> Add Event
