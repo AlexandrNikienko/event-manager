@@ -1,34 +1,5 @@
+@use "./styles/utils.scss";
 @use "./styles/SideBar.scss";
-
-:root {
-  --bg: #f4f6f8;
-  --card: #fff;
-  --accent: #2b6ef6;
-  --muted: #6b7280;
-
-
-  --primary-color: #007bff;
-  --secondary-color: #6c757d;
-  --success-color: #28a745;
-  --danger-color: #dc3545;
-  --background-color: #f8f9fa;
-  --border-color: #dee2e6;
-}
-
-%rainbow-text {
-  background: linear-gradient(90deg,
-        red,
-        orange,
-        yellow,
-        green,
-        blue,
-        indigo,
-        violet);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: 0px 0px 0px rgba(0, 0, 0, 0.5);
-}
 
 * {
   box-sizing: border-box;
@@ -41,16 +12,13 @@
 body {
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
   margin: 0;
-  background: var(--bg);
   color: #111;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
   min-height: 100vh;
-  background: url(/src/assets/rainbow.svg) no-repeat center / cover;
+  background: var(--background-color) url(/src/assets/rainbow.svg) no-repeat center / cover;
   backdrop-filter: saturate(30%) blur(30px);
 }
 
@@ -111,13 +79,11 @@ body {
 }
 
 main {
-  // transform: translateY(-48px);
   flex: 1;
   position: relative;
 }
 
 .controls {
-  // margin-bottom: 1rem;
   position: absolute;
   left: 50%;
   transform: translate(-50%, -48px);
@@ -127,13 +93,6 @@ main {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
-}
-
-.month-card {
-  background: var(--card);
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .month-title {
@@ -180,7 +139,7 @@ main {
   align-items: center;
   justify-content: center;
   font-size: 0.7rem;
-  background: var(--accent);
+  background: var(--primary-color);
   color: white;
 }
 
@@ -280,9 +239,11 @@ main {
 .ant-btn {
   position: relative;
   z-index: 1;
-
   border-radius: 16px;
-  //box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.month-card {
+  padding: .5rem;
 }
 
 .month-card,

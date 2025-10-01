@@ -21,6 +21,12 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
     }
   }, [initial, form]);
 
+  useEffect(() => {
+    if (yearOption === "unknown") {
+      form.setFieldsValue({ isRecurring: true });
+    }
+  }, [yearOption, form]);
+
   const currentYear = new Date().getFullYear();
 
   // Watch form values
@@ -137,7 +143,10 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
       </Form.Item>
 
       <Form.Item name="isRecurring" valuePropName="checked" style={{ marginLeft: 118 }}>
-        <Checkbox>Repeat every year</Checkbox>
+        <Checkbox
+          checked={yearOption === "unknown" ? true : undefined}
+          disabled={yearOption === "unknown"}
+        >Repeat every year</Checkbox>
       </Form.Item>
 
       <Flex gap="small" justify="end" style={{ marginTop: 20 }}>
