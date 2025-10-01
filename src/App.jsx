@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Flex, Modal, Input, Checkbox, Dropdown, Avatar, Spin } from 'antd';
+import { Button, Flex, Modal, Input, Checkbox, Dropdown, Avatar, Spin, notification } from 'antd';
 import { PlusOutlined, UserOutlined, QuestionOutlined, LogoutOutlined } from "@ant-design/icons";
 import { useAuth } from "./AuthProvider.jsx";
 import { eventService } from './services/eventService';
@@ -16,6 +16,7 @@ import rainbow from "./assets/rainbow.svg";
 
 export default function App() {
   const [modal, contextHolder] = Modal.useModal();
+  const [note, notificationContextHolder] = notification.useNotification();
 
   const [events, setEvents] = useState([]);
   const [editingEvent, setEditingEvent] = useState(null);
@@ -42,11 +43,11 @@ export default function App() {
   }
 
   useEffect(() => {
-    if (loadingUser) return; // still checking auth
+    if (loadingUser) return;
     if (!user) {
-      setEvents([]); // clear events when user logs out
+      setEvents([]);
       return;
-    }    // no logged-in user → don’t load
+    }
     loadEvents();
   }, [user, loadingUser, year]);
 
@@ -87,7 +88,7 @@ export default function App() {
   // }
 
   const loadEvents = async () => {
-    if (!user) return; // extra safety
+    if (!user) return;
 
     try {
       setLoading(true);
@@ -108,15 +109,36 @@ export default function App() {
         // Update existing event
         const updated = await eventService.updateEvent(editingEvent.id, eventData);
         setEvents(events.map(e => e.id === editingEvent.id ? updated : e));
+        
+        // Show success notification for editing
+        note.success({
+          message: 'Event Updated',
+          description: `${eventData.name} has been successfully updated.`,
+          placement: 'topRight',
+        });
       } else {
         // Add new event
         const newEvent = await eventService.addEvent(eventData);
         setEvents([...events, newEvent]);
+        
+        // Show success notification for adding
+        note.success({
+          message: 'Event Created',
+          description: `${eventData.name} has been successfully added.`,
+          placement: 'topRight',
+        });
       }
       setIsModalOpen(false);
       setEditingEvent(null);
     } catch (error) {
       console.error('Error saving event:', error);
+      
+      // Show error notification
+      note.error({
+        message: 'Error',
+        description: `Failed to ${editingEvent ? 'update' : 'create'} event. Please try again.`,
+        placement: 'topRight',
+      });
     }
   };
 
@@ -154,8 +176,22 @@ export default function App() {
         try {
           await eventService.deleteEvent(id);
           setEvents(events.filter((e) => e.id !== id));
+          
+          // Show success notification for deletion
+          note.info({
+            message: 'Event Deleted',
+            description: `${event.name} has been deleted.`,
+            placement: 'topRight',
+          });
         } catch (error) {
           console.error("Error deleting event:", error);
+          
+          // Show error notification
+          note.error({
+            message: 'Error',
+            description: 'Failed to delete event. Please try again.',
+            placement: 'topRight',
+          });
         }
       },
     });
@@ -203,6 +239,7 @@ export default function App() {
   return (
     <div className="app">
       {contextHolder}
+      {notificationContextHolder}
 
       <header className="app-header">
         <h1><img className="logo" src={rainbow} alt="Logo" />Life Palette</h1>
