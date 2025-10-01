@@ -17,7 +17,7 @@ export default function EventList({ events = [], onEdit, onDelete, year, hidePas
                     key={event.id || `${event.name}-${event.month}-${event.day}`}
                     className={`event-list__item ${isEventInPast(event, year) ? "past-event" : ""}`}
                 >
-                    <Flex className="ellipsis pointer"
+                    <Flex className="ellipsis pointer p4"
                         align="center" gap="small" justify="start" flex={1}
                         onClick={(e) => {
                             e.stopPropagation();

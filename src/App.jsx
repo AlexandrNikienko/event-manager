@@ -268,7 +268,7 @@ export default function App() {
 
       </header>
 
-      <Flex gap="large">
+      <Flex gap="large" align="start">
         <aside className={`sidebar ${isSidebarOpen ? 'is-open' : ''}`}>
           <div className="sidebar-extender" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             <DoubleArrowsIcon />

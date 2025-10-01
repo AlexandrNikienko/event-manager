@@ -111,12 +111,16 @@ body {
 }
 
 main {
-  transform: translateY(-47px);
+  // transform: translateY(-48px);
   flex: 1;
+  position: relative;
 }
 
 .controls {
-  margin-bottom: 1rem;
+  // margin-bottom: 1rem;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -48px);
 }
 
 .year-view {
@@ -265,13 +269,6 @@ main {
   border-radius: 6px;
 }
 
-.sidebar-search {
-  margin-bottom: .5rem;
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-}
-
 .search-input {
   margin: 0;
   width: auto;
@@ -285,7 +282,7 @@ main {
   z-index: 1;
 
   border-radius: 16px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  //box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
 .month-card,
@@ -348,4 +345,8 @@ main {
 
 .custom-dropdown b {
   display: block;
+}
+
+.p4 {
+  padding: 4px;
 }
