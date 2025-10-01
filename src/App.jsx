@@ -292,8 +292,9 @@ export default function App() {
             <EventList events={events && filteredEvents} year={year} hidePast={hidePast} onEdit={handleEdit} onDelete={handleDelete} />
           </div>
         </aside>
-
-        <YearViewCalendar
+        
+        <main className={user ? '' : 'unclickable'}>
+          <YearViewCalendar
           events={events && filteredEvents}
           onDelete={handleDelete}
           onEdit={handleEdit}
@@ -302,6 +303,7 @@ export default function App() {
           onYearChange={handleYearChange}
           loading={loading}
         />
+        </main>
       </Flex>
 
       <Modal

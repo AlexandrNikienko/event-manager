@@ -27,7 +27,7 @@ export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayC
   });
 
   return (
-    <main>
+    <>
       <Flex gap="middle" justify="center" align="center" className="controls">
         <Button color="default" variant="outlined" onClick={() => onYearChange(year - 1)}>
           <LeftOutlined />
@@ -58,6 +58,6 @@ export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayC
           })}
         </div>
       )}
-    </main>
+    </>
   );
 }
