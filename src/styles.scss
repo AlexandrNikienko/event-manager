@@ -86,13 +86,33 @@ main {
 .controls {
   position: absolute;
   left: 50%;
-  transform: translate(-50%, -48px);
+  transform: translate(-50%, -52px);
+
+  @media (max-width: 952px) {
+    left: auto;
+    right: 3.5rem;
+    transform: translate(0, -52px);
+  }
+
+  @media (max-width: 628px) {
+    position: static;
+    margin-bottom: 1rem;
+    transform: translate(0, -0);
+  }
 }
 
 .year-view {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
+
+  @media (min-width: 1332px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media (max-width: 1331px) {
+    grid-template-columns: repeat(auto-fit, minmax(252px, 1fr));
+  }
 }
 
 .month-title {
@@ -277,7 +297,11 @@ main {
   z-index: 10;
 }
 
-.user-avatar.pulse {
+.user-avatar {
+  cursor: pointer;
+}
+
+.pulse {
   animation: pulse 1.5s infinite;
   background-color: #f0f0f0;
   color: #555;
@@ -304,6 +328,10 @@ main {
 
 .p4 {
   padding: 4px;
+}
+
+.mb8 {
+  margin-bottom: 8px;
 }
 
 .unclickable {

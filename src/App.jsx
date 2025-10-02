@@ -4,7 +4,6 @@ import { PlusOutlined, UserOutlined, QuestionOutlined, LogoutOutlined, MenuUnfol
 import { useAuth } from "./AuthProvider.jsx";
 import { eventService } from './services/eventService';
 import { MONTH_NAMES } from "./utils/utils.js";
-import { DoubleArrowsIcon } from "./utils/icons";
 import EventForm from "./components/EventForm";
 import YearViewCalendar from "./components/YearViewCalendar";
 import { LoginButton } from "./components/LoginButton";
@@ -253,7 +252,7 @@ export default function App() {
           <PlusOutlined /> Add Event
         </Button>
 
-        {loading && <div>Loading events...</div>}
+        {user && loading && <div>Loading events...</div>}
 
         <div className="user">
           {loadingUser ? (
@@ -269,7 +268,7 @@ export default function App() {
                 <div className="custom-dropdown">
                   {user ? (
                     <>
-                      <div style={{ marginBottom: 8 }}>
+                      <div className="mb8">
                         <b>Welcome, {user.displayName}</b>
                         <span>{user.email}</span>
                       </div>
@@ -302,7 +301,6 @@ export default function App() {
                 className={`user-avatar ${!user ? "pulse" : ""}`}
                 src={user?.photoURL || (user ? null : undefined)}
                 icon={!user ? <QuestionOutlined /> : (!user?.photoURL && <UserOutlined />)}
-                style={{ cursor: "pointer" }}
               />
             </Dropdown>
           )}

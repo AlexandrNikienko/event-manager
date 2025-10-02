@@ -1,7 +1,6 @@
 @use "./utils.scss";
 
 .sidebar {
-  position: relative;
   transition: .3s;
   white-space: nowrap;
   z-index: 1;
@@ -11,6 +10,11 @@
 
   &.ant-layout-sider-collapsed {
     margin-inline-end: 0;
+  }
+
+  @media (max-width: 628px) {
+    position: fixed;
+    background-color: white;;
   }
 }
 
