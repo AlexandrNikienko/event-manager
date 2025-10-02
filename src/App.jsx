@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Flex, Modal, Input, Checkbox, Dropdown, Avatar, Spin, notification } from 'antd';
-import { PlusOutlined, UserOutlined, QuestionOutlined, LogoutOutlined } from "@ant-design/icons";
+import { PlusOutlined, UserOutlined, QuestionOutlined, LogoutOutlined, MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
 import { useAuth } from "./AuthProvider.jsx";
 import { eventService } from './services/eventService';
 import { MONTH_NAMES } from "./utils/utils.js";
@@ -10,6 +10,7 @@ import YearViewCalendar from "./components/YearViewCalendar";
 import { LoginButton } from "./components/LoginButton";
 import EventList from "./components/EventList.jsx";
 import rainbow from "./assets/rainbow.svg";
+import Sider from "antd/es/layout/Sider.js";
 
 // import { getFirestore, collection, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
 // const db = getFirestore();
@@ -24,7 +25,7 @@ export default function App() {
   const [year, setYear] = useState(new Date().getFullYear());
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [hidePast, setHidePast] = useState(true);
 
@@ -242,6 +243,10 @@ export default function App() {
       {notificationContextHolder}
 
       <header className="app-header">
+        <div className="sidebar-extender" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+          {isSidebarOpen ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
+        </div>
+
         <h1><img className="logo" src={rainbow} alt="Logo" />Life Palette</h1>
 
         <Button className="create-event-btn" onClick={handleCreateEvent} type="primary" disabled={!user}>
@@ -302,33 +307,33 @@ export default function App() {
             </Dropdown>
           )}
         </div>
-
       </header>
 
-      <Flex gap="large" align="start">
-        <aside className={`sidebar ${isSidebarOpen ? 'is-open' : ''}`}>
-          <div className="sidebar-extender" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-            <DoubleArrowsIcon />
-          </div>
+      <Flex gap="0" align="start">
+        <Sider className="sidebar"
+          trigger={null} 
+          collapsible collapsed={!isSidebarOpen}
+          collapsedWidth={0} width={300}
+          theme="light"
+        >
+            <div className="sidebar-inner">
+              <h2 className="sidebar-title">Events in {year}</h2>
 
-          <div className="sidebar-inner">
-            <h2 className="sidebar-title">Events in {year}</h2>
+              <div className="sidebar-search">
+                <Input className="search-input"
+                  name="search"
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search event"
+                />
 
-            <div className="sidebar-search">
-              <Input className="search-input"
-                name="search"
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search event"
-              />
+                <Checkbox checked={hidePast} onChange={() => setHidePast(!hidePast)}>Hide past</Checkbox>
+              </div>
 
-              <Checkbox checked={hidePast} onChange={() => setHidePast(!hidePast)}>Hide past</Checkbox>
+              <EventList events={events && filteredEvents} year={year} hidePast={hidePast} onEdit={handleEdit} onDelete={handleDelete} />
             </div>
-
-            <EventList events={events && filteredEvents} year={year} hidePast={hidePast} onEdit={handleEdit} onDelete={handleDelete} />
-          </div>
-        </aside>
+        </Sider>
         
         <main className={user ? '' : 'unclickable'}>
           <YearViewCalendar

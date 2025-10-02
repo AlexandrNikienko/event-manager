@@ -18,7 +18,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
-  background: var(--background-color) url(/src/assets/rainbow.svg) no-repeat center / cover;
+  background: var(--background-color) url(/src/assets/rainbow.svg) no-repeat center / cover fixed;
   backdrop-filter: saturate(30%) blur(30px);
 }
 
@@ -246,14 +246,8 @@ main {
   padding: .5rem;
 }
 
-.month-card,
-.sidebar {
-  /* From https://css.glass */
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 16px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(12px);
+.month-card {
+  @extend %glass-background;
 }
 
 .ellipsis {
