@@ -67,6 +67,40 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
     layout: "horizontal",
   };
 
+  const [loadingAI, setLoadingAI] = useState(false);
+
+  async function handleAIDescription() {
+    const { name, year, month, day } = form.getFieldsValue();
+    if (!name) return alert("Please enter an event name first");
+
+    const date =
+      year === "unknown"
+        ? `month ${month}, day ${day}`
+        : `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+    setLoadingAI(true);
+    try {
+      const res = await fetch("/.netlify/functions/ai-assistant", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: name, date }),
+      });
+
+      const data = await res.json();
+      if (data.text) {
+        form.setFieldValue("note", data.text);
+      } else {
+        alert("AI did not return a description");
+      }
+    } catch (err) {
+      console.error("AI request failed", err);
+      alert("Failed to get AI suggestion");
+    } finally {
+      setLoadingAI(false);
+    }
+  }
+
+
   return (
     <Form
       form={form}
@@ -83,6 +117,16 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
       <Form.Item name="note" label="Note" placeholder="Enter a note">
         <TextArea />
       </Form.Item>
+
+      <Button
+        type="dashed"
+        onClick={handleAIDescription}
+        disabled={loadingAI}
+        className="bg-gradient-to-r from-indigo-500 to-pink-500 text-white px-3 py-2 rounded-md flex items-center gap-2"
+      >
+        {/* <Sparkles size={16} /> */}
+        {loadingAI ? "Thinking..." : "Suggest with AI"}
+      </Button>
 
       <Form.Item label="Type" name="type">
         <Select options={EVENT_TYPES.map(t => ({
