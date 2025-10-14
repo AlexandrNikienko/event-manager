@@ -1,11 +1,15 @@
 import OpenAI from "openai";
 
 const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY2,
 });
+
 
 export async function handler(event) {
   try {
+    const body = JSON.parse(event.body);
+    console.log("AI function input:", body);
+
     const { title, date } = JSON.parse(event.body);
 
     const prompt = `
@@ -16,11 +20,13 @@ Date: ${date || "unspecified"}
 `;
 
     const response = await client.chat.completions.create({
-      model: "gpt-4o-mini", // fast, affordable, great for this use
+      model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
     });
 
     const text = response.choices[0].message.content.trim();
+
+    console.log("AI response:", text);
 
     return {
       statusCode: 200,

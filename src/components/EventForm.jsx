@@ -80,13 +80,16 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
 
     setLoadingAI(true);
     try {
+      console.error("try");
       const res = await fetch("/.netlify/functions/ai-assistant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: name, date }),
       });
+      console.error("res", res);
 
       const data = await res.json();
+      console.error("data", data);
       if (data.text) {
         form.setFieldValue("note", data.text);
       } else {
