@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext } from "react";
 import { Button, Flex, Modal, Input, Checkbox, Dropdown, Avatar, Spin, notification } from 'antd';
 import { PlusOutlined, UserOutlined, QuestionOutlined, LogoutOutlined, MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
 import { useAuth } from "./AuthProvider.jsx";
@@ -13,6 +13,8 @@ import Sider from "antd/es/layout/Sider.js";
 
 // import { getFirestore, collection, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
 // const db = getFirestore();
+
+export const GlobalStateContext = createContext(null);
 
 export default function App() {
   const [modal, contextHolder] = Modal.useModal();
@@ -335,14 +337,14 @@ export default function App() {
         
         <main className={user ? '' : 'unclickable'}>
           <YearViewCalendar
-          events={events && filteredEvents}
-          onDelete={handleDelete}
-          onEdit={handleEdit}
-          onDayClick={handleDayClick}
-          year={year}
-          onYearChange={handleYearChange}
-          loading={loading}
-        />
+            events={events && filteredEvents}
+            onDelete={handleDelete}
+            onEdit={handleEdit}
+            onDayClick={handleDayClick}
+            year={year}
+            onYearChange={handleYearChange}
+            loading={loading}
+          />
         </main>
       </Flex>
 

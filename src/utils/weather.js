@@ -28,6 +28,7 @@ export const WEATHER_ICONS = {
 };
 
 export async function getWeatherForecast(lat, lon) {
+  console.log('getWeatherForecast')
   const url = `https://api.open-meteo.com/v1/ecmwf?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`;
   const res = await fetch(url);
   const data = await res.json();

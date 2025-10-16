@@ -10,7 +10,10 @@ export default function EventList({ events = [], onEdit, onDelete, year, hidePas
     const [decorated, setDecorated] = useState(events);
 
     useEffect(() => {
-        decorateEventsWithWeather(events, year).then(setDecorated);
+        const t = setTimeout(() => {
+            decorateEventsWithWeather(events, year).then(setDecorated);
+        }, 300);
+        return () => clearTimeout(t);
     }, [events, year]);
 
     return (
