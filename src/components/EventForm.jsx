@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Form, Input, Select, Checkbox, Button, Flex, Radio, InputNumber } from "antd";
+import { Sparkles } from "lucide-react";
 import { daysInMonth, MONTH_NAMES, EVENT_TYPES } from "../utils/utils";
 import TextArea from "antd/es/input/TextArea";
 
@@ -70,7 +71,7 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
   const [loadingAI, setLoadingAI] = useState(false);
 
   async function handleAIDescription() {
-    const { name, year, month, day } = form.getFieldsValue();
+    const { name, year, month, day, type } = form.getFieldsValue();
     if (!name) return alert("Please enter an event name first");
 
     const date =
@@ -79,25 +80,24 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
         : `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
     setLoadingAI(true);
+
     try {
-      console.error("try");
       const res = await fetch("/.netlify/functions/ai-assistant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: name, date }),
+        body: JSON.stringify({ title: name, date, type }),
       });
-      console.error("res", res);
 
       const data = await res.json();
-      console.error("data", data);
-      if (data.text) {
-        form.setFieldValue("note", data.text);
+      console.log("AI response data:", data);
+
+      if (data.note) {
+        form.setFieldValue("note", data.note);
       } else {
-        alert("AI did not return a description");
+        alert("AI did not return a note");
       }
     } catch (err) {
       console.error("AI request failed", err);
-      alert("Failed to get AI suggestion");
     } finally {
       setLoadingAI(false);
     }
@@ -121,15 +121,14 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
         <TextArea />
       </Form.Item>
 
-      <Button
+      {/* <Button
         type="dashed"
         onClick={handleAIDescription}
         disabled={loadingAI}
-        className="bg-gradient-to-r from-indigo-500 to-pink-500 text-white px-3 py-2 rounded-md flex items-center gap-2"
       >
-        {/* <Sparkles size={16} /> */}
+        <Sparkles size={16} />
         {loadingAI ? "Thinking..." : "Suggest with AI"}
-      </Button>
+      </Button> */}
 
       <Form.Item label="Type" name="type">
         <Select options={EVENT_TYPES.map(t => ({
