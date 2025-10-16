@@ -291,6 +291,10 @@ main {
   margin-bottom: 1rem;
 }
 
+.ant-modal-root .ant-modal-wrap {
+  max-height: 100vh;
+}
+
 .user {
   position: absolute;
   right: 0;
