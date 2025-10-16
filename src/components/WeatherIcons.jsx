@@ -1,45 +1,43 @@
 import React from 'react';
-import { Cloud, CloudRain, CloudSnow, CloudDrizzle, Sun, CloudFog, Wind } from 'lucide-react';
+
+const iconsProps = {
+  viewBox: "0 0 24 24",
+  fill: "none",
+  xmlns: "http://www.w3.org/2000/svg",
+  role: "img",
+  strokeWidth: "2",
+  strokeLinecap: "round",
+  strokeLinejoin: "round",
+  stroke: "#4b89ec" 
+};
 
 function SunIcon({ size = 24 }) {
   return (
-    // <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img">
-    //   <defs>
-    //     <linearGradient id="gSun" x1="0" x2="1">
-    //       <stop offset="0%" stopColor="#FFD54A" />
-    //       <stop offset="100%" stopColor="#FFB74D" />
-    //     </linearGradient>
-    //   </defs>
-    //   <circle cx="12" cy="12" r="5" fill="url(#gSun)" />
-    //   <g stroke="#FFB74D" strokeWidth="1.4" strokeLinecap="round">
-    //     <line x1="12" y1="1.5" x2="12" y2="4.2" />
-    //     <line x1="12" y1="19.8" x2="12" y2="22.5" />
-    //     <line x1="1.5" y1="12" x2="4.2" y2="12" />
-    //     <line x1="19.8" y1="12" x2="22.5" y2="12" />
-    //     <line x1="4.2" y1="4.2" x2="6" y2="6" />
-    //     <line x1="18" y1="18" x2="19.8" y2="19.8" />
-    //     <line x1="4.2" y1="19.8" x2="6" y2="18" />
-    //     <line x1="18" y1="6" x2="19.8" y2="4.2" />
-    //   </g>
-    // </svg>
-
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#4b89ec" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img">
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2" />
-      <path d="M12 20v2" />
-      <path d="m4.93 4.93 1.41 1.41" />
-      <path d="m17.66 17.66 1.41 1.41" />
-      <path d="M2 12h2" />
-      <path d="M20 12h2" />
-      <path d="m6.34 17.66-1.41 1.41" />
-      <path d="m19.07 4.93-1.41 1.41" />
+    <svg width={size} height={size} {...iconsProps}>
+      <defs>
+        <linearGradient id="gSun" x1="0" x2="1">
+          <stop offset="0%" stopColor="#FFD54A" />
+          <stop offset="100%" stopColor="#FFB74D" />
+        </linearGradient>
+      </defs>
+      <circle cx="12" cy="12" r="4" strokeWidth="0" fill="url(#gSun)"/>
+      <g stroke="#FFB74D">
+        <path d="M12 2v2" />
+        <path d="M12 20v2" />
+        <path d="m4.93 4.93 1.41 1.41" />
+        <path d="m17.66 17.66 1.41 1.41" />
+        <path d="M2 12h2" />
+        <path d="M20 12h2" />
+        <path d="m6.34 17.66-1.41 1.41" />
+        <path d="m19.07 4.93-1.41 1.41" />
+      </g>
     </svg>
   );
 }
 
 function PartlyCloudyIcon({ size = 24 }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#4b89ec" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img">
+    <svg width={size} height={size} {...iconsProps}>
       <path d="M12 2v2" />
       <path d="m4.93 4.93 1.41 1.41" />
       <path d="M20 12h2" />
@@ -52,7 +50,7 @@ function PartlyCloudyIcon({ size = 24 }) {
 
 function CloudyIcon({ size = 24 }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#4b89ec" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img">
+    <svg width={size} height={size} {...iconsProps}>
       <path d="M17.5 21H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
       <path d="M22 10a3 3 0 0 0-3-3h-2.207a5.502 5.502 0 0 0-10.702.5" />
     </svg>
@@ -61,7 +59,7 @@ function CloudyIcon({ size = 24 }) {
 
 function CloudFogIcon({ size = 24 }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#4b89ec" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img">
+    <svg width={size} height={size} {...iconsProps}>
       <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
       <path d="M16 17H7" />
       <path d="M17 21H9" />
@@ -71,7 +69,7 @@ function CloudFogIcon({ size = 24 }) {
 
 function CloudDrizzleIcon({ size = 24 }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#4b89ec" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img">
+    <svg width={size} height={size} {...iconsProps}>
       <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
       <path d="M8 19v1"/>
       <path d="M8 14v1"/>
@@ -85,7 +83,7 @@ function CloudDrizzleIcon({ size = 24 }) {
 
 function CloudRainIcon({ size = 24 }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#4b89ec" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img">
+    <svg width={size} height={size} {...iconsProps}>
       <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
       <path d="M16 14v6" />
       <path d="M8 14v6" />
@@ -96,7 +94,7 @@ function CloudRainIcon({ size = 24 }) {
 
 function SnowIcon({ size = 24 }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#4b89ec" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img">
+    <svg width={size} height={size} {...iconsProps}>
       <path d="m10 20-1.25-2.5L6 18" />
       <path d="M10 4 8.75 6.5 6 6" />
       <path d="m14 20 1.25-2.5L18 18" />
@@ -115,7 +113,7 @@ function SnowIcon({ size = 24 }) {
 
 function ThunderIcon({ size = 24 }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#4b89ec" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" role="img">
+    <svg width={size} height={size} {...iconsProps}>
       <path d="M6 16.326A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 .5 8.973" />
       <path d="m13 12-3 5h4l-3 5" />
     </svg>
