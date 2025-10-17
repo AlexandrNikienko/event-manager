@@ -38,7 +38,6 @@ export default function MonthGrid({ month, eventsMap = {}, onDelete, onEdit, onD
             {events.slice(0, 4).map((e, i) => (
               <div key={i} className="dot" title={e.name}></div>
             ))}
-            {/* {events.length > 4 && <span className="more">+</span>} */}
           </div>
         )}
 

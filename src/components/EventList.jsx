@@ -3,7 +3,6 @@ import { Button, Flex } from "antd";
 import { getAge, isEventInPast, MONTH_NAMES, getEventTypeIcon } from "../utils/utils";
 import { DeleteIcon, EditIcon } from "../utils/icons";
 import { decorateEventsWithWeather } from "../hooks/useWeatherForEvents";
-import "../styles/EventList.scss";
 import WeatherIcon from "./WeatherIcons";
 import { GlobalStateContext } from "../App";
 
