@@ -14,13 +14,14 @@ import Sider from "antd/es/layout/Sider.js";
 // import { getFirestore, collection, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
 // const db = getFirestore();
 
-export const GlobalStateContext = createContext(null);
+export const GlobalStateContext = createContext(new Date().getFullYear());
 
 export default function App() {
   const [modal, contextHolder] = Modal.useModal();
   const [note, notificationContextHolder] = notification.useNotification();
 
   const [events, setEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
   const [editingEvent, setEditingEvent] = useState(null);
   const [newEvent, setNewEvent] = useState(null);
   const [year, setYear] = useState(new Date().getFullYear());
@@ -213,154 +214,154 @@ export default function App() {
     setEditingEvent(null);
   };
 
-  // Sidebar logic
-  const eventsOfYear = events.filter(e => e.isRecurring || e.year === year);
+  useEffect(() => {
+    // Sidebar logic
+    const eventsOfYear = events.filter(e => e.isRecurring || e.year === year).sort((a, b) => {
+      if (a.month !== b.month) return a.month - b.month;
+      return a.day - b.day;
+    });
 
-  eventsOfYear.sort((a, b) => {
-    if (a.month !== b.month) return a.month - b.month;
-    return a.day - b.day;
-  });
+    const filteredEvents = eventsOfYear.filter(event => {
+      const term = searchTerm.toLowerCase();
+      return (
+        event.name.toLowerCase().includes(term) ||
+        (event.note && event.note.toLowerCase().includes(term)) //search in title and notes
+      );
+    });
 
-  // Handler to update year from YearViewCalendar
-  const handleYearChange = (newYear) => {
-    setYear(newYear);
-  };
+    console.log('Filtered events updated:', filteredEvents);
 
-  const filteredEvents = eventsOfYear.filter(event => {
-    const term = searchTerm.toLowerCase();
-    return (
-      event.name.toLowerCase().includes(term) ||
-      (event.note && event.note.toLowerCase().includes(term))
-    );
-  });
+    setFilteredEvents(filteredEvents);
+  }, [events, searchTerm]);
 
   if (error) {
     return <div className="error">{error}</div>;
   }
 
   return (
-    <div className="app">
-      {contextHolder}
-      {notificationContextHolder}
+    <GlobalStateContext.Provider value={{ year, setYear }}>
+      <div className="app">
+        {contextHolder}
+        {notificationContextHolder}
 
-      <header className="app-header">
-        <div className="sidebar-extender" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-          {isSidebarOpen ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
-        </div>
+        <header className="app-header">
+          <div className="sidebar-extender" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+            {isSidebarOpen ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
+          </div>
 
-        <h1><img className="logo" src={rainbow} alt="Logo" />Life Palette</h1>
+          <h1><img className="logo" src={rainbow} alt="Logo" />Life Palette</h1>
 
-        <Button className="create-event-btn" onClick={handleCreateEvent} type="primary" disabled={!user}>
-          <PlusOutlined /> Add Event
-        </Button>
+          <Button className="create-event-btn" onClick={handleCreateEvent} type="primary" disabled={!user}>
+            <PlusOutlined /> Add Event
+          </Button>
 
-        {user && loading && <div>Loading events...</div>}
+          {user && loading && <div>Loading events...</div>}
 
-        <div className="user">
-          {loadingUser ? (
-            <Spin />
-          ) : (
-            <Dropdown
-              arrow
-              trigger={["hover"]}
-              open={open}
-              onOpenChange={setOpen}
-              placement="bottomRight"
-              popupRender={() => (
-                <div className="custom-dropdown">
-                  {user ? (
-                    <>
-                      <div className="mb8">
-                        <b>Welcome, {user.displayName}</b>
-                        <span>{user.email}</span>
+          <div className="user">
+            {loadingUser ? (
+              <Spin />
+            ) : (
+              <Dropdown
+                arrow
+                trigger={["hover"]}
+                open={open}
+                onOpenChange={setOpen}
+                placement="bottomRight"
+                popupRender={() => (
+                  <div className="custom-dropdown">
+                    {user ? (
+                      <>
+                        <div className="mb8">
+                          <b>Welcome, {user.displayName}</b>
+                          <span>{user.email}</span>
+                        </div>
+                        
+                        <Button
+                          block
+                          danger
+                          type="primary"
+                          icon={<LogoutOutlined />}
+                          onClick={() => {
+                            logout();
+                            setOpen(false);
+                          }}
+                        >
+                          Logout
+                        </Button>
+                      </>
+                    ) : (
+                      <div>
+                        Please, <LoginButton />
+                        <br />
+                        to activate the functionality
                       </div>
-                      
-                      <Button
-                        block
-                        danger
-                        type="primary"
-                        icon={<LogoutOutlined />}
-                        onClick={() => {
-                          logout();
-                          setOpen(false);
-                        }}
-                      >
-                        Logout
-                      </Button>
-                    </>
-                  ) : (
-                    <div>
-                      Please, <LoginButton />
-                      <br />
-                      to activate the functionality
-                    </div>
-                  )}
-                </div>
-              )}
-            >
-              <Avatar
-                size={"large"}
-                className={`user-avatar ${!user ? "pulse" : ""}`}
-                src={user?.photoURL || (user ? null : undefined)}
-                icon={!user ? <QuestionOutlined /> : (!user?.photoURL && <UserOutlined />)}
-              />
-            </Dropdown>
-          )}
-        </div>
-      </header>
-
-      <Flex gap="0" align="start">
-        <Sider className="sidebar"
-          trigger={null} 
-          collapsible collapsed={!isSidebarOpen}
-          collapsedWidth={0} width={300}
-          theme="light"
-        >
-            <div className="sidebar-inner">
-              <h2 className="sidebar-title">Events in {year}</h2>
-
-              <div className="sidebar-search">
-                <Input className="search-input"
-                  name="search"
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search event"
+                    )}
+                  </div>
+                )}
+              >
+                <Avatar
+                  size={"large"}
+                  className={`user-avatar ${!user ? "pulse" : ""}`}
+                  src={user?.photoURL || (user ? null : undefined)}
+                  icon={!user ? <QuestionOutlined /> : (!user?.photoURL && <UserOutlined />)}
                 />
+              </Dropdown>
+            )}
+          </div>
+        </header>
 
-                <Checkbox checked={hidePast} onChange={() => setHidePast(!hidePast)}>Hide past</Checkbox>
+        <Flex gap="0" align="start">
+          <Sider className="sidebar"
+            trigger={null} 
+            collapsible collapsed={!isSidebarOpen}
+            collapsedWidth={0} width={300}
+            theme="light"
+          >
+              <div className="sidebar-inner">
+                <h2 className="sidebar-title">Events in {year}</h2>
+
+                <div className="sidebar-search">
+                  <Input className="search-input"
+                    name="search"
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search event"
+                  />
+
+                  <Checkbox checked={hidePast} onChange={() => setHidePast(!hidePast)}>Hide past</Checkbox>
+                </div>
+
+                <EventList events={events && filteredEvents} hidePast={hidePast} onEdit={handleEdit} onDelete={handleDelete} />
               </div>
+          </Sider>
+          
+          <main className={user ? '' : 'unclickable'}>
+              <YearViewCalendar
+                events={events && filteredEvents}
+                onDelete={handleDelete}
+                onEdit={handleEdit}
+                onDayClick={handleDayClick}
+                loading={loading}
+              />
+            
+          </main>
+        </Flex>
 
-              <EventList events={events && filteredEvents} year={year} hidePast={hidePast} onEdit={handleEdit} onDelete={handleDelete} />
-            </div>
-        </Sider>
-        
-        <main className={user ? '' : 'unclickable'}>
-          <YearViewCalendar
-            events={events && filteredEvents}
-            onDelete={handleDelete}
-            onEdit={handleEdit}
-            onDayClick={handleDayClick}
-            year={year}
-            onYearChange={handleYearChange}
-            loading={loading}
-          />
-        </main>
-      </Flex>
-
-      <Modal
-        title={editingEvent ? "Edit Event" : "Add Event"}
-        closable={{ 'aria-label': 'Custom Close Button' }}
-        open={isModalOpen}
-        onCancel={handleCancel}
-        footer={null}
-      >
-        <EventForm
-          onSubmit={handleEventSubmit}
-          initial={editingEvent || newEvent}
+        <Modal
+          title={editingEvent ? "Edit Event" : "Add Event"}
+          closable={{ 'aria-label': 'Custom Close Button' }}
+          open={isModalOpen}
           onCancel={handleCancel}
-        />
-      </Modal>
-    </div>
+          footer={null}
+        >
+          <EventForm
+            onSubmit={handleEventSubmit}
+            initialEvent={editingEvent || newEvent}
+            onCancel={handleCancel}
+          />
+        </Modal>
+      </div>
+    </GlobalStateContext.Provider>
   );
 }

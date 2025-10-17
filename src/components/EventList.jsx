@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, Flex } from "antd";
 import { getAge, isEventInPast, MONTH_NAMES, getEventTypeIcon } from "../utils/utils";
 import { DeleteIcon, EditIcon } from "../utils/icons";
 import { decorateEventsWithWeather } from "../hooks/useWeatherForEvents";
 import "../styles/EventList.scss";
 import WeatherIcon from "./WeatherIcons";
+import { GlobalStateContext } from "../App";
 
-export default function EventList({ events = [], onEdit, onDelete, year, hidePast, hideDate = false }) {
+export default function EventList({ events = [], onEdit, onDelete, hidePast, hideDate = false }) {
+    const { year } = useContext(GlobalStateContext);
     const [decorated, setDecorated] = useState(events);
 
     useEffect(() => {

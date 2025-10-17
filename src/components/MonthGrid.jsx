@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { MONTH_NAMES, daysInMonth, WEEKDAYS } from "../utils/utils";
 import DayTooltip from "./DayTooltip";
+import { GlobalStateContext } from "../App";
 
-export default function MonthGrid({ month, year, eventsMap = {}, onDelete, onEdit, onDayClick }) {
+export default function MonthGrid({ month, eventsMap = {}, onDelete, onEdit, onDayClick }) {
+  const { year } = useContext(GlobalStateContext);
   const days = daysInMonth(month, year);
 
   // Get today's date
@@ -40,7 +42,7 @@ export default function MonthGrid({ month, year, eventsMap = {}, onDelete, onEdi
           </div>
         )}
 
-        <DayTooltip events={events} onDelete={onDelete} onEdit={onEdit} year={year}/>
+        <DayTooltip events={events} onDelete={onDelete} onEdit={onEdit}/>
       </div>
     );
   }

@@ -23,6 +23,7 @@ export function getAge(event, currentYear) {
 };
 
 export function isEventInPast(event, year) {
+  // console.log('isEventInPast called with event:', event, 'year:', year);
   const today = new Date();
   const eventYear = event.isRecurring ? year : event.year;
   const eventDate = new Date(eventYear, event.month - 1, event.day);

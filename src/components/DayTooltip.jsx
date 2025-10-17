@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Tooltip } from "antd";
 import EventList from "./EventList";
+import { GlobalStateContext } from "../App";
 
-export default function DayTooltip({ events = [], onDelete, onEdit, year }) {
+export default function DayTooltip({ events = [], onDelete, onEdit }) {
   const [open, setOpen] = useState(false);
 
   if (!events || events.length === 0) return null;
@@ -15,7 +16,7 @@ export default function DayTooltip({ events = [], onDelete, onEdit, year }) {
       open={open}
       onOpenChange={setOpen}
       title={
-        <EventList events={events} year={year} onDelete={onDelete} hideDate={true} 
+        <EventList events={events} onDelete={onDelete} hideDate={true} 
           onEdit={(id) => {
             setOpen(false);
             onEdit?.(id);

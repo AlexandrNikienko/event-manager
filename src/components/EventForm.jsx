@@ -4,23 +4,23 @@ import { Sparkles } from "lucide-react";
 import { daysInMonth, MONTH_NAMES, EVENT_TYPES } from "../utils/utils";
 import TextArea from "antd/es/input/TextArea";
 
-export default function EventForm({ onSubmit, initial, onCancel }) {
+export default function EventForm({ onSubmit, initialEvent, onCancel }) {
   const [form] = Form.useForm();
 
   const [yearOption, setYearOption] = useState(
-    initial?.year === "unknown" ? "unknown" : "year"
+    initialEvent?.year === "unknown" ? "unknown" : "year"
   );
 
-  console.log('Initial values:', initial);
+  console.log('Initial values:', initialEvent);
 
   useEffect(() => {
-    form.setFieldsValue(initial);
-    if (initial?.year === "unknown") {
+    form.setFieldsValue(initialEvent);
+    if (initialEvent?.year === "unknown") {
       setYearOption("unknown");
     } else {
       setYearOption("year");
     }
-  }, [initial, form]);
+  }, [initialEvent, form]);
 
   useEffect(() => {
     if (yearOption === "unknown") {
@@ -107,7 +107,7 @@ export default function EventForm({ onSubmit, initial, onCancel }) {
   return (
     <Form
       form={form}
-      initialValues={initial}
+      initialValues={initialEvent}
       labelCol={{ span: 6 }}
       wrapperCol={{ span: 18 }}
       layout="horizontal"

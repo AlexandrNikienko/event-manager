@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Button, Flex } from 'antd';
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { daysInMonth } from "../utils/utils";
 import MonthGrid from "./MonthGrid";
+import { GlobalStateContext } from "../App";
 
-export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayClick, onYearChange, year, loading }) {
-  const currentYear = new Date().getFullYear();
+export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayClick, loading }) {
+  const { year, setYear } = useContext(GlobalStateContext);
 
   // console.log('loading:', loading);
 
@@ -29,13 +30,13 @@ export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayC
   return (
     <>
       <Flex gap="middle" justify="center" align="center" className="controls">
-        <Button color="default" variant="outlined" onClick={() => onYearChange(year - 1)}>
+        <Button color="default" variant="outlined" onClick={() => setYear(year - 1)}>
           <LeftOutlined />
         </Button>
 
         <b>{year}</b>
 
-        <Button color="default" variant="outlined" onClick={() => onYearChange(year + 1)}>
+        <Button color="default" variant="outlined" onClick={() => setYear(year + 1)}>
           <RightOutlined />
         </Button>
       </Flex>
@@ -48,7 +49,6 @@ export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayC
               <MonthGrid
                 key={monthIndex}
                 month={monthIndex}
-                year={year}
                 eventsMap={map[monthIndex]}
                 onDelete={onDelete}
                 onEdit={onEdit}

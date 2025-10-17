@@ -169,9 +169,9 @@ main {
   right: 0;
   display: flex;
   gap: 2px;
-  justify-content: end;
   flex-wrap: wrap;
-  max-width: 18px;
+  max-width: 14px;
+  transform: rotateX(180deg);
 }
 
 .more {

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const iconsProps = {
+const iconProps = {
   viewBox: "0 0 24 24",
   fill: "none",
   xmlns: "http://www.w3.org/2000/svg",
@@ -13,7 +13,7 @@ const iconsProps = {
 
 function SunIcon({ size = 24 }) {
   return (
-    <svg width={size} height={size} {...iconsProps}>
+    <svg width={size} height={size} {...iconProps}>
       <defs>
         <linearGradient id="gSun" x1="0" x2="1">
           <stop offset="0%" stopColor="#FFD54A" />
@@ -37,12 +37,14 @@ function SunIcon({ size = 24 }) {
 
 function PartlyCloudyIcon({ size = 24 }) {
   return (
-    <svg width={size} height={size} {...iconsProps}>
-      <path d="M12 2v2" />
-      <path d="m4.93 4.93 1.41 1.41" />
-      <path d="M20 12h2" />
-      <path d="m19.07 4.93-1.41 1.41" />
-      <path d="M15.947 12.65a4 4 0 0 0-5.925-4.128" />
+    <svg width={size} height={size} {...iconProps}>
+      <g stroke="#FFB74D">
+        <path d="M12 2v2" />
+        <path d="m4.93 4.93 1.41 1.41" />
+        <path d="M20 12h2" />
+        <path d="m19.07 4.93-1.41 1.41" />
+        <path d="M15.947 12.65a4 4 0 0 0-5.925-4.128" />
+      </g>
       <path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z" />
     </svg>
   );
@@ -50,7 +52,7 @@ function PartlyCloudyIcon({ size = 24 }) {
 
 function CloudyIcon({ size = 24 }) {
   return (
-    <svg width={size} height={size} {...iconsProps}>
+    <svg width={size} height={size} {...iconProps}>
       <path d="M17.5 21H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
       <path d="M22 10a3 3 0 0 0-3-3h-2.207a5.502 5.502 0 0 0-10.702.5" />
     </svg>
@@ -59,7 +61,7 @@ function CloudyIcon({ size = 24 }) {
 
 function CloudFogIcon({ size = 24 }) {
   return (
-    <svg width={size} height={size} {...iconsProps}>
+    <svg width={size} height={size} {...iconProps}>
       <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
       <path d="M16 17H7" />
       <path d="M17 21H9" />
@@ -69,7 +71,7 @@ function CloudFogIcon({ size = 24 }) {
 
 function CloudDrizzleIcon({ size = 24 }) {
   return (
-    <svg width={size} height={size} {...iconsProps}>
+    <svg width={size} height={size} {...iconProps}>
       <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
       <path d="M8 19v1"/>
       <path d="M8 14v1"/>
@@ -83,7 +85,7 @@ function CloudDrizzleIcon({ size = 24 }) {
 
 function CloudRainIcon({ size = 24 }) {
   return (
-    <svg width={size} height={size} {...iconsProps}>
+    <svg width={size} height={size} {...iconProps}>
       <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
       <path d="M16 14v6" />
       <path d="M8 14v6" />
@@ -94,7 +96,7 @@ function CloudRainIcon({ size = 24 }) {
 
 function SnowIcon({ size = 24 }) {
   return (
-    <svg width={size} height={size} {...iconsProps}>
+    <svg width={size} height={size} {...iconProps}>
       <path d="m10 20-1.25-2.5L6 18" />
       <path d="M10 4 8.75 6.5 6 6" />
       <path d="m14 20 1.25-2.5L18 18" />
@@ -113,9 +115,9 @@ function SnowIcon({ size = 24 }) {
 
 function ThunderIcon({ size = 24 }) {
   return (
-    <svg width={size} height={size} {...iconsProps}>
+    <svg width={size} height={size} {...iconProps}>
       <path d="M6 16.326A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 .5 8.973" />
-      <path d="m13 12-3 5h4l-3 5" />
+      <path stroke="#FFB74D" d="m13 12-3 5h4l-3 5" />
     </svg>
   );
 }
@@ -174,7 +176,7 @@ export const WEATHER_DESC = {
 
 export default function WeatherIcon({ code ,size }) {
   //console.log("WeatherIcon", code);
-  if (code === 0) return <SunIcon size={size}/>;
+  if (code === 0) return <SunIcon size={size} />;
   if (code <= 2) return <PartlyCloudyIcon size={size} />;
   if (code <= 3) return <CloudyIcon size={size} />;
   if (code >= 45 && code <= 48) return <CloudFogIcon size={size} />;
@@ -182,7 +184,7 @@ export default function WeatherIcon({ code ,size }) {
   if (code >= 61 && code <= 67) return <CloudRainIcon size={size} />;
   if (code >= 71 && code <= 86) return <SnowIcon size={size} />;
   if (code >= 95) return <ThunderIcon size={size} />;
-  return "?";
+  return "";
 };
 
 export const getWeatherDescription = (code) => {
