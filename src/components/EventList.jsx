@@ -47,7 +47,7 @@ export default function EventList({ events = [], onEdit, onDelete, hidePast, hid
                             }}
                         >
                             <span className="event-list__date" hidden={hideDate}>
-                                {MONTH_NAMES[event.month - 1].slice(0, 3)} {event.day}
+                                {MONTH_NAMES[event.month - 1]?.slice(0, 3)} {event.day}
                             </span>
 
                             <span className="event-list__icon">

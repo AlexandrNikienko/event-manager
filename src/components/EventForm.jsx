@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Form, Input, Select, Checkbox, Button, Flex, Radio, InputNumber } from "antd";
+import React, { useEffect, useState } from "react";
+import { Form, Input, Select, Checkbox, Button, Flex } from "antd";
 import { Sparkles } from "lucide-react";
-import { daysInMonth, MONTH_NAMES, EVENT_TYPES } from "../utils/utils";
+import { EVENT_TYPES } from "../utils/utils";
 import TextArea from "antd/es/input/TextArea";
+import DatePicker from "./DatePicker";
 
 export default function EventForm({ onSubmit, initialEvent, onCancel }) {
   const [form] = Form.useForm();
@@ -11,54 +12,57 @@ export default function EventForm({ onSubmit, initialEvent, onCancel }) {
     initialEvent?.year === "unknown" ? "unknown" : "year"
   );
 
-  console.log('Initial values:', initialEvent);
+  const [selectedDate, setSelectedDate] = useState({
+    year: initialEvent?.year,
+    month: initialEvent?.month - 1,
+    day: initialEvent?.day,
+  });
+
+  const date = Form.useWatch("date", form) || {};
 
   useEffect(() => {
+    console.log('Selected date changed:', selectedDate);
+  }, [selectedDate]);
+
+  useEffect(() => {
+    //console.log('Setting form values to:', initialEvent);
     form.setFieldsValue(initialEvent);
     if (initialEvent?.year === "unknown") {
       setYearOption("unknown");
     } else {
       setYearOption("year");
     }
+    setSelectedDate({
+      year: initialEvent?.year,
+      month: initialEvent?.month - 1,
+      day: initialEvent?.day,
+    })
+    //console.log('Initial values:', initialEvent);
   }, [initialEvent, form]);
 
   useEffect(() => {
-    if (yearOption === "unknown") {
+    setYearOption(date.year === "unknown" ? "unknown" : "year");
+    if (date?.year === "unknown") {
       form.setFieldsValue({ isRecurring: true });
     }
-  }, [yearOption, form]);
-
-  const currentYear = new Date().getFullYear();
-
-  // Watch form values
-  const month = Form.useWatch("month", form) || 1;
-  const year = Form.useWatch("year", form) || "unknown";
-  const day = Form.useWatch("day", form) || 1;
-
-  // Calculate days count based on month + year
-  const daysCount = useMemo(() => {
-    if (year === "unknown" && month === 2) return 29;
-    if (year === "unknown") return daysInMonth(month, 2024);
-    return daysInMonth(month, Number(year));
-  }, [month, year]);
-
-  // Auto-correct day if invalid
-  useEffect(() => {
-    if (day > daysCount) {
-      form.setFieldsValue({ day: daysCount });
-    }
-  }, [day, daysCount, form]);
+  }, [date, form]);
 
   const handleSubmit = async (e) => {
     let values = form.getFieldsValue();
+    values = {
+      ...values,
+      ...selectedDate
+    };
+    values.month = values.month + 1; // Adjust month from 0-11 to 1-12
+    delete values.date;
 
-    // Normalize year based on option
     if (yearOption === "unknown") {
       values.year = "unknown";
     }
 
-    console.log('Submitting with values:', form.getFieldsValue());
-    await onSubmit(form.getFieldsValue());
+    console.log('Submitting with values:', values);
+    //return
+    await onSubmit(values);
     form.resetFields();
   };
 
@@ -130,62 +134,18 @@ export default function EventForm({ onSubmit, initialEvent, onCancel }) {
         {loadingAI ? "Thinking..." : "Suggest with AI"}
       </Button> */}
 
-      <Form.Item label="Type" name="type">
+      <Form.Item label="Type" name="type" rules={[{ required: true }]} placeholder="Enter a type">
         <Select options={EVENT_TYPES.map(t => ({
           value: t.value,
           label: `${t.icon} ${t.label}`,
         }))} />
       </Form.Item>
 
-      <Form.Item label="Month" name="month">
-        <Select options={MONTH_NAMES.map((m, i) => ({
-          value: i + 1,
-          label: m,
-        }))} />
-      </Form.Item>
-
-      <Form.Item label="Day" name="day">
-        <Select options={[...Array(daysCount)].map((_, i) => ({
-          value: i + 1,
-          label: i + 1
-        }))} />
-      </Form.Item>
-
-      <Form.Item label="Year">
-        <Radio.Group
-          value={yearOption}
-          onChange={(e) => {
-            const val = e.target.value;
-            setYearOption(val);
-            if (val === "unknown") {
-              form.setFieldsValue({ year: "unknown" });
-            } else {
-              form.setFieldsValue({ year: currentYear });
-            }
-          }}
-        >
-          <Radio value="year">
-            <Form.Item
-              noStyle
-              name="year"
-              rules={[
-                {
-                  required: yearOption === "year",
-                  message: "Please enter year",
-                },
-              ]}
-            >
-              <InputNumber
-                min={1900}
-                max={currentYear + 50}
-                style={{ width: 120, marginLeft: 8 }}
-                disabled={yearOption !== "year"}
-              />
-            </Form.Item>
-          </Radio>
-
-          <Radio value="unknown">Unknown</Radio>
-        </Radio.Group>
+      <Form.Item label="Date" name="date">
+        <DatePicker
+          date={selectedDate}
+          onChange={setSelectedDate}
+        />
       </Form.Item>
 
       <Form.Item name="isRecurring" valuePropName="checked" style={{ marginLeft: 118 }}>

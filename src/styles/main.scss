@@ -19,6 +19,7 @@ body {
   min-height: 100vh;
   background: var(--background-color) url(/src/assets/rainbow.svg) no-repeat center / cover fixed;
   backdrop-filter: saturate(30%) blur(30px);
+  min-width: 360px
 }
 
 .login-prompt {

@@ -14,7 +14,7 @@ import Sider from "antd/es/layout/Sider.js";
 // import { getFirestore, collection, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
 // const db = getFirestore();
 
-export const GlobalStateContext = createContext(new Date().getFullYear());
+export const GlobalStateContext = createContext();
 
 export default function App() {
   const [modal, contextHolder] = Modal.useModal();
@@ -22,6 +22,7 @@ export default function App() {
 
   const [events, setEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
+  const [initialEvent, setInitialEvent] = useState([]);
   const [editingEvent, setEditingEvent] = useState(null);
   const [newEvent, setNewEvent] = useState(null);
   const [year, setYear] = useState(new Date().getFullYear());
@@ -154,13 +155,13 @@ export default function App() {
   const handleDayClick = (date) => {
     console.log('Day clicked:', date);
     setNewEvent({
-      name: "",
-      note: "",
+      name: '',
+      note: '',
       month: date.month,
       day: date.day,
       year: date.year,
       isRecurring: true,
-      type: "birthday",
+      type: '',
     });
     setIsModalOpen(true);
   };
@@ -171,7 +172,7 @@ export default function App() {
 
     modal.confirm({
       title: "Are you sure you want to delete this event?",
-      content: event ? `${event.name} (${MONTH_NAMES[event.month - 1].slice(0, 3)} ${event.day})` : "This event",
+      content: event ? `${event.name} (${MONTH_NAMES[event.month - 1]?.slice(0, 3)} ${event.day})` : "This event",
       okText: "Yes, delete",
       okType: "danger",
       cancelText: "Cancel",
@@ -204,11 +205,11 @@ export default function App() {
     setNewEvent({
       name: '',
       note: '',
-      month: 1,
-      day: 1,
+      month: new Date().getMonth() + 1,
+      day: new Date().getDate(),
+      year: new Date().getFullYear(),
       isRecurring: true,
-      year: "unknown",
-      type: "birthday",
+      type: '',
     });
     showModal(true);
     setEditingEvent(null);
@@ -233,6 +234,10 @@ export default function App() {
 
     setFilteredEvents(filteredEvents);
   }, [events, searchTerm]);
+
+  useEffect(() => {
+    setInitialEvent([editingEvent || newEvent]);
+  }, [editingEvent, newEvent]);
 
   if (error) {
     return <div className="error">{error}</div>;
@@ -357,7 +362,7 @@ export default function App() {
         >
           <EventForm
             onSubmit={handleEventSubmit}
-            initialEvent={editingEvent || newEvent}
+            initialEvent={initialEvent[0]}
             onCancel={handleCancel}
           />
         </Modal>

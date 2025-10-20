@@ -1,0 +1,225 @@
+.date-picker {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  font-family: system-ui, sans-serif;
+
+  .dp-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 6px;
+  }
+
+  .dp-input-wrapper {
+    position: relative;
+  }
+
+  .dp-input {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s border-color ease;
+
+    &:hover {
+      border-color: #999;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #007bff;
+    }
+
+    .dp-input-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      span {
+        color: #222;
+      }
+
+      .dp-icon {
+        color: #888;
+      }
+    }
+
+    .dp-chevron {
+      transition: transform 0.2s;
+      color: #666;
+      &.open {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .dp-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+  }
+
+  .dp-popup {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 20;
+    padding: 12px;
+  }
+
+  .dp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+
+    .dp-nav {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      &:hover {
+        background: #f3f3f3;
+      }
+    }
+
+    .dp-header-center {
+      display: flex;
+      gap: 6px;
+
+      button {
+        background: none;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        &:hover {
+          background: #f3f3f3;
+        }
+      }
+    }
+  }
+
+  .dp-weekdays,
+  .dp-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+
+  .dp-weekday {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    padding: 4px 0;
+  }
+
+  .dp-day-cell {
+    aspect-ratio: 1;
+  }
+
+  .dp-day-btn {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s background-color;
+
+    &.selected {
+      background: #007bff;
+      color: white;
+      font-weight: 600;
+    }
+
+    &:hover:not(.selected) {
+      background: #f2f2f2;
+    }
+  }
+
+  .dp-subheader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+
+    h3 {
+      font-size: 16px;
+      margin: 0;
+      color: #333;
+    }
+
+    .dp-back {
+      background: none;
+      border: none;
+      color: #007bff;
+      cursor: pointer;
+    }
+  }
+
+  .dp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+
+    &.scroll {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+  }
+
+  .dp-grid-btn {
+    border: none;
+    padding: 6px;
+    border-radius: 6px;
+    background: #f7f7f7;
+    cursor: pointer;
+    transition: 0.2s background-color;
+
+    &.selected {
+      background: #007bff;
+      color: white;
+      font-weight: 600;
+    }
+
+    &:hover:not(.selected) {
+      background: #e9e9e9;
+    }
+  }
+
+  .dp-unknown {
+    width: 100%;
+    text-align: center;
+    border: none;
+    background: #f0f0f0;
+    padding: 6px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+
+    &.selected {
+      background: #007bff;
+      color: white;
+      font-weight: 600;
+    }
+
+    &:hover:not(.selected) {
+      background: #e9e9e9;
+    }
+  }
+}

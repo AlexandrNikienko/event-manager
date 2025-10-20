@@ -21,3 +21,6 @@ Responsive and modern UI built with **React** + **Ant Design**<br/>
 <br/>
 🌐 Link:
 👉 https://life-palette.netlify.app/
+<br/>
+<br/>
+Start dev: netlify dev
