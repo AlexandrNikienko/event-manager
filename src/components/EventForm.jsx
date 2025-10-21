@@ -150,8 +150,8 @@ export default function EventForm({ onSubmit, initialEvent, onCancel }) {
 
       <Form.Item name="isRecurring" valuePropName="checked" style={{ marginLeft: 118 }}>
         <Checkbox
-          checked={yearOption === "unknown" ? true : undefined}
-          disabled={yearOption === "unknown"}
+          checked={selectedDate.year === "unknown" ? true : undefined}
+          disabled={selectedDate.year === "unknown"}
         >Repeat every year</Checkbox>
       </Form.Item>
 
