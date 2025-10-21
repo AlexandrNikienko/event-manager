@@ -1,4 +1,4 @@
-export const WEATHER_ICONS = {
+const WEATHER_ICONS = {
   0: "☀️",
   1: "🌤️",
   2: "⛅",
@@ -28,9 +28,10 @@ export const WEATHER_ICONS = {
 };
 
 export async function getWeatherForecast(lat, lon) {
-  console.log('getWeatherForecast from ecmwf model');
-  // TODO do fetch to specific model depends on coordinates (country)
-  const url = `https://api.open-meteo.com/v1/ecmwf?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`;
+  // fetch to specific model depends on coordinates (country)
+  const model = await getWeatherModel(lat, lon);
+  console.log(`getWeatherForecast from ${model} model`);
+  const url = `https://api.open-meteo.com/v1/${model}?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`;
   const res = await fetch(url);
   const data = await res.json();
 
@@ -56,4 +57,46 @@ export async function getUserLocation() {
       (err) => reject(err.message)
     );
   });
+}
+
+/**
+ * Reverse geocode coordinates to get a country code,
+ * then return the most appropriate Open-Meteo model.
+ */
+export async function getWeatherModel(lat, lon) {
+  try {
+    // --- Step 1: Reverse geocoding via OpenStreetMap (Nominatim)
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
+    );
+    const data = await res.json();
+
+    const countryCode = data.address?.country_code?.toUpperCase();
+    console.log("Detected country:", countryCode);
+
+    // --- Step 2: Map to Open-Meteo model
+    const modelMap = {
+      DE: "dwd", // 🇩🇪 Germany
+      US: "noaa", // 🇺🇸 USA
+      FR: "meteofrance", // 🇫🇷 France
+      GB: "ukmo", // 🇬🇧 United Kingdom
+      IE: "ukmo", // 🇮🇪 Ireland (UK Met Office covers)
+      CH: "meteoswiss", // 🇨🇭 Switzerland
+      NO: "metno", // 🇳🇴 Norway
+      DK: "dmi", // 🇩🇰 Denmark
+      IT: "italiameteo", // 🇮🇹 Italy
+      NL: "knmi", // 🇳🇱 Netherlands
+      CA: "gem", // 🇨🇦 Canada
+      KR: "kma", // 🇰🇷 Korea
+      JP: "jma", // 🇯🇵 Japan
+      CN: "cma", // 🇨🇳 China
+      AU: "bom", // 🇦🇺 Australia
+    };
+
+    // --- Step 3: Select model or fallback
+    return modelMap[countryCode] || "ecmwf"; // fallback global model
+  } catch (err) {
+    console.error("getWeatherModel error:", err);
+    return "ecmwf"; // fallback on failure
+  }
 }
