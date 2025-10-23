@@ -3,7 +3,7 @@ import { Calendar, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { MONTH_NAMES, WEEKDAYS } from '../utils/utils';
 
 export default function DatePicker({ date, onChange, label }) {
-    console.log('DatePicker value:', date);
+    //console.log('DatePicker value:', date);
     const currentYear = new Date().getFullYear();
     const [isOpen, setIsOpen] = useState(false);
     const [selectedDay, setSelectedDay] = useState(date?.day);
@@ -12,7 +12,7 @@ export default function DatePicker({ date, onChange, label }) {
     const [viewMode, setViewMode] = useState('calendar'); // 'calendar' | 'month' | 'year'
 
     useEffect(() => {
-        console.log('DatePicker value changed:', date);
+        //console.log('DatePicker value changed:', date);
         setSelectedDay(date?.day);
         setSelectedMonth(date?.month);
         setSelectedYear(date?.year);

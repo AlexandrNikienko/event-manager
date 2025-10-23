@@ -11,21 +11,35 @@ import { getWeatherDescription } from "../components/WeatherIcons";
 let cachedForecast = null;
 let cachedLocation = null;
 let cachedDate = null;
+let lastSettingsKey = null;
 
-export async function decorateEventsWithWeather(events, activeYear, daysAhead = 7) {
+export async function decorateEventsWithWeather(events, activeYear, daysAhead = 7, userSettings) {
+  console.log("decorateEventsWithWeather", userSettings)
   try {
     const currentYear = new Date().getFullYear();
-    if (activeYear !== currentYear) {
-      return events;
-    }
+    if (activeYear !== currentYear) return events;
 
     const today = new Date().toISOString().split("T")[0];
-    const cacheIsFresh = cachedForecast && cachedDate === today;
+    const settingsKey = JSON.stringify({
+      useGeolocation: userSettings?.useGeolocation,
+      lat: userSettings?.lat,
+      lon: userSettings?.lon
+    });
+
+    const settingsChanged = settingsKey !== lastSettingsKey;
+    const cacheIsFresh = cachedForecast && cachedDate === today && !settingsChanged;
 
     if (!cacheIsFresh) {
-      cachedLocation = await getUserLocation();
+      if (userSettings?.useGeolocation) {
+        cachedLocation = await getUserLocation();
+      } else {
+        cachedLocation = { lat: userSettings?.lat, lon: userSettings?.lon };
+      }
+
       cachedForecast = await getWeatherForecast(cachedLocation.lat, cachedLocation.lon);
+
       cachedDate = today;
+      lastSettingsKey = settingsKey;
       console.log("🌤️ Weather fetched & cached");
     } else {
       console.log("⚡ Using cached weather data");
@@ -40,12 +54,11 @@ export async function decorateEventsWithWeather(events, activeYear, daysAhead = 
       const eventDate = new Date(dateStr);
       const diffDays = (eventDate - new Date()) / (1000 * 60 * 60 * 24);
 
-      if (diffDays >= -1 && diffDays <= daysAhead && forecast[dateStr]) {
+      if (diffDays >= -1 && diffDays <= daysAhead && forecast && forecast[dateStr]) {
         const { code, tMin, tMax } = forecast[dateStr];
         ev.weatherCode = code;
         ev.weatherTitle = `${tMin}°–${tMax}° ${getWeatherDescription(code)}`;
       }
-
       return ev;
     });
   } catch (err) {

@@ -10,9 +10,8 @@ import { LoginButton } from "./components/LoginButton";
 import EventList from "./components/EventList.jsx";
 import rainbow from "./assets/rainbow.svg";
 import Sider from "antd/es/layout/Sider.js";
-
-// import { getFirestore, collection, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
-// const db = getFirestore();
+import UserSettings from "./components/UserSettings.jsx";
+import { userService } from "./services/userService.js";
 
 export const GlobalStateContext = createContext();
 
@@ -37,6 +36,34 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
 
+  const [userSettings, setUserSettings] = useState({
+    useGeolocation: true,
+    lat: null,
+    lon: null
+  });
+
+  useEffect(() => {
+    if (loadingUser || !user) return;
+    
+    const loadUserSettings = async () => {
+      try {
+        setLoading(true);
+        const saved = await userService.getSettings();
+        console.log("Saved userSettings: ", saved)
+        setUserSettings({
+          useGeolocation: saved.useGeolocation ?? true,
+          lat: saved.lat ?? null,
+          lon: saved.lon ?? null,
+        });
+      } catch (err) {
+        console.warn("⚠️ Failed to load user settings:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadUserSettings();
+  }, [user, loadingUser]);
+
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -55,45 +82,7 @@ export default function App() {
     loadEvents();
   }, [user, loadingUser, year]);
 
-  //useEffect(() => {
-  //patchEventsUserId
-  //patchEventsUserIdAndDeleteEmptyYear();
-  //}, []);
-
-  // async function patchEventsUserId() {
-  //   const snapshot = await getDocs(collection(db, "events"));
-  //   for (const doc of snapshot.docs) {
-  //     const data = doc.data();
-  //     if (!data.userId) {
-  //       await updateDoc(doc.ref, {
-  //         userId: "kLkSNogK6JMNbN15GmdgGkr4Qvw1",
-  //       });
-  //       console.log(`Updated ${doc.id}`);
-  //     }
-  //   }
-  // }
-
-  // async function patchEventsUserIdAndDeleteEmptyYear() {
-  //   const snapshot = await getDocs(collection(db, "events"));
-
-  //   for (const d of snapshot.docs) {
-  //     const data = d.data();
-
-  //     if (!data.year || data.year === "") {
-  //       await deleteDoc(d.ref);
-  //       console.log(`Deleted ${d.id}`);
-  //     } else if (!data.userId) {
-  //       await updateDoc(d.ref, {
-  //         userId: "kLkSNogK6JMNbN15GmdgGkr4Qvw1",
-  //       });
-  //       console.log(`Updated ${d.id}`);
-  //     }
-  //   }
-  // }
-
   const loadEvents = async () => {
-    if (!user) return;
-
     try {
       setLoading(true);
       setError(null);
@@ -268,7 +257,7 @@ export default function App() {
             ) : (
               <Dropdown
                 arrow
-                trigger={["hover"]}
+                trigger={["click"]}
                 open={open}
                 onOpenChange={setOpen}
                 placement="bottomRight"
@@ -293,6 +282,15 @@ export default function App() {
                         >
                           Logout
                         </Button>
+
+                        <hr />
+
+                        <UserSettings 
+                          userSettings={userSettings}
+                          setUserSettings={setUserSettings}
+                          loading={loading}
+                          note={note}
+                        />
                       </>
                     ) : (
                       <div>
@@ -337,7 +335,12 @@ export default function App() {
                   <Checkbox checked={hidePast} onChange={() => setHidePast(!hidePast)}>Hide past</Checkbox>
                 </div>
 
-                <EventList events={events && filteredEvents} hidePast={hidePast} onEdit={handleEdit} onDelete={handleDelete} />
+                <EventList 
+                  events={events && filteredEvents}
+                  hidePast={hidePast}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  userSettings={userSettings}/>
               </div>
           </Sider>
           

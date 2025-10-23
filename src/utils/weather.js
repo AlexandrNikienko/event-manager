@@ -28,12 +28,23 @@ const WEATHER_ICONS = {
 };
 
 export async function getWeatherForecast(lat, lon) {
-  // fetch to specific model depends on coordinates (country)
-  const model = await getWeatherModel(lat, lon);
-  console.log(`getWeatherForecast from ${model} model`);
-  const url = `https://api.open-meteo.com/v1/${model}?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`;
-  const res = await fetch(url);
-  const data = await res.json();
+  if (!lat || !lon) {
+    console.log("No lat/lon. Please enter coordinates in Settings or activate and use browser's geolocation.");
+    return;
+  }
+
+  const model = (await getWeatherModel(lat, lon));
+  console.log(`getWeatherForecast using ${model} model`);
+  
+  let res = await fetch(`https://api.open-meteo.com/v1/${model}?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`);
+  let data = await res.json();
+
+  // Callback if the forecast does not support daily wethear codes
+  if (!data?.daily?.weathercode || Object.values(data.daily.weathercode).every(code => code == null)) {
+    console.warn(`Model ${model} returned nulls — retrying with ECMWF`);
+    res = await fetch(`https://api.open-meteo.com/v1/ecmwf?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`);
+    data = await res.json();
+  }
 
   const forecast = {};
   data.daily.time.forEach((date, i) => {
@@ -43,6 +54,7 @@ export async function getWeatherForecast(lat, lon) {
       tMax: data.daily.temperature_2m_max[i],
     };
   });
+
   return forecast;
 }
 
@@ -64,6 +76,8 @@ export async function getUserLocation() {
  * then return the most appropriate Open-Meteo model.
  */
 export async function getWeatherModel(lat, lon) {
+  console.log("getWeatherModel with lat/lon:", lat, lon);
+
   try {
     // --- Step 1: Reverse geocoding via OpenStreetMap (Nominatim)
     const res = await fetch(

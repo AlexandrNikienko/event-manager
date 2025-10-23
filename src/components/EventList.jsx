@@ -6,16 +6,17 @@ import { decorateEventsWithWeather } from "../hooks/useWeatherForEvents";
 import WeatherIcon from "./WeatherIcons";
 import { GlobalStateContext } from "../App";
 
-export default function EventList({ events = [], onEdit, onDelete, hidePast, hideDate = false }) {
+export default function EventList({ events = [], onEdit, onDelete, hidePast, hideDate = false, userSettings }) {
     const { year } = useContext(GlobalStateContext);
     const [decorated, setDecorated] = useState(events);
 
     useEffect(() => {
+        //console.log("EventList", userSettings)
         const t = setTimeout(() => {
-            decorateEventsWithWeather(events, year).then(setDecorated);
+            decorateEventsWithWeather(events, year, 7, userSettings).then(setDecorated);
         }, 300);
         return () => clearTimeout(t);
-    }, [events, year]);
+    }, [events, year, userSettings]);
 
     return (
         <ul className="event-list">
