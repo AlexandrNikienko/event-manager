@@ -19,7 +19,7 @@ export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayC
     const day = Math.min(e.day, dim);
 
     // Only show non-recurring events on their specific year
-    if (!e.isRecurring && e.year !== year) return;
+    //if (!e.isRecurring && e.year !== year) return; //??? 
 
     if (!map[e.month]) map[e.month] = {};
     const arr = map[e.month][day] || [];

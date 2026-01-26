@@ -21,6 +21,11 @@
 .sidebar-inner {
   padding: 1rem 0.5rem;
   overflow: hidden;
+
+  .edit-btn,
+  .delete-btn {
+    display: none;
+  }
 }
 
 .sidebar-extender {

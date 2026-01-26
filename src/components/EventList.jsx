@@ -33,8 +33,7 @@ export default function EventList({ events = [], onEdit, onDelete, hidePast, hid
                     <li
                         hidden={hidePast && isEventInPast(event, year)}
                         key={event.id || `${event.name}-${event.month}-${event.day}`}
-                        className={`event-list__item ${isEventInPast(event, year) ? "past-event" : ""
-                            }`}
+                        className={`event-list__item ${isEventInPast(event, year) ? "past-event" : ""}`}
                     >
                         <Flex
                             className="ellipsis pointer p4"
@@ -63,13 +62,13 @@ export default function EventList({ events = [], onEdit, onDelete, hidePast, hid
                                 title={event.name}
                             >
                                 {event.name}
-                            </span>
 
-                            {event.weatherCode && (
-                                <span title={event.weatherTitle} style={{ lineHeight: 0 }}>
-                                    <WeatherIcon code={event.weatherCode} size="16"/>
-                                </span>
-                            )}
+                                {event.weatherCode && (
+                                    <span className="event-list__wheather-icon" title={event.weatherTitle} style={{ lineHeight: 0 }}>
+                                        <WeatherIcon code={event.weatherCode} size="12"/>
+                                    </span>
+                                )}
+                            </span>
 
                             <Button
                                 className="edit-btn"

@@ -16,6 +16,11 @@
 
     &:hover {
       background: var(--background-color);
+
+      .edit-btn,
+      .delete-btn {
+        display: inline;
+      }
     }
   }
 
@@ -32,6 +37,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 24px;
   }
 
   &__note {
@@ -49,6 +55,12 @@
     position: absolute;
     top: -4px;
     left: 12px;
+  }
+
+  &__wheather-icon {
+      position: relative;
+      top: -6px;
+      //right: -8px;
   }
 }
 

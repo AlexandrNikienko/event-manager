@@ -74,7 +74,7 @@ export default function App() {
   }
 
   useEffect(() => {
-    if (loadingUser) return;
+    if (loadingUser) return; // ???
     if (!user) {
       setEvents([]);
       return;
@@ -83,6 +83,7 @@ export default function App() {
   }, [user, loadingUser, year]);
 
   const loadEvents = async () => {
+    console.log('Loading events for year:', year);
     try {
       setLoading(true);
       setError(null);
@@ -336,7 +337,8 @@ export default function App() {
                 </div>
 
                 <EventList 
-                  events={events && filteredEvents}
+                 //events={events && filteredEvents}
+                  events={filteredEvents}
                   hidePast={hidePast}
                   onEdit={handleEdit}
                   onDelete={handleDelete}
@@ -346,7 +348,8 @@ export default function App() {
           
           <main className={user ? '' : 'unclickable'}>
               <YearViewCalendar
-                events={events && filteredEvents}
+                //events={events && filteredEvents}
+                events={filteredEvents}
                 onDelete={handleDelete}
                 onEdit={handleEdit}
                 onDayClick={handleDayClick}
