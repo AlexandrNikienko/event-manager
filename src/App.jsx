@@ -43,7 +43,13 @@ export default function App() {
   });
 
   useEffect(() => {
-    if (loadingUser || !user) return;
+    if (loadingUser) return;
+
+    // If user logged out / not ready
+    if (!user) {
+      setEvents([]);
+      return;
+    }
     
     const loadUserSettings = async () => {
       try {
@@ -60,9 +66,13 @@ export default function App() {
       } finally {
         setLoading(false);
       }
+
+      // ---- Load events ----
+      loadEvents();
     };
+
     loadUserSettings();
-  }, [user, loadingUser]);
+  }, [user, loadingUser, year]);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -72,15 +82,6 @@ export default function App() {
     setIsModalOpen(false);
     setEditingEvent(null);
   }
-
-  useEffect(() => {
-    if (loadingUser) return; // ???
-    if (!user) {
-      setEvents([]);
-      return;
-    }
-    loadEvents();
-  }, [user, loadingUser, year]);
 
   const loadEvents = async () => {
     console.log('Loading events for year:', year);
@@ -365,6 +366,7 @@ export default function App() {
           open={isModalOpen}
           onCancel={handleCancel}
           footer={null}
+          width={'460px'}
         >
           <EventForm
             onSubmit={handleEventSubmit}

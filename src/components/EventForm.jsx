@@ -112,17 +112,11 @@ export default function EventForm({ onSubmit, initialEvent, onCancel }) {
     <Form
       form={form}
       initialValues={initialEvent}
-      labelCol={{ span: 6 }}
-      wrapperCol={{ span: 18 }}
-      layout="horizontal"
+      layout="vertical"
       onFinish={handleSubmit}
     >
-      <Form.Item name="name" label="Event Name" rules={[{ required: true }]} placeholder="Enter event name">
+      <Form.Item name="name" label="Title" rules={[{ required: true }]} placeholder="Enter event title">
         <Input />
-      </Form.Item>
-
-      <Form.Item name="note" label="Note" placeholder="Enter a note">
-        <TextArea />
       </Form.Item>
 
       {/* <Button
@@ -141,14 +135,18 @@ export default function EventForm({ onSubmit, initialEvent, onCancel }) {
         }))} />
       </Form.Item>
 
-      <Form.Item label="Date" name="date">
+      <Form.Item label="Date" name="date" rules={[{ required: true }]} >
         <DatePicker
           date={selectedDate}
           onChange={setSelectedDate}
         />
       </Form.Item>
 
-      <Form.Item name="isRecurring" valuePropName="checked" style={{ marginLeft: 118 }}>
+      <Form.Item name="note" label="Note" placeholder="Enter a note">
+        <TextArea />
+      </Form.Item>
+
+      <Form.Item name="isRecurring" valuePropName="checked">
         <Checkbox
           checked={selectedDate.year === "unknown" ? true : undefined}
           disabled={selectedDate.year === "unknown"}

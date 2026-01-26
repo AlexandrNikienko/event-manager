@@ -200,3 +200,19 @@ main {
 .unclickable {
   pointer-events: none;
 }
+
+/* Ant Design overrides */
+
+/* Move asterics next to the right of the label */
+.ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional) {
+  flex-direction: row-reverse;
+}
+
+.ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+  margin-inline-start: 4px;
+  margin-inline-end: 0;
+}
+
+.ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::after {
+  content: none !important;
+}
