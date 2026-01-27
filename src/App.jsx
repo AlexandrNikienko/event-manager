@@ -263,6 +263,7 @@ export default function App() {
       },
       isRecurring: false,
       type: '',
+      reminderTime: null
     });
     setIsModalOpen(true);
   };
@@ -331,6 +332,7 @@ export default function App() {
       },
       isRecurring: false,
       type: '',
+      reminderTime: null
     });
     showModal(true);
     setEditingEvent(null);

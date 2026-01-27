@@ -60,7 +60,10 @@ export default function EventForm({ onSubmit, initialEvent, onCancel }) {
 
   useEffect(() => {
     //console.log('Setting form values to:', initialEvent);
-    form.setFieldsValue(initialEvent);
+    form.setFieldsValue({
+      ...initialEvent,
+      reminderTime: initialEvent?.reminderTime || null, // Explicitly set reminder field
+    });
     if (initialEvent?.year === "unknown") {
       setYearOption("unknown");
     } else {
