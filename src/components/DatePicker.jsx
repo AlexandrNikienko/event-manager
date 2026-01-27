@@ -51,6 +51,9 @@ export default function DatePicker({ date, onChange, label }) {
     };
 
     const displayValue = () => {
+        if (!selectedDay || selectedMonth === undefined || !selectedYear) {
+            return 'Select date';
+        }
         const monthName = MONTH_NAMES[selectedMonth];
         const yearDisplay = selectedYear === 'unknown' ? 'Unknown' : selectedYear;
         return `${selectedDay} ${monthName} ${yearDisplay}`;

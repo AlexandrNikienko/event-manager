@@ -6,17 +6,51 @@ import TextArea from "antd/es/input/TextArea";
 import DatePicker from "./DatePicker";
 
 export default function EventForm({ onSubmit, initialEvent, onCancel }) {
+
   const [form] = Form.useForm();
+  
+  const today = new Date();
 
   const [yearOption, setYearOption] = useState(
     initialEvent?.year === "unknown" ? "unknown" : "year"
   );
 
-  const [selectedDate, setSelectedDate] = useState({
-    year: initialEvent?.year,
-    month: initialEvent?.month - 1,
-    day: initialEvent?.day,
-  });
+  const [selectedDate, setSelectedDate] = useState(
+    initialEvent?.startDate ? {
+      year: initialEvent.startDate?.year,
+      month: initialEvent.startDate?.month - 1,
+      day: initialEvent.startDate?.day,
+    } : {
+      year: today.getFullYear(),
+      month: today.getMonth(),
+      day: today.getDate(),
+    }
+  );
+
+  const [isMultipleDays, setIsMultipleDays] = useState(
+    initialEvent?.isMultiDay ? true : false
+  );
+  
+  const defaultDate = {
+    year: today.getFullYear(),
+    month: today.getMonth(),
+    day: today.getDate(),
+  };
+  
+  const [startDate, setStartDate] = useState(
+    initialEvent?.startDate ? {
+      year: initialEvent.startDate?.year,
+      month: initialEvent.startDate?.month - 1,
+      day: initialEvent.startDate.day,
+    } : defaultDate
+  );
+  const [endDate, setEndDate] = useState(
+    initialEvent?.endDate ? {
+      year: initialEvent.endDate.year,
+      month: initialEvent.endDate.month - 1,
+      day: initialEvent.endDate.day,
+    } : defaultDate
+  );
 
   const date = Form.useWatch("date", form) || {};
 
@@ -32,11 +66,34 @@ export default function EventForm({ onSubmit, initialEvent, onCancel }) {
     } else {
       setYearOption("year");
     }
-    setSelectedDate({
-      year: initialEvent?.year,
-      month: initialEvent?.month - 1,
-      day: initialEvent?.day,
-    })
+    
+    // Update multi-day event state if initialEvent has multi-day data
+    if (initialEvent?.isMultiDay) {
+      setIsMultipleDays(true);
+      if (initialEvent?.startDate) {
+        setStartDate({
+          year: initialEvent.startDate?.year,
+          month: initialEvent.startDate?.month - 1,
+          day: initialEvent.startDate.day,
+        });
+      }
+      if (initialEvent?.endDate) {
+        setEndDate({
+          year: initialEvent.endDate.year,
+          month: initialEvent.endDate.month - 1,
+          day: initialEvent.endDate.day,
+        });
+      }
+    } else {
+      setIsMultipleDays(false);
+      if (initialEvent?.startDate) {
+        setSelectedDate({
+          year: initialEvent.startDate?.year,
+          month: initialEvent.startDate?.month - 1,
+          day: initialEvent.startDate?.day,
+        });
+      }
+    }
     //console.log('Initial values:', initialEvent);
   }, [initialEvent, form]);
 
@@ -49,12 +106,31 @@ export default function EventForm({ onSubmit, initialEvent, onCancel }) {
 
   const handleSubmit = async (e) => {
     let values = form.getFieldsValue();
-    values = {
-      ...values,
-      ...selectedDate
-    };
-    values.month = values.month + 1; // Adjust month from 0-11 to 1-12
-    delete values.date;
+    
+    if (isMultipleDays) {
+      if (!startDate?.day || !endDate?.day) {
+        return alert("Please select both start and end dates for multi-day event");
+      }
+      values.isMultiDay = true;
+      values.startDate = {
+        year: startDate.year,
+        month: startDate.month + 1,
+        day: startDate.day,
+      };
+      values.endDate = {
+        year: endDate.year,
+        month: endDate.month + 1,
+        day: endDate.day,
+      };
+      delete values.date;
+    } else {
+      values.startDate = {
+        year: selectedDate.year,
+        month: selectedDate.month + 1,
+        day: selectedDate.day,
+      };
+      delete values.date;
+    }
 
     if (yearOption === "unknown") {
       values.year = "unknown";
@@ -135,11 +211,62 @@ export default function EventForm({ onSubmit, initialEvent, onCancel }) {
         }))} />
       </Form.Item>
 
-      <Form.Item label="Date" name="date" rules={[{ required: true }]} >
-        <DatePicker
-          date={selectedDate}
-          onChange={setSelectedDate}
-        />
+      <Form.Item>
+        <Flex justify="space-between" align="center" style={{ marginBottom: 8 }}>
+          <span style={{ fontWeight: 500 }}>Date</span>
+
+          <Checkbox
+            checked={isMultipleDays}
+            onChange={e => {
+              setIsMultipleDays(e.target.checked);
+              
+              // When enabling multiple days, set From to current selected date and Till to next day
+              if (e.target.checked) {
+                setStartDate(selectedDate);
+                
+                // Calculate next day
+                const nextDay = new Date(selectedDate.year, selectedDate.month, selectedDate.day + 1);
+                setEndDate({
+                  year: nextDay.getFullYear(),
+                  month: nextDay.getMonth(),
+                  day: nextDay.getDate(),
+                });
+              }
+            }}
+          >
+            Multiple days
+          </Checkbox>
+        </Flex>
+
+        {isMultipleDays ? (
+          <Flex gap="middle">
+
+            <div style={{ flex: 1 }}>
+              <div style={{ marginBottom: 4, color: "#667085" }}>From</div>
+
+              <DatePicker
+                date={startDate}
+                onChange={setStartDate}
+              />
+            </div>
+
+            <div style={{ flex: 1 }}>
+              <div style={{ marginBottom: 4, color: "#667085" }}>Till</div>
+              
+              <DatePicker
+                date={endDate}
+                onChange={setEndDate}
+              />
+            </div>
+
+          </Flex>
+        ) : (
+          <DatePicker
+            date={selectedDate}
+            onChange={setSelectedDate}
+          />
+        )}
+
       </Form.Item>
 
       <Form.Item name="note" label="Note" placeholder="Enter a note">
@@ -153,7 +280,7 @@ export default function EventForm({ onSubmit, initialEvent, onCancel }) {
         >Repeat every year</Checkbox>
       </Form.Item>
 
-      <Flex gap="small" justify="end" style={{ marginTop: 20 }}>
+      <Flex gap="small" justify="end">
         <Button onClick={() => {
           onCancel && onCancel();
           form.resetFields();

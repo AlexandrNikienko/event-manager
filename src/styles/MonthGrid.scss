@@ -20,11 +20,13 @@
 .day-cell {
     border-radius: 6px;
     position: relative;
-    padding: 6px;
+    padding: 3px 6px;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     position: relative;
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
 
     &:not(.empty):hover {
         cursor: pointer;
@@ -32,7 +34,182 @@
     }
 
     &.has-event {
-        background: linear-gradient(90deg, rgba(43, 110, 246, 0.06), rgba(43, 110, 246, 0.02));
+        background: linear-gradient(90deg, rgba(43, 110, 246, 0.02), rgba(43, 110, 246, 0.06));
+    }
+
+    &.has-multi-day-event {
+        position: relative;
+    }
+
+    // Multi-day event styling with 3 color variants
+    &.multi-day-start-0 {
+        border-top-color: #FF6B6B;
+        background: linear-gradient(90deg, rgba(255, 107, 107, 0.12), rgba(255, 107, 107, 0.04));
+
+        &::before {
+            content: '';
+            position: absolute;
+            right: -4px;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: linear-gradient(90deg, #FF6B6B, rgba(255, 107, 107, 0.3));
+        }
+    }
+
+    &.multi-day-mid-0 {
+        border-top: 3px solid #FF6B6B;
+        border-bottom: 3px solid #FF6B6B;
+        background: linear-gradient(90deg, rgba(255, 107, 107, 0.08), rgba(255, 107, 107, 0.02));
+
+        &::before {
+            content: '';
+            position: absolute;
+            right: -4px;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: #FF6B6B;
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: -4px;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: #FF6B6B;
+        }
+    }
+
+    &.multi-day-end-0 {
+        border-top-color: #FF6B6B;
+        background: linear-gradient(90deg, rgba(255, 107, 107, 0.04), rgba(255, 107, 107, 0.12));
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: -4px;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: linear-gradient(90deg, rgba(255, 107, 107, 0.3), #FF6B6B);
+        }
+    }
+
+    // Second color variant (green)
+    &.multi-day-start-1 {
+        border-top-color: #51CF66;
+        background: linear-gradient(90deg, rgba(81, 207, 102, 0.12), rgba(81, 207, 102, 0.04));
+
+        &::before {
+            content: '';
+            position: absolute;
+            right: -4px;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: linear-gradient(90deg, #51CF66, rgba(81, 207, 102, 0.3));
+        }
+    }
+
+    &.multi-day-mid-1 {
+        border-top: 3px solid #51CF66;
+        border-bottom: 3px solid #51CF66;
+        background: linear-gradient(90deg, rgba(81, 207, 102, 0.08), rgba(81, 207, 102, 0.02));
+
+        &::before {
+            content: '';
+            position: absolute;
+            right: -4px;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: #51CF66;
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: -4px;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: #51CF66;
+        }
+    }
+
+    &.multi-day-end-1 {
+        border-top-color: #51CF66;
+        background: linear-gradient(90deg, rgba(81, 207, 102, 0.04), rgba(81, 207, 102, 0.12));
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: -4px;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: linear-gradient(90deg, rgba(81, 207, 102, 0.3), #51CF66);
+        }
+    }
+
+    // Third color variant (purple)
+    &.multi-day-start-2 {
+        border-top-color: #9775FA;
+        background: linear-gradient(90deg, rgba(151, 117, 250, 0.12), rgba(151, 117, 250, 0.04));
+
+        &::before {
+            content: '';
+            position: absolute;
+            right: -4px;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: linear-gradient(90deg, #9775FA, rgba(151, 117, 250, 0.3));
+        }
+    }
+
+    &.multi-day-mid-2 {
+        border-top: 3px solid #9775FA;
+        border-bottom: 3px solid #9775FA;
+        background: linear-gradient(90deg, rgba(151, 117, 250, 0.08), rgba(151, 117, 250, 0.02));
+
+        &::before {
+            content: '';
+            position: absolute;
+            right: -4px;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: #9775FA;
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: -4px;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: #9775FA;
+        }
+    }
+
+    &.multi-day-end-2 {
+        border-top-color: #9775FA;
+        background: linear-gradient(90deg, rgba(151, 117, 250, 0.04), rgba(151, 117, 250, 0.12));
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: -4px;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: linear-gradient(90deg, rgba(151, 117, 250, 0.3), #9775FA);
+        }
     }
 
     &.today {

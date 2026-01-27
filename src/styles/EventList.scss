@@ -24,11 +24,31 @@
     }
   }
 
+  &__recurring {
+    display: none;
+  }
+
+  .sidebar-inner & {
+    .event-list {
+      &__recurring {
+        display: inline;
+      }
+
+      &__item {
+        &:hover {
+          .event-list__recurring {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+
   &__date {
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--muted);
-    flex: 0 0 40px;
+    flex: 0 0 42px;
   }
 
   &__name {
@@ -58,9 +78,15 @@
   }
 
   &__wheather-icon {
-      position: relative;
-      top: -6px;
-      //right: -8px;
+    position: relative;
+    top: -6px;
+  }
+
+  &__recurring {
+    svg {
+      width: 10px;
+      height: 10px;
+    }
   }
 }
 

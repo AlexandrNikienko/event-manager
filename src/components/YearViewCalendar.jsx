@@ -15,16 +15,64 @@ export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayC
   for (let m = 1; m <= 12; m++) map[m] = {};
 
   events.forEach((e) => {
-    const dim = daysInMonth(e.month, year);
-    const day = Math.min(e.day, dim);
+    if (e.isMultiDay) {
+      // For multi-day events, add them to all months they span
+      const startMonth = e.startDate?.month;
+      const endMonth = e.endDate?.month;
+      let startYear = e.startDate?.year;
+      let endYear = e.endDate?.year;
+      
+      // For recurring multi-day events, adjust years to current viewing year
+      if (e.isRecurring) {
+        startYear = year;
+        endYear = year;
+      }
+      
+      // Add event to all months it spans in the current year
+      if (startYear === year && endYear === year) {
+        // Event is within the same year
+        for (let m = startMonth; m <= endMonth; m++) {
+          if (!map[m]) map[m] = {};
+          const arr = map[m][1] || []; // Add to day 1 as a placeholder
+          if (!arr.find(ev => ev.id === e.id)) { // Avoid duplicates
+            arr.push(e);
+          }
+          map[m][1] = arr;
+        }
+      } else if (startYear === year) {
+        // Event starts in current year, ends in next year
+        for (let m = startMonth; m <= 12; m++) {
+          if (!map[m]) map[m] = {};
+          const arr = map[m][1] || [];
+          if (!arr.find(ev => ev.id === e.id)) {
+            arr.push(e);
+          }
+          map[m][1] = arr;
+        }
+      } else if (endYear === year) {
+        // Event starts in previous year, ends in current year
+        for (let m = 1; m <= endMonth; m++) {
+          if (!map[m]) map[m] = {};
+          const arr = map[m][1] || [];
+          if (!arr.find(ev => ev.id === e.id)) {
+            arr.push(e);
+          }
+          map[m][1] = arr;
+        }
+      }
+    } else {
+      // Single day events
+      const dim = daysInMonth(e.startDate?.month, year);
+      const day = Math.min(e.startDate?.day, dim);
 
-    // Only show non-recurring events on their specific year
-    //if (!e.isRecurring && e.year !== year) return; //??? 
+      // Only show non-recurring events on their specific year
+      //if (!e.isRecurring && e.startDate.year !== year) return; //??? 
 
-    if (!map[e.month]) map[e.month] = {};
-    const arr = map[e.month][day] || [];
-    arr.push(e);
-    map[e.month][day] = arr;
+      if (!map[e.startDate?.month]) map[e.startDate?.month] = {};
+      const arr = map[e.startDate?.month][day] || [];
+      arr.push(e);
+      map[e.startDate?.month][day] = arr;
+    }
   });
 
   return (

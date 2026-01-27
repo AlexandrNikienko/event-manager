@@ -12,7 +12,25 @@ export const eventService = {
 
     return snapshot.docs
       .map(doc => ({ id: doc.id, ...doc.data() }))
-      .filter(event => event.isRecurring || event.year === year);
+      .filter(event => {
+        // Include recurring events
+        if (event.isRecurring) return true;
+        
+        // Include events with old format
+        if (event.year === year) return true;
+        
+        // Include single-day events that match the year
+        if (event.startDate?.year === year) return true;
+        
+        // Include multi-day events that overlap with this year
+        if (event.isMultiDay) {
+          const startYear = event.startDate?.year;
+          const endYear = event.endDate?.year;
+          return startYear <= year && endYear >= year;
+        }
+        
+        return false;
+      });
   },
 
   async addEvent(eventData) {

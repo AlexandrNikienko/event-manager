@@ -28,11 +28,14 @@ export default function EventList({ events = [], onEdit, onDelete, hidePast, hid
 
             {decorated.map((event) => {
                 const age = getAge(event, year);
+                const dateDisplay = event.isMultiDay 
+                  ? `${MONTH_NAMES[event.startDate?.month - 1]?.slice(0, 3)} ${event.startDate?.day} - ${MONTH_NAMES[event.endDate?.month - 1]?.slice(0, 3)} ${event.endDate?.day}`
+                  : `${MONTH_NAMES[event.startDate?.month - 1]?.slice(0, 3)} ${event.startDate?.day}`;
 
                 return (
                     <li
                         hidden={hidePast && isEventInPast(event, year)}
-                        key={event.id || `${event.name}-${event.month}-${event.day}`}
+                        key={event.id || `${event.name}-${event.startDate?.month}-${event.startDate.day}`}
                         className={`event-list__item ${isEventInPast(event, year) ? "past-event" : ""}`}
                     >
                         <Flex
@@ -47,7 +50,7 @@ export default function EventList({ events = [], onEdit, onDelete, hidePast, hid
                             }}
                         >
                             <span className="event-list__date" hidden={hideDate}>
-                                {MONTH_NAMES[event.month - 1]?.slice(0, 3)} {event.day}
+                                {dateDisplay}
                             </span>
 
                             <span className="event-list__icon">
@@ -77,6 +80,12 @@ export default function EventList({ events = [], onEdit, onDelete, hidePast, hid
                                 size="small"
                                 type="text"
                             />
+
+                            {event.isRecurring ? (
+                                <span className="event-list__recurring">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 2 4 4-4 4"></path><path d="M3 11v-1a4 4 0 0 1 4-4h14"></path><path d="m7 22-4-4 4-4"></path><path d="M21 13v1a4 4 0 0 1-4 4H3"></path></svg>
+                                </span>
+                            ) : ""}
                         </Flex>
 
                         <Button

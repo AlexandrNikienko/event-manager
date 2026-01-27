@@ -15,6 +15,96 @@ import { userService } from "./services/userService.js";
 
 export const GlobalStateContext = createContext();
 
+/**
+ * Migration function: Transform events from old format to new format
+ * Old format: {day, month, year}
+ * New format: {startDate: {day, month, year}}
+ */
+async function migrateEventsToNewFormat(events, note) {
+  let migrated = 0;
+  let skipped = 0;
+  let errors = 0;
+
+  console.log('🔄 Starting migration...', events);
+  
+  for (const event of events) {
+    try {
+      // Check if already migrated
+      if (event.startDate) {
+        console.log(`↷ "${event.name}" (already migrated)`);
+        skipped++;
+        continue;
+      }
+
+      // Check if old format exists
+      if (!event.day && !event.month && !event.year) {
+        console.log(`⊘ "${event.name}" (no old format data)`);
+        skipped++;
+        continue;
+      }
+
+      // Transform event
+      const transformedEvent = {
+        ...event,
+        startDate: {
+          day: event.day || 0,
+          month: event.month || 0,
+          year: event.year || 0,
+        },
+      };
+
+      // Handle multi-day events
+      if (event.endDay || event.endMonth || event.endYear) {
+        transformedEvent.endDate = {
+          day: event.endDay || 0,
+          month: event.endMonth || 0,
+          year: event.endYear || 0,
+        };
+        transformedEvent.isMultiDay = true;
+      }
+
+      // Remove old properties
+      delete transformedEvent.day;
+      delete transformedEvent.month;
+      delete transformedEvent.year;
+      delete transformedEvent.endDay;
+      delete transformedEvent.endMonth;
+      delete transformedEvent.endYear;
+      delete transformedEvent.id;
+
+      // Update event in Firestore
+      await eventService.updateEvent(event.id, transformedEvent);
+      console.log(`✓ "${event.name}"`);
+      migrated++;
+    } catch (err) {
+      console.error(`✗ "${event.name}" - Error:`, err);
+      errors++;
+    }
+  }
+
+  // Show notification with results
+  const message = `Migration completed!\nMigrated: ${migrated} | Skipped: ${skipped} | Errors: ${errors}`;
+  console.log('📈 Migration Summary:', { migrated, skipped, errors });
+
+  if (errors === 0) {
+    note.success({
+      message: '✅ Migration Successful',
+      description: `Migrated: ${migrated} | Skipped: ${skipped}`,
+      placement: 'topRight',
+      duration: 5,
+    });
+  } else {
+    note.warning({
+      message: '⚠️ Migration Completed with Errors',
+      description: `Migrated: ${migrated} | Skipped: ${skipped} | Errors: ${errors}`,
+      placement: 'topRight',
+      duration: 5,
+    });
+  }
+
+  return { migrated, skipped, errors };
+}
+
 export default function App() {
   const [modal, contextHolder] = Modal.useModal();
   const [note, notificationContextHolder] = notification.useNotification();
@@ -41,6 +131,24 @@ export default function App() {
     lat: null,
     lon: null
   });
+
+  // Migration effect
+  useEffect(() => {
+    return
+    if (loadingUser) return;
+    if (!user) return;
+    if (loading) return;        // still loading events
+    if (!events.length) return;
+
+    console.log("🚀 Running migration after auth + events load");
+
+    const runMigration = async () => {
+      await handleMigration();
+    };
+
+    runMigration();
+
+  }, [user, loadingUser, loading, events, year]);
 
   useEffect(() => {
     if (loadingUser) return;
@@ -148,10 +256,12 @@ export default function App() {
     setNewEvent({
       name: '',
       note: '',
-      month: date.month,
-      day: date.day,
-      year: date.year,
-      isRecurring: true,
+      startDate: {
+        month: date.month,
+        day: date.day,
+        year: date.year,
+      },
+      isRecurring: false,
       type: '',
     });
     setIsModalOpen(true);
@@ -163,7 +273,7 @@ export default function App() {
 
     modal.confirm({
       title: "Are you sure you want to delete this event?",
-      content: event ? `${event.name} (${MONTH_NAMES[event.month - 1]?.slice(0, 3)} ${event.day})` : "This event",
+      content: event ? `${event.name} (${MONTH_NAMES[event.startDate?.month - 1]?.slice(0, 3)} ${event.startDate?.day})` : "This event",
       okText: "Yes, delete",
       okType: "danger",
       cancelText: "Cancel",
@@ -192,14 +302,34 @@ export default function App() {
     });
   };
 
+  const handleMigration = async () => {
+    console.log('Starting migration with', events.length, 'events', year);
+    
+    try {
+          await migrateEventsToNewFormat(events, note);
+          // Reload events after migration
+          await loadEvents();
+        } catch (error) {
+          console.error("Error during migration:", error);
+          note.error({
+            message: 'Migration Error',
+            description: 'Failed to migrate events. Please try again.',
+            placement: 'topRight',
+          });
+        }
+  };
+
   const handleCreateEvent = () => {
+    const today = new Date();
     setNewEvent({
       name: '',
       note: '',
-      month: new Date().getMonth() + 1,
-      day: new Date().getDate(),
-      year: new Date().getFullYear(),
-      isRecurring: true,
+      startDate: {
+        month: today.getMonth() + 1,
+        day: today.getDate(),
+        year: today.getFullYear(),
+      },
+      isRecurring: false,
       type: '',
     });
     showModal(true);
@@ -208,9 +338,21 @@ export default function App() {
 
   useEffect(() => {
     // Sidebar logic
-    const eventsOfYear = events.filter(e => e.isRecurring || e.year === year).sort((a, b) => {
-      if (a.month !== b.month) return a.month - b.month;
-      return a.day - b.day;
+    const eventsOfYear = events.filter(e => {
+      if (e.isRecurring) return true;
+      if (e.isMultiDay) {
+        // Include multi-day events if they overlap with the current year
+        return (e.startDate?.year === year) || (e.endDate?.year === year);
+      }
+      return e.startDate?.year === year;
+    }).sort((a, b) => {
+      const aMonth = a.startDate?.month;
+      const aDay = a.startDate?.day;
+      const bMonth = b.startDate?.month;
+      const bDay = b.startDate?.day;
+      
+      if (aMonth !== bMonth) return aMonth - bMonth;
+      return aDay - bDay;
     });
 
     const filteredEvents = eventsOfYear.filter(event => {
@@ -224,7 +366,7 @@ export default function App() {
     console.log('Filtered events updated:', filteredEvents);
 
     setFilteredEvents(filteredEvents);
-  }, [events, searchTerm]);
+  }, [events, searchTerm, year]);
 
   useEffect(() => {
     setInitialEvent([editingEvent || newEvent]);
@@ -366,7 +508,6 @@ export default function App() {
           open={isModalOpen}
           onCancel={handleCancel}
           footer={null}
-          width={'460px'}
         >
           <EventForm
             onSubmit={handleEventSubmit}
