@@ -18,6 +18,9 @@
 }
 
 .day-cell {
+    --miltiDayColor: hsl(216, 100%, 71%);
+    --miltiDayColorHSL: 216, 100%, 71%;
+
     border-radius: 6px;
     position: relative;
     padding: 3px 6px;
@@ -43,8 +46,8 @@
 
     // Multi-day event styling with 3 color variants
     &.multi-day-start-0 {
-        border-top-color: #FF6B6B;
-        background: linear-gradient(90deg, rgba(255, 107, 107, 0.12), rgba(255, 107, 107, 0.04));
+        border-top-color: var(--miltiDayColor);
+        background: linear-gradient(90deg, hsla(var(--miltiDayColorHSL), 0.12), hsla(var(--miltiDayColorHSL), 0.04));
 
         &::before {
             content: '';
@@ -53,14 +56,14 @@
             top: 0;
             bottom: 0;
             width: 8px;
-            background: linear-gradient(90deg, #FF6B6B, rgba(255, 107, 107, 0.3));
+            background: linear-gradient(90deg, var(--miltiDayColor), hsla(var(--miltiDayColorHSL), 0.3));
         }
     }
 
     &.multi-day-mid-0 {
-        border-top: 3px solid #FF6B6B;
-        border-bottom: 3px solid #FF6B6B;
-        background: linear-gradient(90deg, rgba(255, 107, 107, 0.08), rgba(255, 107, 107, 0.02));
+        border-top: 3px solid hsl(var(--miltiDayColorHSL));
+        border-bottom: 3px solid hsl(var(--miltiDayColorHSL));
+        background: linear-gradient(90deg, hsla(var(--miltiDayColorHSL), 0.08), hsla(var(--miltiDayColorHSL), 0.02));
 
         &::before {
             content: '';
@@ -69,7 +72,7 @@
             top: 0;
             bottom: 0;
             width: 8px;
-            background: #FF6B6B;
+            background: hsl(var(--miltiDayColorHSL));
         }
 
         &::after {
@@ -79,13 +82,13 @@
             top: 0;
             bottom: 0;
             width: 8px;
-            background: #FF6B6B;
+            background: hsl(var(--miltiDayColorHSL));
         }
     }
 
     &.multi-day-end-0 {
-        border-top-color: #FF6B6B;
-        background: linear-gradient(90deg, rgba(255, 107, 107, 0.04), rgba(255, 107, 107, 0.12));
+        border-top-color: hsl(var(--miltiDayColorHSL));
+        background: linear-gradient(90deg, hsla(var(--miltiDayColorHSL), 0.04), hsla(var(--miltiDayColorHSL), 0.12));
 
         &::after {
             content: '';
@@ -94,7 +97,7 @@
             top: 0;
             bottom: 0;
             width: 8px;
-            background: linear-gradient(90deg, rgba(255, 107, 107, 0.3), #FF6B6B);
+            background: linear-gradient(90deg, hsla(var(--miltiDayColorHSL), 0.3), hsl(var(--miltiDayColorHSL)));
         }
     }
 
@@ -256,8 +259,8 @@
 
 .dots {
     position: absolute;
-    bottom: 0;
-    right: 0;
+    bottom: -1px;
+    right: 3px;
     display: flex;
     gap: 2px;
     flex-wrap: wrap;
