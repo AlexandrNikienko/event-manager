@@ -1,0 +1,13 @@
+{
+  "functions": [
+    {
+      "function": "send-reminders",
+      "events": [
+        {
+          "http": "scheduled",
+          "rate": "rate(5 minutes)"
+        }
+      ]
+    }
+  ]
+}

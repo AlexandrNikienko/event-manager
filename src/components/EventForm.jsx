@@ -273,6 +273,22 @@ export default function EventForm({ onSubmit, initialEvent, onCancel }) {
         <TextArea />
       </Form.Item>
 
+      <Form.Item name="reminderTime" label="Reminder" placeholder="Select reminder time">
+        <Select 
+          placeholder="Choose when to be reminded"
+          options={[
+            { value: null, label: "No reminder" },
+            { value: "15m", label: "15 minutes before" },
+            { value: "1h", label: "1 hour before" },
+            { value: "3h", label: "3 hours before" },
+            { value: "1d", label: "1 day before" },
+            { value: "3d", label: "3 days before" },
+            { value: "1w", label: "1 week before" },
+          ]}
+          allowClear
+        />
+      </Form.Item>
+
       <Form.Item name="isRecurring" valuePropName="checked">
         <Checkbox
           checked={selectedDate.year === "unknown" ? true : undefined}
