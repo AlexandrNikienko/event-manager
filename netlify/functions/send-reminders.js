@@ -114,18 +114,20 @@ async function sendEmailReminder(userEmail, event, reminderTime) {
 /**
  * Main handler - Check for events that need reminders
  */
-exports.handler = async function(event, context) {
-  console.log("🔔 Reminder function triggered");
+export async function handler(event, context) {
+  console.log("🔔 [send-reminders] Function triggered at", new Date().toISOString());
 
-  console.log("ENV CHECK:", {
-    service: process.env.EMAIL_SERVICE,
-    user: process.env.EMAIL_USER,
-    pass: !!process.env.EMAIL_PASSWORD
+  console.log("📋 [send-reminders] Environment check:", {
+    emailService: !!process.env.EMAIL_SERVICE,
+    emailUser: !!process.env.EMAIL_USER,
+    emailPassword: !!process.env.EMAIL_PASSWORD,
   });
   
   try {
+    console.log("🔍 [send-reminders] Fetching users from Firebase...");
     const usersCol = collection(db, "users");
     const usersSnapshot = await getDocs(usersCol);
+    console.log(`👥 [send-reminders] Found ${usersSnapshot.docs.length} user(s)`);
     
     let remindersProcessed = 0;
     let emailsSent = 0;
@@ -137,13 +139,16 @@ exports.handler = async function(event, context) {
       const userEmail = userData.email;
       
       if (!userEmail) {
-        console.warn(`User ${userId} has no email address`);
+        console.warn(`⚠️ [send-reminders] User ${userId} has no email address`);
         continue;
       }
+      
+      console.log(`📧 [send-reminders] Processing user: ${userEmail}`);
       
       // Get all events for this user
       const eventsCol = collection(db, "users", userId, "events");
       const eventsSnapshot = await getDocs(eventsCol);
+      console.log(`📅 [send-reminders] User has ${eventsSnapshot.docs.length} event(s)`);
       
       for (const eventDoc of eventsSnapshot.docs) {
         const event = eventDoc.data();
@@ -159,7 +164,10 @@ exports.handler = async function(event, context) {
         // Check if it's time to send the reminder (within 5 minutes window)
         const timeDiff = Math.abs(now.getTime() - reminderDate.getTime());
         
+        console.log(`⏰ [send-reminders] Event "${event.name}": reminder time ${event.reminderTime}, time diff ${Math.round(timeDiff / 1000)}s`);
+        
         if (timeDiff < 5 * 60 * 1000) {
+          console.log(`📬 [send-reminders] Sending reminder for "${event.name}" to ${userEmail}`);
           const sent = await sendEmailReminder(userEmail, event, event.reminderTime);
           
           if (sent) {
@@ -168,6 +176,7 @@ exports.handler = async function(event, context) {
             // Mark reminder as sent
             const eventRef = doc(db, "users", userId, "events", eventId);
             await updateDoc(eventRef, { reminderSent: true });
+            console.log(`✅ [send-reminders] Marked reminder as sent for "${event.name}"`);
           }
           
           remindersProcessed++;
@@ -175,7 +184,7 @@ exports.handler = async function(event, context) {
       }
     }
     
-    console.log(`✅ Reminder function completed: ${remindersProcessed} checked, ${emailsSent} sent`);
+    console.log(`✨ [send-reminders] Completed: ${remindersProcessed} checked, ${emailsSent} sent`);
     
     return {
       statusCode: 200,
@@ -187,7 +196,7 @@ exports.handler = async function(event, context) {
       }),
     };
   } catch (error) {
-    console.error("❌ Error in reminder function:", error);
+    console.error("❌ [send-reminders] Error:", error);
     
     return {
       statusCode: 500,
