@@ -2,25 +2,37 @@ import { initializeApp, getApps, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import nodemailer from "nodemailer";
 
-// 1. Setup Firebase Admin (God Mode)
-if (!getApps().length) {
-  // We need to handle the private key newlines correctly for Netlify env vars
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY 
-    ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n') 
-    : undefined;
+// --- FIX: Robust Private Key Parsing ---
+function getPrivateKey() {
+  const key = process.env.FIREBASE_PRIVATE_KEY;
+  if (!key) return undefined;
 
-  initializeApp({
-    credential: cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: privateKey,
-    }),
-  });
+  // 1. Remove surrounding quotes if user pasted them from JSON
+  const cleanKey = key.replace(/^"|"$/g, '');
+
+  // 2. Handle standard PEM formatting
+  // If the key already has real newlines, this won't hurt. 
+  // If it has literal "\n" characters (from JSON), this fixes them.
+  return cleanKey.replace(/\\n/g, '\n');
+}
+
+if (!getApps().length) {
+  try {
+    initializeApp({
+      credential: cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: getPrivateKey(), // <--- USE THE HELPER FUNCTION
+      }),
+    });
+  } catch (error) {
+    console.error("❌ Firebase Admin Init Error:", error);
+  }
 }
 
 const db = getFirestore();
 
-// 2. Setup Nodemailer
+// Setup Nodemailer
 const transporter = nodemailer.createTransport({
   service: process.env.EMAIL_SERVICE,
   auth: {
