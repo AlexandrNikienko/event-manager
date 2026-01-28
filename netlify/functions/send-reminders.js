@@ -118,7 +118,8 @@ export default async (req) => {
       const userData = userDoc.data();
       const userEmail = userData.email;
 
-      console.log(`👥 [send-reminders] Found ${userEmail} email`);
+      console.log(`👥 [send-reminders] Found userData ${userData}`);
+      console.log(`👥 [send-reminders] Found email ${userEmail}`);
       
       if (!userEmail) return;
 

@@ -276,7 +276,7 @@ export default function EventForm({ onSubmit, initialEvent, onCancel }) {
         <TextArea />
       </Form.Item>
 
-      <Form.Item name="reminderTime" label="Reminder" placeholder="Select reminder time">
+      <Form.Item name="reminderTime" label="Email Reminder" placeholder="Select reminder time">
         <Select 
           placeholder="Choose when to be reminded"
           options={[
