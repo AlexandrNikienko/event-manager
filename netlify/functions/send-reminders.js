@@ -114,8 +114,14 @@ async function sendEmailReminder(userEmail, event, reminderTime) {
 /**
  * Main handler - Check for events that need reminders
  */
-export async function handler(event, context) {
+exports.handler = async function(event, context) {
   console.log("🔔 Reminder function triggered");
+
+  console.log("ENV CHECK:", {
+    service: process.env.EMAIL_SERVICE,
+    user: process.env.EMAIL_USER,
+    pass: !!process.env.EMAIL_PASSWORD
+  });
   
   try {
     const usersCol = collection(db, "users");
