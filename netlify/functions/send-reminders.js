@@ -97,9 +97,9 @@ async function sendEmailReminder(userEmail, event) {
 
 export default async (req) => {
   console.log("📋 [send-reminders] Environment check:", {
-    emailService: !!process.env.EMAIL_SERVICE,
-    emailUser: !!process.env.EMAIL_USER,
-    emailPassword: !!process.env.EMAIL_PASSWORD,
+    emailService: process.env.EMAIL_SERVICE,
+    emailUser: process.env.EMAIL_USER,
+    emailPassword: process.env.EMAIL_PASSWORD,
   });
   
   try {
@@ -117,6 +117,8 @@ export default async (req) => {
     const userPromises = usersSnapshot.docs.map(async (userDoc) => {
       const userData = userDoc.data();
       const userEmail = userData.email;
+
+      console.log(`👥 [send-reminders] Found ${userEmail} email`);
       
       if (!userEmail) return;
 
