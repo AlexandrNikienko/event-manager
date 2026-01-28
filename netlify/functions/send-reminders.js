@@ -128,8 +128,12 @@ export default async (req) => {
       
       const eventPromises = eventsSnapshot.docs.map(async (eventDoc) => {
         const eventData = eventDoc.data();
+
+        console.log(`⏳ [send-reminders] Checking event: ${eventData.name} with reminder ${eventData.reminderTime}`);
         
         if (!eventData.reminderTime || eventData.reminderSent) return;
+
+        console.log(`⏳ [send-reminders] Calculating reminder for event: ${eventData.name}`);
         
         const eventDate = getEventDateTime(eventData);
         const reminderMs = getReminderMilliseconds(eventData.reminderTime);
