@@ -1,7 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, updateDoc, doc } from "firebase/firestore";
 import nodemailer from "nodemailer";
-import { schedule } from "@netlify/functions";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC80-ofeALeRh2N-WQpNsW6sSTE_Itnw-s",
@@ -36,6 +35,9 @@ function getReminderMilliseconds(reminderTime) {
 }
 
 function getEventDateTime(event) {
+  // Handle case where date might be saved differently
+  if (!event.startDate) return new Date();
+  
   let eventDate = new Date(
     event.startDate.year,
     event.startDate.month - 1,
@@ -61,6 +63,7 @@ async function sendEmailReminder(userEmail, event) {
   
   try {
     await transporter.sendMail(mailOptions);
+    console.log(`Email sent to ${userEmail}`);
     return true;
   } catch (error) {
     console.error(`✗ Failed to send email to ${userEmail}:`, error);
@@ -68,8 +71,10 @@ async function sendEmailReminder(userEmail, event) {
   }
 }
 
-// THE MAIN HANDLER LOGIC
-const myHandler = async (event, context) => {
+// --- NEW V3 SYNTAX ---
+
+// 1. Export the handler as default
+export default async (req) => {
   console.log("🔔 [send-reminders] Function triggered at", new Date().toISOString());
   
   try {
@@ -94,9 +99,9 @@ const myHandler = async (event, context) => {
         const reminderMs = getReminderMilliseconds(eventData.reminderTime);
         const reminderDate = new Date(eventDate.getTime() - reminderMs);
         
-        // Check if within 10 minutes (to match your 15m cron schedule safe window)
         const timeDiff = Math.abs(now.getTime() - reminderDate.getTime());
         
+        // 10 minute window
         if (timeDiff < 10 * 60 * 1000) {
           const sent = await sendEmailReminder(userEmail, eventData);
           if (sent) {
@@ -107,12 +112,16 @@ const myHandler = async (event, context) => {
       }
     }
     
-    return { statusCode: 200 };
+    // V3 uses standard Response objects
+    return new Response(JSON.stringify({ message: "Success", emailsSent }), { status: 200 });
+
   } catch (error) {
     console.error("❌ Error:", error);
-    return { statusCode: 500 };
+    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
 };
 
-// WRAP THE HANDLER WITH THE SCHEDULE
-export const handler = schedule("*/15 * * * *", myHandler);
+// 2. Export the configuration object to set the schedule
+export const config = {
+  schedule: "*/15 * * * *"
+};
