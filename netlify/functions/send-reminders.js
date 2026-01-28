@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, query, where, updateDoc, doc } from "firebase/firestore";
+import { getFirestore, collection, getDocs, updateDoc, doc } from "firebase/firestore";
 import nodemailer from "nodemailer";
 
 const firebaseConfig = {
@@ -14,9 +14,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Email transporter configuration
+// Email transporter using environment variables
 const transporter = nodemailer.createTransport({
-  service: process.env.EMAIL_SERVICE || "gmail",
+  service: process.env.EMAIL_SERVICE,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
@@ -45,14 +45,12 @@ function getEventDateTime(event) {
   let eventDate;
   
   if (event.isMultiDay) {
-    // For multi-day events, use start date
     eventDate = new Date(
       event.startDate.year,
       event.startDate.month - 1,
       event.startDate.day
     );
   } else {
-    // For single-day events
     eventDate = new Date(
       event.startDate.year,
       event.startDate.month - 1,
@@ -60,20 +58,14 @@ function getEventDateTime(event) {
     );
   }
   
-  // Set to 9 AM on the event day
   eventDate.setHours(9, 0, 0, 0);
-  
   return eventDate;
 }
 
 /**
- * Send email reminder
+ * Send email reminder using nodemailer
  */
 async function sendEmailReminder(userEmail, event, reminderTime) {
-  const eventDate = getEventDateTime(event);
-  const reminderMs = getReminderMilliseconds(reminderTime);
-  const reminderDate = new Date(eventDate.getTime() - reminderMs);
-  
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: userEmail,
@@ -103,7 +95,7 @@ async function sendEmailReminder(userEmail, event, reminderTime) {
         
         <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
         
-        <p style="color: #999; font-size: 12px;">This is an automated reminder from Life Palette. If you need to manage your reminders, please visit your calendar.</p>
+        <p style="color: #999; font-size: 12px;">This is an automated reminder from Life Palette.</p>
       </div>
     `,
     text: `Event Reminder: ${event.name} on ${event.startDate.month}/${event.startDate.day}/${event.startDate.year}`,
@@ -111,7 +103,7 @@ async function sendEmailReminder(userEmail, event, reminderTime) {
   
   try {
     await transporter.sendMail(mailOptions);
-    console.log(`✓ Reminder email sent to ${userEmail} for event "${event.name}"`);
+    console.log(`✓ Reminder email sent to ${userEmail} for "${event.name}"`);
     return true;
   } catch (error) {
     console.error(`✗ Failed to send email to ${userEmail}:`, error);
@@ -126,7 +118,6 @@ export async function handler(event, context) {
   console.log("🔔 Reminder function triggered");
   
   try {
-    // Get all users
     const usersCol = collection(db, "users");
     const usersSnapshot = await getDocs(usersCol);
     
@@ -152,18 +143,14 @@ export async function handler(event, context) {
         const event = eventDoc.data();
         const eventId = eventDoc.id;
         
-        // Skip if no reminder is set
         if (!event.reminderTime) continue;
-        
-        // Skip if already reminded
         if (event.reminderSent) continue;
         
         const eventDate = getEventDateTime(event);
         const reminderMs = getReminderMilliseconds(event.reminderTime);
         const reminderDate = new Date(eventDate.getTime() - reminderMs);
         
-        // Check if it's time to send the reminder
-        // Send reminder if current time is within 5 minutes of reminder time
+        // Check if it's time to send the reminder (within 5 minutes window)
         const timeDiff = Math.abs(now.getTime() - reminderDate.getTime());
         
         if (timeDiff < 5 * 60 * 1000) {
@@ -190,6 +177,7 @@ export async function handler(event, context) {
         message: "Reminders processed successfully",
         remindersProcessed,
         emailsSent,
+        timestamp: new Date().toISOString(),
       }),
     };
   } catch (error) {
