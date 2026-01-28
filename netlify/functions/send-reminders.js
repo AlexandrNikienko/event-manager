@@ -96,11 +96,19 @@ async function sendEmailReminder(userEmail, event) {
 // --- V3 HANDLER ---
 
 export default async (req) => {
-  console.log("🔔 [send-reminders] Starting check...");
+  console.log("📋 [send-reminders] Environment check:", {
+    emailService: !!process.env.EMAIL_SERVICE,
+    emailUser: !!process.env.EMAIL_USER,
+    emailPassword: !!process.env.EMAIL_PASSWORD,
+  });
   
   try {
+    console.log("🔍 [send-reminders] Fetching users from Firebase...");
+
     // Admin SDK syntax is slightly different (collection().get())
     const usersSnapshot = await db.collection("users").get();
+
+    console.log(`👥 [send-reminders] Found ${usersSnapshot.docs.length} user(s)`);
     
     let emailsSent = 0;
     const now = new Date();
@@ -112,6 +120,8 @@ export default async (req) => {
       
       if (!userEmail) return;
 
+      console.log(`📧 [send-reminders] Processing user: ${userEmail}`);
+
       const eventsSnapshot = await db.collection("users").doc(userDoc.id).collection("events").get();
       
       const eventPromises = eventsSnapshot.docs.map(async (eventDoc) => {
@@ -122,19 +132,24 @@ export default async (req) => {
         const eventDate = getEventDateTime(eventData);
         const reminderMs = getReminderMilliseconds(eventData.reminderTime);
         const reminderDate = new Date(eventDate.getTime() - reminderMs);
-        
         const timeDiff = Math.abs(now.getTime() - reminderDate.getTime());
+
+        console.log(`⏰ [send-reminders] Event "${eventData.name}": reminder time ${eventData.reminderTime}, time diff ${Math.round(timeDiff / 1000)}s`);
         
         // 10 minute window
         if (timeDiff < 10 * 60 * 1000) {
           console.log(`Found event due: ${eventData.name}`);
+
           const sent = await sendEmailReminder(userEmail, eventData);
+
           if (sent) {
             emailsSent++;
             // Mark as sent
             await db.collection("users").doc(userDoc.id).collection("events").doc(eventDoc.id).update({ 
               reminderSent: true 
             });
+
+            console.log(`✅ [send-reminders] Marked reminder as sent for "${eventData.name}"`);
           }
         }
       });
