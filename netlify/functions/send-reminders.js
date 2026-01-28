@@ -1,9 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, updateDoc, doc } from "firebase/firestore";
 import nodemailer from "nodemailer";
-import { schedule } from "@netlify/functions"; // <--- IMPORT THIS
-
-console.log("The send-reminders function loaded");
+import { schedule } from "@netlify/functions";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC80-ofeALeRh2N-WQpNsW6sSTE_Itnw-s",
