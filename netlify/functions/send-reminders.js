@@ -115,14 +115,18 @@ export default async (req) => {
     
     // Iterate over all users
     const userPromises = usersSnapshot.docs.map(async (userDoc) => {
+      const userId = userDoc.id;
       const userData = userDoc.data();
-      const userEmail = userData.email;
+      const userEmail = userData?.userEmail;
 
       console.log(`👥 [send-reminders] Found userDoc ${userDoc}`);
       console.log(`👥 [send-reminders] Found userData ${userData}`);
       console.log(`👥 [send-reminders] Found email ${userEmail}`);
       
-      if (!userEmail) return;
+      if (!userEmail) {
+        console.warn(`⚠️ [send-reminders] User ${userId} has no email address`);
+        return;
+      }
 
       console.log(`📧 [send-reminders] Processing user: ${userEmail}`);
 

@@ -26,7 +26,6 @@ export const userService = {
     const user = auth.currentUser;
     if (!user) throw new Error("User not authorized");
 
-    // ✅ Same fix here
     const settingsDoc = doc(db, "users", user.uid, "settings", "default");
     await setDoc(settingsDoc, newSettings, { merge: true });
   }

@@ -1,4 +1,4 @@
-import { db, auth } from "../firebase";
+import { db, auth, saveUserEmail } from "../firebase";
 import { collection, addDoc, deleteDoc, updateDoc, doc, getDocs } from "firebase/firestore";
 
 export const eventService = {
@@ -6,6 +6,9 @@ export const eventService = {
     const user = auth.currentUser;
     console.log("getEventsByYear", user)
     if (!user) throw new Error("User not authorized");
+
+    // Save user email to Firestore
+    await saveUserEmail(user);
 
     const eventsCol = collection(db, "users", user.uid, "events");
     const snapshot = await getDocs(eventsCol);

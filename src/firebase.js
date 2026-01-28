@@ -1,6 +1,6 @@
 // src/firebase.js
 import { initializeApp } from "firebase/app";
-import { getFirestore, initializeFirestore, persistentLocalCache, persistentSingleTabManager } from "firebase/firestore";
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentSingleTabManager, doc, setDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 // your firebaseConfig from Firebase Console
@@ -25,3 +25,10 @@ const db = initializeFirestore(app, {
 });
 
 export { db };
+
+export const saveUserEmail = async (user) => {
+  if (!user || !user.email) return;
+
+  const userRef = doc(db, "users", user.uid);
+  await setDoc(userRef, { userEmail: user.email }, { merge: true });
+};
