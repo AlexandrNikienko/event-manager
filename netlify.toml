@@ -7,5 +7,5 @@
   publish = "dist"
 
 [[scheduled.functions]]
-  function = "send-reminders"
+  name = "send-reminders"
   cron = "*/5 * * * *"
