@@ -208,5 +208,5 @@ export default async (req) => {
 
 // Keep schedule consistent with `netlify.toml` (set to every 15 minutes)
 export const config = {
-  schedule: "*/15 * * * *"
+  schedule: "*/5 * * * *"
 };
