@@ -41,6 +41,15 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Verify transporter on startup to catch misconfigurations early
+(async () => {
+  try {
+    await transporter.verify();
+    console.log("📧 [send-reminders] Mail transporter verified");
+  } catch (err) {
+    console.error("❌ [send-reminders] Mail transporter verification failed:", err);
+  }
+})();
 // Helper: Convert time string to ms
 function getReminderMilliseconds(reminderTime) {
   const times = {
@@ -113,15 +122,34 @@ export default async (req) => {
     let emailsSent = 0;
     const now = new Date();
     
+    // Configurable time window (minutes) to catch reminders — should be >= schedule interval
+    const WINDOW_MINUTES = parseInt(process.env.REMINDER_WINDOW_MINUTES || "20", 10);
+    const WINDOW_MS = WINDOW_MINUTES * 60 * 1000;
+
+    // Allow manual test invocation via query param: ?test=1&to=email@example.com
+    const url = req?.url || "";
+    const searchParams = typeof URL !== "undefined" ? new URL(url, "http://localhost")?.searchParams : null;
+    const isTest = searchParams?.get("test") === "1";
+    const testTo = searchParams?.get("to");
+
+    /*If you want an immediate test, call the function/url with query params: ?test=1&to=you@example.com*/
+    if (isTest) {
+      const to = testTo || process.env.TEST_TO_EMAIL || "";
+      if (!to) {
+        console.warn("⚠️ [send-reminders] Test invoked but no target email provided (query param 'to' or env TEST_TO_EMAIL)");
+      } else {
+        console.log(`🧪 [send-reminders] Sending test email to ${to}`);
+        await sendEmailReminder(to, { name: "Test reminder", startDate: { month: "--", day: "--", year: "--" } });
+      }
+    }
+
     // Iterate over all users
     const userPromises = usersSnapshot.docs.map(async (userDoc) => {
       const userId = userDoc.id;
       const userData = userDoc.data();
-      const userEmail = userData?.userEmail;
+      const userEmail = userData?.userEmail || userData?.email;
 
-      console.log(`👥 Found userDoc ${userDoc}`);
-      console.log(`👥 Found userData ${userData}`);
-      console.log(`👥 Found email ${userEmail}`);
+      console.log(`👤 userId=${userId} userEmail=${userEmail}`);
       
       if (!userEmail) {
         console.warn(`⚠️ User ${userId} has no email address`);
@@ -144,10 +172,10 @@ export default async (req) => {
         const reminderDate = new Date(eventDate.getTime() - reminderMs);
         const timeDiff = Math.abs(now.getTime() - reminderDate.getTime());
 
-        console.log(`⏰ Event "${eventData.name}": reminder time ${eventData.reminderTime}, time diff ${Math.round(timeDiff / 1000)}s`);
+        console.log(`⏰ Event "${eventData.name}": eventDate=${eventDate.toISOString()}, reminderTime=${eventData.reminderTime}, reminderDate=${reminderDate.toISOString()}, now=${now.toISOString()}, timeDiffSeconds=${Math.round(timeDiff / 1000)}s, windowMinutes=${WINDOW_MINUTES}`);
         
-        // 10 minute window
-        if (timeDiff < 10 * 60 * 1000) {
+        // If reminder is within the configured window
+        if (timeDiff < WINDOW_MS) {
           console.log(`Found event due: ${eventData.name}`);
 
           const sent = await sendEmailReminder(userEmail, eventData);
@@ -178,6 +206,7 @@ export default async (req) => {
   }
 };
 
+// Keep schedule consistent with `netlify.toml` (set to every 15 minutes)
 export const config = {
-  schedule: "*/5 * * * *"
+  schedule: "*/15 * * * *"
 };
