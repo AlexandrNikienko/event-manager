@@ -82,12 +82,15 @@ async function sendEmailReminder(userEmail, event) {
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: userEmail,
-    subject: `📅 Reminder: ${event.name}`,
+    subject: `📅 Life Pallete Reminder: ${event.name}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2>Event Reminder 🎉</h2>
         <p>This is a reminder about your upcoming event: <strong>${event.name}</strong></p>
         <p>Date: ${event.startDate.month}/${event.startDate.day}/${event.startDate.year}</p>
+        </br>
+        <p>Don't forget to check <a href="https://life-pallete.netlify.app">your app</a> for more details!</p>
+        <p>Best regards,<br/>Life Pallete Team</p>
       </div>
     `,
   };
@@ -123,7 +126,7 @@ export default async (req) => {
     const now = new Date();
     
     // Configurable time window (minutes) to catch reminders — should be >= schedule interval
-    const WINDOW_MINUTES = parseInt(process.env.REMINDER_WINDOW_MINUTES || "60", 10);
+    const WINDOW_MINUTES = parseInt(process.env.REMINDER_WINDOW_MINUTES || "20", 10);
     const WINDOW_MS = WINDOW_MINUTES * 60 * 1000;
 
     // Allow manual test invocation via query param: ?test=1&to=email@example.com
