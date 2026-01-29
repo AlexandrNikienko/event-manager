@@ -123,7 +123,7 @@ export default async (req) => {
     const now = new Date();
     
     // Configurable time window (minutes) to catch reminders — should be >= schedule interval
-    const WINDOW_MINUTES = parseInt(process.env.REMINDER_WINDOW_MINUTES || "20", 10);
+    const WINDOW_MINUTES = parseInt(process.env.REMINDER_WINDOW_MINUTES || "60", 10);
     const WINDOW_MS = WINDOW_MINUTES * 60 * 1000;
 
     // Allow manual test invocation via query param: ?test=1&to=email@example.com
