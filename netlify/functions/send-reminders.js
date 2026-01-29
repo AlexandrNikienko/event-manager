@@ -106,6 +106,7 @@ async function sendEmailReminder(userEmail, event) {
 }
 
 // --- V3 HANDLER ---
+const INTERVAL_MINUTES = parseInt(process.env.REMINDER_INTERVAL_MINUTES || "5", 10);
 
 export default async (req) => {
   console.log("📋 Environment check:", {
@@ -126,7 +127,7 @@ export default async (req) => {
     const now = new Date();
     
     // Configurable time window (minutes) to catch reminders — should be >= schedule interval
-    const WINDOW_MINUTES = parseInt(process.env.REMINDER_WINDOW_MINUTES || "20", 10);
+    const WINDOW_MINUTES = INTERVAL_MINUTES * 2;
     const WINDOW_MS = WINDOW_MINUTES * 60 * 1000;
 
     // Allow manual test invocation via query param: ?test=1&to=email@example.com
@@ -211,5 +212,5 @@ export default async (req) => {
 
 // Keep schedule consistent with `netlify.toml` (set to every 15 minutes)
 export const config = {
-  schedule: "*/5 * * * *"
+  schedule: `*/${INTERVAL_MINUTES} * * * *`
 };
