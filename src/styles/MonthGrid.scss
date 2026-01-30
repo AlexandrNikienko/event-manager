@@ -8,7 +8,8 @@
 .month-title {
     margin-bottom: 8px;
     text-align: center;
-    font-weight: 500;
+    font-weight: bold;
+    font-size: .8rem;
 }
 
 .days-grid {
@@ -26,7 +27,7 @@
     padding: 3px 6px;
     display: flex;
     align-items: flex-start;
-    justify-content: space-between;
+    justify-content: center;
     position: relative;
     border-top: 3px solid transparent;
     border-bottom: 3px solid transparent;
