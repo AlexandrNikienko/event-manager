@@ -106,7 +106,6 @@ async function sendEmailReminder(userEmail, event) {
 }
 
 // --- V3 HANDLER ---
-const INTERVAL_MINUTES = parseInt(process.env.REMINDER_INTERVAL_MINUTES || "5", 10);
 
 export default async (req) => {
   console.log("📋 Environment check:", {
@@ -127,7 +126,7 @@ export default async (req) => {
     const now = new Date();
     
     // Configurable time window (minutes) to catch reminders — should be >= schedule interval
-    const WINDOW_MINUTES = INTERVAL_MINUTES * 2;
+    const WINDOW_MINUTES = parseInt(process.env.REMINDER_WINDOW_MINUTES || "10", 10);
     const WINDOW_MS = WINDOW_MINUTES * 60 * 1000;
 
     // Allow manual test invocation via query param: ?test=1&to=email@example.com
@@ -174,9 +173,9 @@ export default async (req) => {
         const eventDate = getEventDateTime(eventData);
         const reminderMs = getReminderMilliseconds(eventData.reminderTime);
         const reminderDate = new Date(eventDate.getTime() - reminderMs);
-        const timeDiff = now.getTime() - reminderDate.getTime();
+        const timeDiff = Math.abs(now.getTime() - reminderDate.getTime());
 
-        console.log(`⏰ Event "${eventData.name}": eventDate=${eventDate.toISOString()}, reminderTime=${eventData.reminderTime}, reminderDate=${reminderDate.toISOString()}, now=${now.toISOString()}, timeDiffMin=${Math.round(timeDiff / 1000 / 60)}s, windowMinutes=${WINDOW_MINUTES}`);
+        console.log(`⏰ Event "${eventData.name}": eventDate=${eventDate.toISOString()}, reminderTime=${eventData.reminderTime}, reminderDate=${reminderDate.toISOString()}, now=${now.toISOString()}, timeDiffSeconds=${Math.round(timeDiff / 1000)}s, windowMinutes=${WINDOW_MINUTES}`);
         
         // If reminder is within the configured window
         if (timeDiff < WINDOW_MS) {
@@ -210,7 +209,7 @@ export default async (req) => {
   }
 };
 
-// Keep schedule consistent with `netlify.toml`
+// Keep schedule consistent with `netlify.toml` (set to every 15 minutes)
 export const config = {
-  schedule: `*/5 * * * *`
+  schedule: "*/5 * * * *"
 };
