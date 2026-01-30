@@ -176,7 +176,7 @@ export default async (req) => {
         const reminderDate = new Date(eventDate.getTime() - reminderMs);
         const timeDiff = now.getTime() - reminderDate.getTime();
 
-        console.log(`⏰ Event "${eventData.name}": eventDate=${eventDate.toISOString()}, reminderTime=${eventData.reminderTime}, reminderDate=${reminderDate.toISOString()}, now=${now.toISOString()}, timeDiffSeconds=${Math.round(timeDiff / 1000)}s, windowMinutes=${WINDOW_MINUTES}`);
+        console.log(`⏰ Event "${eventData.name}": eventDate=${eventDate.toISOString()}, reminderTime=${eventData.reminderTime}, reminderDate=${reminderDate.toISOString()}, now=${now.toISOString()}, timeDiffMin=${Math.round(timeDiff / 1000 / 60)}s, windowMinutes=${WINDOW_MINUTES}`);
         
         // If reminder is within the configured window
         if (timeDiff < WINDOW_MS) {
