@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createContext } from "react";
 import { Button, Flex, Modal, Input, Checkbox, Dropdown, Avatar, Spin, notification } from 'antd';
-import { PlusOutlined, UserOutlined, QuestionOutlined, LogoutOutlined, MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
+import { PlusOutlined, UserOutlined, QuestionOutlined, LogoutOutlined, MenuUnfoldOutlined, MenuFoldOutlined, SearchOutlined } from "@ant-design/icons";
 import { useAuth } from "./AuthProvider.jsx";
 import { eventService } from './services/eventService';
 import { MONTH_NAMES } from "./utils/utils.js";
@@ -477,6 +477,7 @@ export default function App() {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Search event"
+                    prefix={<SearchOutlined />}
                   />
 
                   <Checkbox checked={hidePast} onChange={() => setHidePast(!hidePast)}>Hide past</Checkbox>
