@@ -111,7 +111,7 @@ export default async (req) => {
   console.log("📋 Environment check:", {
     emailService: process.env.EMAIL_SERVICE,
     emailUser: process.env.EMAIL_USER,
-    emailPassword: process.env.EMAIL_PASSWORD,
+    //emailPassword: !!process.env.EMAIL_PASSWORD,
   });
   
   try {
