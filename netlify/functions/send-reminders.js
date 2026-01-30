@@ -178,7 +178,7 @@ export default async (req) => {
         console.log(`⏰ Event "${eventData.name}": eventDate=${eventDate.toISOString()}, reminderTime=${eventData.reminderTime}, reminderDate=${reminderDate.toISOString()}, now=${now.toISOString()}, timeDiffMins=${Math.round(timeDiff / 1000 / 60)}, windowMinutes=${WINDOW_MINUTES}`);
         
         // If reminder is within the configured window
-        if (timeDiff < WINDOW_MS) {
+        if (timeDiff > 0 && timeDiff <= WINDOW_MS) {
           console.log(`Found event due: ${eventData.name}`);
 
           const sent = await sendEmailReminder(userEmail, eventData);
