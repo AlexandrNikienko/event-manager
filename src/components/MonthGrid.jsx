@@ -45,7 +45,7 @@ function getMultiDayEventPositions(event, month, year) {
   return positions;
 }
 
-export default function MonthGrid({ month, eventsMap = {}, onDelete, onEdit, onDayClick }) {
+export default function MonthGrid({ month, eventsMap = {}, onDelete, onEdit, onDayClick, hoveredDate }) {
   const { year } = useContext(GlobalStateContext);
   const days = daysInMonth(month, year);
 
@@ -116,7 +116,7 @@ export default function MonthGrid({ month, eventsMap = {}, onDelete, onEdit, onD
     dayCells.push(
       <div
         key={d}
-        className={`day-cell${events.length ? " has-event" : ""}${isToday ? " today" : ""}${multiDayEvents.length ? " has-multi-day-event" : ""} ${multiDayClasses}`}
+        className={`day-cell${events.length ? " has-event" : ""}${isToday ? " today" : ""}${multiDayEvents.length ? " has-multi-day-event" : ""}${hoveredDate && hoveredDate.month === month && hoveredDate.day === d ? " hovered-date" : ""} ${multiDayClasses}`}
         onClick={() => onDayClick && onDayClick({ month, day: d, year })}
       >
         <div className="day-number">{d}</div>

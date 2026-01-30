@@ -37,6 +37,25 @@
         background: #f0f4ff;
     }
 
+    &.hovered-date {
+        background: linear-gradient(135deg, rgba(66, 165, 245, 0.15), rgba(66, 165, 245, 0.08)) !important;
+        outline: 2px solid rgba(66, 165, 245, 0.6);
+        box-shadow: 0 0 12px rgba(66, 165, 245, 0.3);
+        //animation: pulse-highlight 0.3s ease-in-out;
+    }
+
+    @keyframes pulse-highlight {
+        0% {
+            box-shadow: 0 0 0 rgba(66, 165, 245, 0.3);
+        }
+        50% {
+            box-shadow: 0 0 16px rgba(66, 165, 245, 0.4);
+        }
+        100% {
+            box-shadow: 0 0 12px rgba(66, 165, 245, 0.3);
+        }
+    }
+
     &.has-event {
         background: linear-gradient(90deg, rgba(43, 110, 246, 0.02), rgba(43, 110, 246, 0.06));
     }

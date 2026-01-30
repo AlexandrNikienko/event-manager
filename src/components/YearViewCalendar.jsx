@@ -5,7 +5,7 @@ import { daysInMonth } from "../utils/utils";
 import MonthGrid from "./MonthGrid";
 import { GlobalStateContext } from "../App";
 
-export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayClick, loading }) {
+export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayClick, loading, hoveredDate }) {
   const { year, setYear } = useContext(GlobalStateContext);
 
   // console.log('loading:', loading);
@@ -101,6 +101,7 @@ export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayC
                 onDelete={onDelete}
                 onEdit={onEdit}
                 onDayClick={onDayClick}
+                hoveredDate={hoveredDate}
               />
             );
           })}

@@ -6,7 +6,7 @@ import { decorateEventsWithWeather } from "../hooks/useWeatherForEvents";
 import WeatherIcon from "./WeatherIcons";
 import { GlobalStateContext } from "../App";
 
-export default function EventList({ events = [], onEdit, onDelete, hidePast, hideDate = false, userSettings }) {
+export default function EventList({ events = [], onEdit, onDelete, hidePast, hideDate = false, userSettings, onEventHover }) {
     const { year } = useContext(GlobalStateContext);
     const [decorated, setDecorated] = useState(events);
 
@@ -37,6 +37,8 @@ export default function EventList({ events = [], onEdit, onDelete, hidePast, hid
                         hidden={hidePast && isEventInPast(event, year)}
                         key={event.id || `${event.name}-${event.startDate?.month}-${event.startDate.day}`}
                         className={`event-list__item ${isEventInPast(event, year) ? "past-event" : ""}`}
+                        onMouseEnter={() => onEventHover?.({ month: event.startDate?.month, day: event.startDate?.day, year: event.startDate?.year })}
+                        onMouseLeave={() => onEventHover?.(null)}
                     >
                         <Flex
                             className="ellipsis pointer p4"

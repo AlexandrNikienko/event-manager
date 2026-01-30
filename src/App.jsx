@@ -115,6 +115,7 @@ export default function App() {
   const [editingEvent, setEditingEvent] = useState(null);
   const [newEvent, setNewEvent] = useState(null);
   const [year, setYear] = useState(new Date().getFullYear());
+  const [hoveredDate, setHoveredDate] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -487,7 +488,9 @@ export default function App() {
                   hidePast={hidePast}
                   onEdit={handleEdit}
                   onDelete={handleDelete}
-                  userSettings={userSettings}/>
+                  userSettings={userSettings}
+                  onEventHover={setHoveredDate}
+                />
               </div>
           </Sider>
           
@@ -499,6 +502,7 @@ export default function App() {
                 onEdit={handleEdit}
                 onDayClick={handleDayClick}
                 loading={loading}
+                hoveredDate={hoveredDate}
               />
             
           </main>
