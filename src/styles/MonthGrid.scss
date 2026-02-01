@@ -3,13 +3,121 @@
 .month-card {
     padding: .5rem;
     @extend %glass-background;
+
+    &--expanded {
+        width: 100%;
+        padding: 1rem 2rem 2rem;
+
+        .days-grid {
+            gap: 12px;
+        }
+
+        .day-cell {
+            min-height: 120px;
+            padding: 12px;
+            flex-wrap: wrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .day-number {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .dots {
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+        }
+
+        .weekdays-row {
+            margin-bottom: 1rem;
+            padding: 8px 0;
+        }
+
+        .weekday-cell {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .month-header {
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .month-expand-btn {
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+        }
+
+        .event-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        .event-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 8px;
+            border-radius: 6px;
+            background: rgba(66,165,245,0.06);
+            color: #064a8a;
+            font-size: 0.9rem;
+            cursor: pointer;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .event-label__dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            flex: 0 0 auto;
+        }
+
+        .event-label__text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .month-expand-btn {
+            display: block;
+        }
+    }
 }
 
-.month-title {
+.month-expand-btn {
+    display: none;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 1.2rem;
+    transition: none;
+
+    .month-card:not(.month-card--expanded):hover & {
+        display: block;
+    }
+}
+
+.month-header {
     margin-bottom: 8px;
     text-align: center;
     font-weight: bold;
-    font-size: .8rem;
 }
 
 .days-grid {

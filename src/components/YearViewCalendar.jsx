@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Button, Flex } from 'antd';
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { daysInMonth } from "../utils/utils";
@@ -7,6 +7,7 @@ import { GlobalStateContext } from "../App";
 
 export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayClick, loading, hoveredDate }) {
   const { year, setYear } = useContext(GlobalStateContext);
+  const [expandedMonth, setExpandedMonth] = useState(null);
 
   // console.log('loading:', loading);
 
@@ -90,21 +91,39 @@ export default function YearViewCalendar({ events = [], onDelete, onEdit, onDayC
       </Flex>
 
       {true && (
-        <div className="year-view">
-          {Array.from({ length: 12 }).map((_, i) => {
-            const monthIndex = i + 1;
-            return (
-              <MonthGrid
-                key={monthIndex}
-                month={monthIndex}
-                eventsMap={map[monthIndex]}
-                onDelete={onDelete}
-                onEdit={onEdit}
-                onDayClick={onDayClick}
-                hoveredDate={hoveredDate}
-              />
-            );
-          })}
+        <div className={`year-view${expandedMonth ? " expanded-month-view" : ""}`}>
+          {expandedMonth ? (
+            // Expanded single month view
+            <MonthGrid
+              key={expandedMonth}
+              month={expandedMonth}
+              eventsMap={map[expandedMonth]}
+              onDelete={onDelete}
+              onEdit={onEdit}
+              onDayClick={onDayClick}
+              hoveredDate={hoveredDate}
+              isExpanded={true}
+              onCollapseMonth={() => setExpandedMonth(null)}
+            />
+          ) : (
+            // Calendar grid view
+            Array.from({ length: 12 }).map((_, i) => {
+              const monthIndex = i + 1;
+              return (
+                <MonthGrid
+                  key={monthIndex}
+                  month={monthIndex}
+                  eventsMap={map[monthIndex]}
+                  onDelete={onDelete}
+                  onEdit={onEdit}
+                  onDayClick={onDayClick}
+                  hoveredDate={hoveredDate}
+                  isExpanded={false}
+                  onExpandMonth={() => setExpandedMonth(monthIndex)}
+                />
+              );
+            })
+          )}
         </div>
       )}
     </>

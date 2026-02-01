@@ -168,18 +168,17 @@ export default async (req) => {
         
         if (!eventData.reminderTime || eventData.reminderSent) return;
 
-        console.log(`⏳ Calculating reminder for event: ${eventData.name}`);
+        //console.log(`⏳ Calculating reminder for event: ${eventData.name}`);
         
         const eventDate = getEventDateTime(eventData);
         const reminderMs = getReminderMilliseconds(eventData.reminderTime);
         const reminderDate = new Date(eventDate.getTime() - reminderMs);
         const timeDiff =  reminderDate.getTime() - now.getTime()
 
-        console.log(`⏰ Event "${eventData.name}": eventDate=${eventDate.toISOString()}, reminderTime=${eventData.reminderTime}, reminderDate=${reminderDate.toISOString()}, now=${now.toISOString()}, timeDiffMins=${Math.round(timeDiff / 1000 / 60)}, windowMinutes=${WINDOW_MINUTES}`);
-        
         // If reminder is within the configured window
         if (timeDiff > 0 && timeDiff <= WINDOW_MS) {
           console.log(`Found event due: ${eventData.name}`);
+          console.log(`⏰ EventDate=${eventDate.toISOString()}, reminderTime=${eventData.reminderTime}, reminderDate=${reminderDate.toISOString()}, now=${now.toISOString()}, timeDiffMins=${Math.round(timeDiff / 1000 / 60)}, windowMinutes=${WINDOW_MINUTES}`);
 
           const sent = await sendEmailReminder(userEmail, eventData);
 

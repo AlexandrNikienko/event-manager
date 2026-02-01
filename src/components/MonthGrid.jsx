@@ -1,4 +1,6 @@
 import React, { useContext, useMemo } from "react";
+import { Button } from "antd";
+import { ExpandOutlined, CompressOutlined } from "@ant-design/icons";
 import { MONTH_NAMES, daysInMonth, WEEKDAYS } from "../utils/utils";
 import DayTooltip from "./DayTooltip";
 import { GlobalStateContext } from "../App";
@@ -45,7 +47,7 @@ function getMultiDayEventPositions(event, month, year) {
   return positions;
 }
 
-export default function MonthGrid({ month, eventsMap = {}, onDelete, onEdit, onDayClick, hoveredDate }) {
+export default function MonthGrid({ month, eventsMap = {}, onDelete, onEdit, onDayClick, hoveredDate, isExpanded = false, onExpandMonth, onCollapseMonth }) {
   const { year } = useContext(GlobalStateContext);
   const days = daysInMonth(month, year);
 
@@ -122,10 +124,27 @@ export default function MonthGrid({ month, eventsMap = {}, onDelete, onEdit, onD
         <div className="day-number">{d}</div>
 
         {events.length > 0 && (
-          <div className="dots">
-            {singleDayEvents.slice(0, 4).map((e, i) => (
-              <div key={i} className="dot" title={e.name}></div>
-            ))}
+          <div className={isExpanded ? "event-list" : "dots"}>
+            {isExpanded ? (
+              // In expanded view show labels for single-day events and multi-day events only on their start day
+              events
+                .filter(e => !e.multiDayInfo || e.multiDayInfo.isStart)
+                .map((e, i) => (
+                  <div
+                    key={i}
+                    className="event-label"
+                    title={e.name}
+                    onClick={(ev) => { ev.stopPropagation(); onEdit && onEdit(e.id); }}
+                  >
+                    <span className="event-label__dot" />
+                    <span className="event-label__text">{e.name}</span>
+                  </div>
+                ))
+            ) : (
+              singleDayEvents.slice(0, 4).map((e, i) => (
+                <div key={i} className="dot" title={e.name}></div>
+              ))
+            )}
           </div>
         )}
 
@@ -135,9 +154,18 @@ export default function MonthGrid({ month, eventsMap = {}, onDelete, onEdit, onD
   }
 
   return (
-    <div className="month-card">
+    <div className={`month-card${isExpanded ? " month-card--expanded" : ""}`}>
       <div className="month-inner">
-        <div className="month-title">{MONTH_NAMES[month - 1]} {year}</div>
+        <div className="month-header">
+          <div className="month-title">{MONTH_NAMES[month - 1]}</div>
+
+          <Button
+            type="text"
+            icon={isExpanded ? <CompressOutlined /> : <ExpandOutlined />}
+            onClick={isExpanded ? onCollapseMonth : onExpandMonth}
+            className="month-expand-btn"
+          />
+        </div>
 
         <div className="weekdays-row">
           {WEEKDAYS.map((wd) => (

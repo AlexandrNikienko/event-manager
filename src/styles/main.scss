@@ -112,6 +112,10 @@ main {
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
 
+  &.expanded-month-view {
+    grid-template-columns: 1fr;
+  }
+
   @media (min-width: 1332px) {
     grid-template-columns: repeat(4, 1fr);
   }
