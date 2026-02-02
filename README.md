@@ -10,8 +10,8 @@ Enjoy a unique full-year view that helps you visualize your events and never mis
 🗓️ Features:
 
 Add, edit, and manage events with ease<br/>
-Beautiful yearly calendar visualization<br/>
-Smart reminders (Email / Telegram — coming soon)<br/>
+Friendly year and month view<br/>
+Smart email reminder<br/>
 <br/>
 **Firebase** storing<br/>
 **Gmail** authorization<br/>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Select, Checkbox, Button, Flex } from "antd";
+import { Form, Input, Select, Checkbox, Button, Flex, Tooltip } from "antd";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 import { Sparkles } from "lucide-react";
 import { EVENT_TYPES } from "../utils/utils";
 import TextArea from "antd/es/input/TextArea";
@@ -216,7 +217,7 @@ export default function EventForm({ onSubmit, initialEvent, onCancel }) {
 
       <Form.Item>
         <Flex justify="space-between" align="center" style={{ marginBottom: 8 }}>
-          <span style={{ fontWeight: 500 }}>Date</span>
+          <span>Date</span>
 
           <Checkbox
             checked={isMultipleDays}
@@ -276,7 +277,18 @@ export default function EventForm({ onSubmit, initialEvent, onCancel }) {
         <TextArea />
       </Form.Item>
 
-      <Form.Item name="reminderTime" label="Email Reminder" placeholder="Select reminder time">
+      <Form.Item 
+        name="reminderTime" 
+        label={
+          <span>
+            Email Reminder
+            <Tooltip title="Reminders are based on a default 9:00 AM event time. The reminder will be sent at the specified interval before 9 AM of the event date.">
+              <QuestionCircleOutlined style={{ marginLeft: 4 }} />
+            </Tooltip>
+          </span>
+        } 
+        placeholder="Select reminder time"
+      >
         <Select 
           placeholder="Choose when to be reminded"
           options={[
