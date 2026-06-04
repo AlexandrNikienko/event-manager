@@ -12,18 +12,12 @@ export function daysInMonth(month, year) {
 }
 
 export function getAge(event, currentYear) {
-  if ((event.type !== "birthday" && event.type !== "anniversary") || !event.year || event.year === "unknown") {
+  if ((event.type !== "birthday" && event.type !== "anniversary") || !event.startDate?.year) {
     return null;
   }
 
-  let birthYear;
-  if (event.isMultiDay) {
-    birthYear = Number(event.startDate.year);
-  } else {
-    birthYear = Number(event.year);
-  }
-  
-  const age = currentYear - birthYear;
+  const startYear = Number(event.startDate.year);
+  const age = currentYear - startYear;
 
   return age;
 };

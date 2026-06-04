@@ -48,9 +48,9 @@ export async function decorateEventsWithWeather(events, activeYear, daysAhead = 
     const forecast = cachedForecast;
 
     return events.map((ev) => {
-      if (!ev.year || !ev.month || !ev.day) return ev;
+      if (!ev.startDate?.year || !ev.startDate?.month || !ev.startDate?.day) return ev;
 
-      const dateStr = `${activeYear}-${String(ev.month).padStart(2, "0")}-${String(ev.day).padStart(2, "0")}`;
+      const dateStr = `${activeYear}-${String(ev.startDate.month).padStart(2, "0")}-${String(ev.startDate.day).padStart(2, "0")}`;
       const eventDate = new Date(dateStr);
       const diffDays = (eventDate - new Date()) / (1000 * 60 * 60 * 24);
 
@@ -58,6 +58,7 @@ export async function decorateEventsWithWeather(events, activeYear, daysAhead = 
         const { code, tMin, tMax } = forecast[dateStr];
         ev.weatherCode = code;
         ev.weatherTitle = `${tMin}°–${tMax}° ${getWeatherDescription(code)}`;
+        console.log(`Added weather for event "${ev.name}" on ${dateStr}:`, ev.weatherTitle);
       }
       return ev;
     });
