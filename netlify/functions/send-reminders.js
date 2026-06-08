@@ -67,14 +67,22 @@ function getReminderMilliseconds(reminderTime) {
 function getEventDateTime(event) {
   if (!event.startDate) return new Date();
   
-  // Note: Firestore Admin SDK might return Timestamp objects differently 
-  // than client SDK, but if you store data as maps/numbers this logic holds.
   let eventDate = new Date(
     event.startDate.year,
     event.startDate.month - 1,
     event.startDate.day
   );
   eventDate.setHours(9, 0, 0, 0);
+  
+  // For recurring events, calculate the next occurrence
+  if (event.isRecurring) {
+    const now = new Date();
+    // If the event date is in the past, move it to the current year or next year
+    while (eventDate < now) {
+      eventDate.setFullYear(eventDate.getFullYear() + 1);
+    }
+  }
+  
   return eventDate;
 }
 
