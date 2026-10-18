@@ -90,15 +90,15 @@ async function sendEmailReminder(userEmail, event) {
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: userEmail,
-    subject: `📅 Life Pallete Reminder: ${event.name}`,
+    subject: `📅 Life Palette Reminder: ${event.name}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2>Event Reminder 🎉</h2>
         <p>This is a reminder about your upcoming event: <strong>${event.name}</strong></p>
         <p>Date: ${event.startDate.month}/${event.startDate.day}/${event.startDate.year}</p>
         </br>
-        <p>Don't forget to check <a href="https://life-pallete.netlify.app">your app</a> for more details!</p>
-        <p>Best regards,<br/>Life Pallete Team</p>
+        <p>Don't forget to check <a href="https://life-palette.netlify.app">your app</a> for more details!</p>
+        <p>Best regards,<br/>Life Palette Team</p>
       </div>
     `,
   };
